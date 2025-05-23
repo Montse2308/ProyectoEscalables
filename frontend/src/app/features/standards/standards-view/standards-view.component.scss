@@ -1,0 +1,259 @@
+.standards-container {
+  padding: 2rem 1rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.standards-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.standards-header h1 {
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.standards-header p {
+  color: var(--dark-gray);
+}
+
+.standards-form-card,
+.standards-result-card,
+.standards-info-card {
+  background-color: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.standards-form-card h2,
+.standards-result-card h2,
+.standards-info-card h2 {
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+  font-size: 1.5rem;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+.col-md-6 {
+  position: relative;
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+@media (min-width: 768px) {
+  .col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.user-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius);
+}
+
+.user-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: var(--dark-gray);
+  margin-bottom: 0.25rem;
+}
+
+.stat-value {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.strength-level-result {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.strength-level-result h3 {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.level-highlight {
+  color: var(--primary-color);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.strength-bar-container {
+  margin: 2rem 0;
+}
+
+.strength-levels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.level {
+  font-size: 0.875rem;
+  color: var(--dark-gray);
+}
+
+.level.active {
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.strength-bar {
+  height: 10px;
+  background-color: var(--light-gray);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: var(--primary-color);
+  border-radius: 5px;
+}
+
+.percentiles {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.percentile-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.percentile-label {
+  color: var(--dark-gray);
+}
+
+.percentile-value {
+  font-weight: bold;
+}
+
+.standards-table h3 {
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 1.25rem;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 0.75rem;
+  border: 1px solid var(--light-gray);
+  text-align: center;
+}
+
+th {
+  background-color: #f1f1f1;
+  font-weight: 600;
+}
+
+tr.highlighted {
+  background-color: rgba(63, 81, 181, 0.1);
+}
+
+tr.highlighted td {
+  font-weight: bold;
+}
+
+.strength-levels-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.level-info {
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius);
+  border-left: 4px solid var(--primary-color);
+}
+
+.level-info h3 {
+  margin-bottom: 0.75rem;
+  color: var(--primary-color);
+  font-size: 1.25rem;
+}
+
+.level-info p {
+  margin: 0;
+  color: var(--dark-gray);
+  font-size: 0.9rem;
+}
+
+.no-data {
+  text-align: center;
+  padding: 3rem;
+  background-color: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.no-data p {
+  margin: 0;
+  color: var(--dark-gray);
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  padding: 3rem;
+}
+
+@media (max-width: 767px) {
+  .standards-form-card,
+  .standards-result-card,
+  .standards-info-card {
+    padding: 1.5rem;
+  }
+  
+  .user-info {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .strength-levels .level {
+    font-size: 0.75rem;
+  }
+}

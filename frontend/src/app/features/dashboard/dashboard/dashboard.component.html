@@ -1,0 +1,65 @@
+<div class="dashboard-container">
+  <h1 class="dashboard-title">Dashboard</h1>
+  
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+  
+  <div *ngIf="!loading && !error">
+    <div class="welcome-section">
+      <h2>Welcome back, {{ user?.name }}!</h2>
+      <p>Here's your strength training overview</p>
+    </div>
+    
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-title">Total Workouts</div>
+        <div class="metric-value">{{ totalWorkouts }}</div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-title">Workouts This Week</div>
+        <div class="metric-value">{{ weeklyWorkouts }}</div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-title">Strongest Lift</div>
+        <div class="metric-value">{{ strongestLift.exercise }}</div>
+        <div class="metric-subtitle">{{ strongestLift.weight }} kg</div>
+      </div>
+    </div>
+    
+    <div class="recent-workouts">
+      <h3>Recent Workouts</h3>
+      
+      <div *ngIf="recentWorkouts.length === 0" class="no-workouts">
+        <p>No workouts recorded yet. Start tracking your progress!</p>
+        <a routerLink="/workouts/new" class="btn btn-primary">Log a Workout</a>
+      </div>
+      
+      <div *ngIf="recentWorkouts.length > 0" class="workout-list">
+        <div *ngFor="let workout of recentWorkouts" class="workout-card">
+          <div class="workout-header">
+            <h4>{{ workout.name }}</h4>
+            <span class="workout-date">{{ workout.date | date }}</span>
+          </div>
+          
+          <div class="workout-exercises">
+            <div *ngFor="let exercise of workout.exercises" class="exercise-item">
+              <span class="exercise-name">{{ exercise.exercise.name }}</span>
+              <span class="exercise-sets">{{ exercise.sets.length }} sets</span>
+            </div>
+          </div>
+          
+          <a [routerLink]="['/workouts', workout._id]" class="btn btn-sm btn-outline-primary">View Details</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+</div>

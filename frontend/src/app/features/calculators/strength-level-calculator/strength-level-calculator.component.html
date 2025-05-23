@@ -1,0 +1,138 @@
+<div class="calculator-container">
+  <div class="calculator-card">
+    <h2 class="calculator-title">Strength Level Calculator</h2>
+    <p class="calculator-description">
+      Find out your strength level based on your one-rep max (1RM) for different exercises.
+    </p>
+    
+    <form [formGroup]="calculatorForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="exercise">Exercise</label>
+        <select 
+          formControlName="exercise" 
+          class="form-control" 
+          [ngClass]="{ 'is-invalid': f['exercise'].touched && f['exercise'].errors }"
+        >
+          <option value="">Select Exercise</option>
+          <option *ngFor="let exercise of exercises" [value]="exercise._id">{{ exercise.name }}</option>
+        </select>
+        <div *ngIf="loadingExercises" class="loading-text">Loading exercises...</div>
+        <div *ngIf="f['exercise'].touched && f['exercise'].errors" class="invalid-feedback">
+          <div *ngIf="f['exercise'].errors['required']">Exercise is required</div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="oneRM">One-Rep Max (kg)</label>
+        <input 
+          type="number" 
+          formControlName="oneRM" 
+          class="form-control" 
+          [ngClass]="{ 'is-invalid': f['oneRM'].touched && f['oneRM'].errors }" 
+        />
+        <div *ngIf="f['oneRM'].touched && f['oneRM'].errors" class="invalid-feedback">
+          <div *ngIf="f['oneRM'].errors['required']">One-Rep Max is required</div>
+          <div *ngIf="f['oneRM'].errors['min']">One-Rep Max must be greater than 0</div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="bodyWeight">Body Weight (kg)</label>
+        <input 
+          type="number" 
+          formControlName="bodyWeight" 
+          class="form-control" 
+          [ngClass]="{ 'is-invalid': f['bodyWeight'].touched && f['bodyWeight'].errors }" 
+        />
+        <div *ngIf="f['bodyWeight'].touched && f['bodyWeight'].errors" class="invalid-feedback">
+          <div *ngIf="f['bodyWeight'].errors['required']">Body weight is required</div>
+          <div *ngIf="f['bodyWeight'].errors['min']">Body weight must be at least 30 kg</div>
+          <div *ngIf="f['bodyWeight'].errors['max']">Body weight must be less than 300 kg</div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="gender">Gender</label>
+        <div class="gender-selector">
+          <div class="gender-option">
+            <input type="radio" id="male" formControlName="gender" value="male">
+            <label for="male">Male</label>
+          </div>
+          <div class="gender-option">
+            <input type="radio" id="female" formControlName="gender" value="female">
+            <label for="female">Female</label>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <button type="submit" [disabled]="calculatorForm.invalid || loading" class="btn btn-primary">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+          Calculate
+        </button>
+      </div>
+    </form>
+    
+    <div *ngIf="result" class="result-container">
+      <h3>Your Strength Level:</h3>
+      <div class="result-value strength-level">{{ result.strengthLevel | titlecase }}</div>
+      
+      <div class="strength-bar-container">
+        <div class="strength-levels">
+          <div class="level" [ngClass]="{'active': result.strengthLevel === 'beginner'}">Beginner</div>
+          <div class="level" [ngClass]="{'active': result.strengthLevel === 'novice'}">Novice</div>
+          <div class="level" [ngClass]="{'active': result.strengthLevel === 'intermediate'}">Intermediate</div>
+          <div class="level" [ngClass]="{'active': result.strengthLevel === 'advanced'}">Advanced</div>
+          <div class="level" [ngClass]="{'active': result.strengthLevel === 'elite'}">Elite</div>
+        </div>
+        
+        <div class="strength-bar">
+          <div class="progress-bar" [style.width.%]="result.percentage"></div>
+        </div>
+        
+        <div class="percentiles">
+          <div class="percentile-info">
+            <div class="percentile-label">Next Level:</div>
+            <div class="percentile-value">{{ result.percentage }}% Complete</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="standards-table">
+        <h4>Strength Standards</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Level</th>
+              <th>Weight (kg)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr [ngClass]="{'highlighted': result.strengthLevel === 'beginner'}">
+              <td>Beginner</td>
+              <td>{{ result.percentiles.beginner }}</td>
+            </tr>
+            <tr [ngClass]="{'highlighted': result.strengthLevel === 'novice'}">
+              <td>Novice</td>
+              <td>{{ result.percentiles.novice }}</td>
+            </tr>
+            <tr [ngClass]="{'highlighted': result.strengthLevel === 'intermediate'}">
+              <td>Intermediate</td>
+              <td>{{ result.percentiles.intermediate }}</td>
+            </tr>
+            <tr [ngClass]="{'highlighted': result.strengthLevel === 'advanced'}">
+              <td>Advanced</td>
+              <td>{{ result.percentiles.advanced }}</td>
+            </tr>
+            <tr [ngClass]="{'highlighted': result.strengthLevel === 'elite'}">
+              <td>Elite</td>
+              <td>{{ result.percentiles.elite }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div *ngIf="error" class="alert alert-danger mt-3">{{ error }}</div>
+  </div>
+</div>

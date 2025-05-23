@@ -1,0 +1,91 @@
+<div class="template-container">
+  <div class="template-header">
+    <h1>Workout Templates</h1>
+    <p>Create and manage your custom workout routines</p>
+  </div>
+  
+  <div class="template-actions">
+    <div class="search-box">
+      <input 
+        type="text" 
+        [(ngModel)]="searchTerm" 
+        (input)="onSearchChange()" 
+        placeholder="Search templates..." 
+        class="form-control"
+      />
+    </div>
+    
+    <button class="btn btn-primary" (click)="createTemplate()">
+      <i class="fas fa-plus"></i> Create Template
+    </button>
+  </div>
+  
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+  
+  <div *ngIf="!loading && filteredTemplates.length === 0" class="no-data">
+    <p>No templates found. Create your first workout template to get started!</p>
+    <button class="btn btn-primary" (click)="createTemplate()">Create Template</button>
+  </div>
+  
+  <div *ngIf="!loading && filteredTemplates.length > 0" class="template-grid">
+    <div *ngFor="let template of filteredTemplates" class="template-card">
+      <div class="template-card-header">
+        <h3>{{ template.name }}</h3>
+        <span *ngIf="template.isPublic" class="badge badge-success">Public</span>
+      </div>
+      
+      <div class="template-card-body">
+        <p *ngIf="template.description" class="template-description">{{ template.description }}</p>
+        <div class="template-meta">
+          <span class="exercise-count">{{ getExerciseCount(template) }} exercises</span>
+          <span class="created-date">Created: {{ template.createdAt | date:'mediumDate' }}</span>
+        </div>
+      </div>
+      
+      <div class="template-card-actions">
+        <button class="btn btn-sm btn-outline-primary" (click)="viewTemplate(template._id)">
+          View
+        </button>
+        <button class="btn btn-sm btn-outline-secondary" (click)="editTemplate(template._id)">
+          Edit
+        </button>
+        <button class="btn btn-sm btn-outline-danger" (click)="confirmDeleteTemplate(template)">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div *ngIf="error" class="alert alert-danger mt-3">
+    {{ error }}
+  </div>
+  
+  <!-- Delete Confirmation Modal -->
+  <div *ngIf="confirmDelete" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Delete</h5>
+          <button type="button" class="close" (click)="cancelDelete()">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete the template "{{ templateToDelete?.name }}"?</p>
+          <p class="text-danger">This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="cancelDelete()">Cancel</button>
+          <button type="button" class="btn btn-danger" [disabled]="loading" (click)="deleteTemplate()">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,283 @@
+<div class="admin-container">
+  <div class="admin-header">
+    <h1>Strength Standards Management</h1>
+    <p>Create and manage strength standards for different exercises, genders, and weight categories</p>
+  </div>
+  
+  <div class="admin-content">
+    <div class="admin-card">
+      <h2>{{ editMode ? 'Edit Strength Standard' : 'Add New Strength Standard' }}</h2>
+      
+      <form [formGroup]="standardForm" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="exercise">Exercise</label>
+            <select 
+              formControlName="exercise" 
+              class="form-control" 
+              [ngClass]="{ 'is-invalid': f['exercise'].touched && f['exercise'].errors }"
+            >
+              <option value="">Select Exercise</option>
+              <option *ngFor="let exercise of exercises" [value]="exercise._id">{{ exercise.name }}</option>
+            </select>
+            <div *ngIf="f['exercise'].touched && f['exercise'].errors" class="invalid-feedback">
+              <div *ngIf="f['exercise'].errors['required']">Exercise is required</div>
+            </div>
+          </div>
+          
+          <div class="form-group col-md-6">
+            <label for="gender">Gender</label>
+            <div class="gender-selector">
+              <div class="gender-option">
+                <input type="radio" id="male" formControlName="gender" value="male">
+                <label for="male">Male</label>
+              </div>
+              <div class="gender-option">
+                <input type="radio" id="female" formControlName="gender" value="female">
+                <label for="female">Female</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="weight-categories-section">
+          <div class="section-header">
+            <h3>Weight Categories</h3>
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="addWeightCategory()">
+              Add Weight Category
+            </button>
+          </div>
+          
+          <div formArrayName="weightCategories" class="weight-categories">
+            <div *ngFor="let weightCategory of weightCategories.controls; let i = index" class="weight-category-item">
+              <div [formGroupName]="i" class="weight-category-form">
+                <div class="category-header">
+                  <h4>Weight Category {{ i + 1 }}</h4>
+                  <button 
+                    type="button" 
+                    class="btn btn-sm btn-outline-danger" 
+                    (click)="removeWeightCategory(i)"
+                    [disabled]="weightCategories.length === 1"
+                  >
+                    Remove
+                  </button>
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label for="minWeight-{{i}}">Min Weight (kg)</label>
+                    <input 
+                      type="number" 
+                      formControlName="minWeight" 
+                      class="form-control" 
+                      [ngClass]="{ 'is-invalid': getWeightCategoryFormGroup(i).get('minWeight')?.touched && getWeightCategoryFormGroup(i).get('minWeight')?.errors }" 
+                    />
+                    <div *ngIf="getWeightCategoryFormGroup(i).get('minWeight')?.touched && getWeightCategoryFormGroup(i).get('minWeight')?.errors" class="invalid-feedback">
+                      <div *ngIf="getWeightCategoryFormGroup(i).get('minWeight')?.errors?.['required']">Min weight is required</div>
+                      <div *ngIf="getWeightCategoryFormGroup(i).get('minWeight')?.errors?.['min']">Min weight must be at least 30 kg</div>
+                    </div>
+                  </div>
+                  
+                  <div class="form-group col-md-6">
+                    <label for="maxWeight-{{i}}">Max Weight (kg)</label>
+                    <input 
+                      type="number" 
+                      formControlName="maxWeight" 
+                      class="form-control" 
+                      [ngClass]="{ 'is-invalid': getWeightCategoryFormGroup(i).get('maxWeight')?.touched && getWeightCategoryFormGroup(i).get('maxWeight')?.errors }" 
+                    />
+                    <div *ngIf="getWeightCategoryFormGroup(i).get('maxWeight')?.touched && getWeightCategoryFormGroup(i).get('maxWeight')?.errors" class="invalid-feedback">
+                      <div *ngIf="getWeightCategoryFormGroup(i).get('maxWeight')?.errors?.['required']">Max weight is required</div>
+                      <div *ngIf="getWeightCategoryFormGroup(i).get('maxWeight')?.errors?.['min']">Max weight must be at least 30 kg</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div formGroupName="strengthLevels" class="strength-levels">
+                  <h5>Strength Levels (kg)</h5>
+                  
+                  <div class="form-row">
+                    <div class="form-group col-md-4">
+                      <label for="beginner-{{i}}">Beginner</label>
+                      <input 
+                        type="number" 
+                        formControlName="beginner" 
+                        class="form-control" 
+                        [ngClass]="{ 'is-invalid': getStrengthLevelsFormGroup(i).get('beginner')?.touched && getStrengthLevelsFormGroup(i).get('beginner')?.errors }" 
+                      />
+                      <div *ngIf="getStrengthLevelsFormGroup(i).get('beginner')?.touched && getStrengthLevelsFormGroup(i).get('beginner')?.errors" class="invalid-feedback">
+                        <div *ngIf="getStrengthLevelsFormGroup(i).get('beginner')?.errors?.['required']">Beginner level is required</div>
+                        <div *ngIf="getStrengthLevelsFormGroup(i).get('beginner')?.errors?.['min']">Value must be at least 0</div>
+                      </div>
+                    </div>
+                    
+                    <div class="form-group col-md-4">
+                      <label for="novice-{{i}}">Novice</label>
+                      <input 
+                        type="number" 
+                        formControlName="novice" 
+                        class="form-control" 
+                        [ngClass]="{ 'is-invalid': getStrengthLevelsFormGroup(i).get('novice')?.touched && getStrengthLevelsFormGroup(i).get('novice')?.errors }" 
+                      />
+                      <div *ngIf="getStrengthLevelsFormGroup(i).get('novice')?.touched && getStrengthLevelsFormGroup(i).get('novice')?.errors" class="invalid-feedback">
+                        <div *ngIf="getStrengthLevelsFormGroup(i).get('novice')?.errors?.['required']">Novice level is required</div>
+                        <div *ngIf="getStrengthLevelsFormGroup(i).get('novice')?.errors?.['min']">Value must be at least 0</div>
+                      </div>
+                    </div>
+                    
+                    <div class="form-group col-md-4">
+                      <label for="intermediate-{{i}}">Intermediate</label>
+                      <input 
+                        type="number" 
+                        formControlName="intermediate" 
+                        class="form-control" 
+                        [ngClass]="{ 'is-invalid': getStrengthLevelsFormGroup(i).get('intermediate')?.touched && getStrengthLevelsFormGroup(i).get('intermediate')?.errors }" 
+                      />
+                      <div *ngIf="getStrengthLevelsFormGroup(i).get('intermediate')?.touched && getStrengthLevelsFormGroup(i).get('intermediate')?.errors" class="invalid-feedback">
+                        <div *ngIf="getStrengthLevelsFormGroup(i).get('intermediate')?.errors?.['required']">Intermediate level is required</div>
+                        <div *ngIf="getStrengthLevelsFormGroup(i).get('intermediate')?.errors?.['min']">Value must be at least 0</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label for="advanced-{{i}}">Advanced</label>
+                      <input 
+                        type="number" 
+                        formControlName="advanced" 
+                        class="form-control" 
+                        [ngClass]="{ 'is-invalid': getStrengthLevelsFormGroup(i).get('advanced')?.touched && getStrengthLevelsFormGroup(i).get('advanced')?.errors }" 
+                      />
+                      <div *ngIf="getStrengthLevelsFormGroup(i).get('advanced')?.touched && getStrengthLevelsFormGroup(i).get('advanced')?.errors" class="invalid-feedback">
+                        <div *ngIf="getStrengthLevelsFormGroup(i).get('advanced')?.errors?.['required']">Advanced level is required</div>
+                        <div *ngIf="getStrengthLevelsFormGroup(i).get('advanced')?.errors?.['min']">Value must be at least 0</div>
+                      </div>
+                    </div>
+                    
+                    <div class="form-group col-md-6">
+                      <label for="elite-{{i}}">Elite</label>
+                      <input 
+                        type="number" 
+                        formControlName="elite" 
+                        class="form-control" 
+                        [ngClass]="{ 'is-invalid': getStrengthLevelsFormGroup(i).get('elite')?.touched && getStrengthLevelsFormGroup(i).get('elite')?.errors }" 
+                      />
+                      <div *ngIf="getStrengthLevelsFormGroup(i).get('elite')?.touched && getStrengthLevelsFormGroup(i).get('elite')?.errors" class="invalid-feedback">
+                        <div *ngIf="getStrengthLevelsFormGroup(i).get('elite')?.errors?.['required']">Elite level is required</div>
+                        <div *ngIf="getStrengthLevelsFormGroup(i).get('elite')?.errors?.['min']">Value must be at least 0</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" [disabled]="standardForm.invalid || loading" class="btn btn-primary">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            {{ editMode ? 'Update Standard' : 'Add Standard' }}
+          </button>
+          
+          <button *ngIf="editMode" type="button" class="btn btn-outline-secondary" (click)="resetForm()">
+            Cancel
+          </button>
+        </div>
+      </form>
+      
+      <div *ngIf="submitSuccess" class="alert alert-success mt-3">
+        Strength standard {{ editMode ? 'updated' : 'added' }} successfully!
+      </div>
+      
+      <div *ngIf="error" class="alert alert-danger mt-3">
+        {{ error }}
+      </div>
+    </div>
+    
+    <div class="admin-card mt-4">
+      <h2>Strength Standards List</h2>
+      
+      <div *ngIf="loadingData" class="loading-spinner">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+      
+      <div *ngIf="!loadingData && standards.length === 0" class="no-data">
+        <p>No strength standards found. Add your first standard using the form above.</p>
+      </div>
+      
+      <div *ngIf="!loadingData && standards.length > 0" class="standards-list">
+        <div *ngFor="let standard of standards" class="standard-item">
+          <div class="standard-header">
+            <h3>{{ standard.exercise.name }}</h3>
+            <span class="badge" [ngClass]="{'badge-primary': standard.gender === 'male', 'badge-secondary': standard.gender === 'female'}">
+              {{ standard.gender | titlecase }}
+            </span>
+          </div>
+          
+          <div class="weight-categories-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Weight Range</th>
+                  <th>Beginner</th>
+                  <th>Novice</th>
+                  <th>Intermediate</th>
+                  <th>Advanced</th>
+                  <th>Elite</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let category of standard.weightCategories">
+                  <td>{{ category.minWeight }} - {{ category.maxWeight }} kg</td>
+                  <td>{{ category.strengthLevels.beginner }} kg</td>
+                  <td>{{ category.strengthLevels.novice }} kg</td>
+                  <td>{{ category.strengthLevels.intermediate }} kg</td>
+                  <td>{{ category.strengthLevels.advanced }} kg</td>
+                  <td>{{ category.strengthLevels.elite }} kg</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="standard-actions">
+            <button class="btn btn-sm btn-outline-primary" (click)="editStandard(standard)">
+              Edit
+            </button>
+            <button class="btn btn-sm btn-outline-danger" (click)="confirmDeleteStandard(standard)">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Delete Confirmation Modal -->
+  <div *ngIf="confirmDelete" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Delete</h5>
+          <button type="button" class="close" (click)="cancelDelete()">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete the strength standard for "{{ standardToDelete?.exercise.name }}" ({{ standardToDelete?.gender | titlecase }})?</p>
+          <p class="text-danger">This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="cancelDelete()">Cancel</button>
+          <button type="button" class="btn btn-danger" [disabled]="loading" (click)="deleteStandard()">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

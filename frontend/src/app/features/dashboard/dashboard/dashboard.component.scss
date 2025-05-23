@@ -1,0 +1,215 @@
+.dashboard-container {
+  padding: 2rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dashboard-title {
+  text-align: center;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+  font-weight: 600;
+  font-size: 2rem;
+}
+
+.welcome-section {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  background-image: linear-gradient(135deg, rgba(63, 81, 181, 0.05) 0%, rgba(63, 81, 181, 0.1) 100%);
+}
+
+.welcome-section h2 {
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+  font-size: 1.75rem;
+}
+
+.welcome-section p {
+  color: var(--dark-gray);
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.metric-card {
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.metric-title {
+  font-size: 1.1rem;
+  color: var(--dark-gray);
+  margin-bottom: 1rem;
+}
+
+.metric-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.metric-subtitle {
+  font-size: 1rem;
+  color: var(--dark-gray);
+}
+
+.recent-workouts {
+  background-color: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 2rem;
+}
+
+.recent-workouts h3 {
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.no-workouts {
+  text-align: center;
+  padding: 2rem;
+}
+
+.no-workouts p {
+  margin-bottom: 1.5rem;
+  color: var(--dark-gray);
+}
+
+.workout-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.workout-card {
+  padding: 1.5rem;
+  border: 1px solid var(--light-gray);
+  border-radius: var(--border-radius);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.workout-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.workout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.workout-header h4 {
+  margin: 0;
+  color: var(--primary-color);
+  font-size: 1.25rem;
+}
+
+.workout-date {
+  color: var(--dark-gray);
+  font-size: 0.9rem;
+}
+
+.workout-exercises {
+  margin-bottom: 1.5rem;
+}
+
+.exercise-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--light-gray);
+}
+
+.exercise-item:last-child {
+  border-bottom: none;
+}
+
+.exercise-name {
+  font-weight: 500;
+}
+
+.exercise-sets {
+  color: var(--dark-gray);
+  font-size: 0.9rem;
+}
+
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  border-radius: 0.2rem;
+}
+
+.btn-outline-primary {
+  color: var(--primary-color);
+  background-color: transparent;
+  border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+  color: #fff;
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  padding: 3rem;
+}
+
+.alert {
+  position: relative;
+  padding: 1rem 1.25rem;
+  margin-top: 1.5rem;
+  border: 1px solid transparent;
+  border-radius: var(--border-radius);
+}
+
+.alert-danger {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+@media (max-width: 767px) {
+  .welcome-section {
+    padding: 1.5rem;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .recent-workouts {
+    padding: 1.5rem;
+  }
+  
+  .workout-list {
+    grid-template-columns: 1fr;
+  }
+}

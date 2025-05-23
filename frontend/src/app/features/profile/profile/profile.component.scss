@@ -1,0 +1,131 @@
+.profile-container {
+  padding: 2rem 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.profile-header h1 {
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.profile-header p {
+  color: var(--dark-gray);
+}
+
+.profile-tabs {
+  display: flex;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--light-gray);
+}
+
+.tab-button {
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-weight: 500;
+  color: var(--dark-gray);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-button:hover {
+  color: var(--primary-color);
+}
+
+.tab-button.active {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+}
+
+.profile-card {
+  background-color: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 2rem;
+}
+
+.tab-content h2 {
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+  font-size: 1.5rem;
+}
+
+.measurements-info {
+  margin-bottom: 1.5rem;
+  color: var(--dark-gray);
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+.col-md-4, .col-md-6 {
+  position: relative;
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+@media (min-width: 768px) {
+  .col-md-4 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+  }
+  
+  .col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+.form-text {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.btn-primary {
+  margin-top: 1rem;
+}
+
+@media (max-width: 767px) {
+  .profile-card {
+    padding: 1.5rem;
+  }
+  
+  .profile-tabs {
+    flex-direction: column;
+    border-bottom: none;
+  }
+  
+  .tab-button {
+    padding: 0.75rem;
+    border-bottom: none;
+    border-left: 3px solid transparent;
+    text-align: left;
+  }
+  
+  .tab-button.active {
+    border-bottom-color: transparent;
+    border-left-color: var(--primary-color);
+    background-color: rgba(63, 81, 181, 0.05);
+  }
+  
+  .form-row {
+    flex-direction: column;
+  }
+  
+  .col-md-4, .col-md-6 {
+    max-width: 100%;
+  }
+}

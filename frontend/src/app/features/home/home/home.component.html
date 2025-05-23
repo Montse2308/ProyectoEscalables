@@ -1,0 +1,169 @@
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero-background">
+    <div class="hero-overlay"></div>
+  </div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">
+          Potencia Tu <span class="highlight">Entrenamiento</span>
+        </h1>
+        <p class="hero-subtitle">
+          La aplicación definitiva para el seguimiento de entrenamiento de fuerza. 
+          Calcula, registra, analiza y mejora tu rendimiento con herramientas científicamente respaldadas.
+        </p>
+        <div class="hero-actions">
+          <button 
+            *ngIf="!isLoggedIn" 
+            class="btn btn-primary btn-large"
+            (click)="navigateToRegister()">
+            <span class="material-icons">rocket_launch</span>
+            Comenzar Gratis
+          </button>
+          <button 
+            *ngIf="isLoggedIn" 
+            class="btn btn-primary btn-large"
+            (click)="navigateToDashboard()">
+            <span class="material-icons">dashboard</span>
+            Ir al Dashboard
+          </button>
+          <button 
+            class="btn btn-outline btn-large"
+            (click)="navigateToFeature('/calculators')">
+            <span class="material-icons">calculate</span>
+            Probar Calculadoras
+          </button>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img src="/assets/images/hero-workout.jpg" alt="Entrenamiento de fuerza" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item" *ngFor="let stat of stats">
+        <div class="stat-number">{{ stat.number }}</div>
+        <div class="stat-label">{{ stat.label }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Características Principales</h2>
+      <p class="section-subtitle">
+        Todo lo que necesitas para llevar tu entrenamiento al siguiente nivel
+      </p>
+    </div>
+    <div class="features-grid">
+      <div 
+        class="feature-card" 
+        *ngFor="let feature of features"
+        (click)="navigateToFeature(feature.link)">
+        <div class="feature-icon">
+          <span class="material-icons">{{ feature.icon }}</span>
+        </div>
+        <h3 class="feature-title">{{ feature.title }}</h3>
+        <p class="feature-description">{{ feature.description }}</p>
+        <div class="feature-arrow">
+          <span class="material-icons">arrow_forward</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Cómo Funciona</h2>
+      <p class="section-subtitle">
+        Tres simples pasos para transformar tu entrenamiento
+      </p>
+    </div>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h3>Regístrate</h3>
+          <p>Crea tu cuenta gratuita y configura tu perfil de entrenamiento</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h3>Registra</h3>
+          <p>Documenta tus entrenamientos y utiliza nuestras calculadoras avanzadas</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h3>Progresa</h3>
+          <p>Analiza tu evolución y alcanza nuevos récords personales</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Lo Que Dicen Nuestros Usuarios</h2>
+      <p class="section-subtitle">
+        Historias reales de atletas que han transformado su entrenamiento
+      </p>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card" *ngFor="let testimonial of testimonials">
+        <div class="testimonial-content">
+          <div class="quote-icon">
+            <span class="material-icons">format_quote</span>
+          </div>
+          <p class="testimonial-quote">{{ testimonial.quote }}</p>
+        </div>
+        <div class="testimonial-author">
+          <img [src]="testimonial.image" [alt]="testimonial.name" class="author-image">
+          <div class="author-info">
+            <div class="author-name">{{ testimonial.name }}</div>
+            <div class="author-role">{{ testimonial.role }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta" *ngIf="!isLoggedIn">
+  <div class="container">
+    <div class="cta-content">
+      <h2 class="cta-title">¿Listo para Comenzar?</h2>
+      <p class="cta-subtitle">
+        Únete a miles de atletas que ya están mejorando su rendimiento con FuerzApp
+      </p>
+      <div class="cta-actions">
+        <button class="btn btn-primary btn-large" (click)="navigateToRegister()">
+          <span class="material-icons">person_add</span>
+          Crear Cuenta Gratis
+        </button>
+        <button class="btn btn-outline btn-large" (click)="navigateToLogin()">
+          <span class="material-icons">login</span>
+          Iniciar Sesión
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,53 @@
+<div class="calculator-container">
+  <div class="calculator-card">
+    <h2 class="calculator-title">1RM Calculator</h2>
+    <p class="calculator-description">
+      Calculate your one-rep max (1RM) based on the weight you can lift for multiple repetitions.
+    </p>
+    
+    <form [formGroup]="calculatorForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="weight">Weight (kg)</label>
+        <input 
+          type="number" 
+          formControlName="weight" 
+          class="form-control" 
+          [ngClass]="{ 'is-invalid': f['weight'].touched && f['weight'].errors }" 
+        />
+        <div *ngIf="f['weight'].touched && f['weight'].errors" class="invalid-feedback">
+          <div *ngIf="f['weight'].errors['required']">Weight is required</div>
+          <div *ngIf="f['weight'].errors['min']">Weight must be greater than 0</div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="reps">Repetitions</label>
+        <input 
+          type="number" 
+          formControlName="reps" 
+          class="form-control" 
+          [ngClass]="{ 'is-invalid': f['reps'].touched && f['reps'].errors }" 
+        />
+        <div *ngIf="f['reps'].touched && f['reps'].errors" class="invalid-feedback">
+          <div *ngIf="f['reps'].errors['required']">Repetitions is required</div>
+          <div *ngIf="f['reps'].errors['min']">Repetitions must be at least 1</div>
+          <div *ngIf="f['reps'].errors['max']">Repetitions must be less than 37</div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <button type="submit" [disabled]="calculatorForm.invalid || loading" class="btn btn-primary">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+          Calculate
+        </button>
+      </div>
+    </form>
+    
+    <div *ngIf="result !== null" class="result-container">
+      <h3>Your estimated 1RM:</h3>
+      <div class="result-value">{{ result }} kg</div>
+    </div>
+    
+    <div *ngIf="error" class="alert alert-danger mt-3">{{ error }}</div>
+  </div>
+</div>

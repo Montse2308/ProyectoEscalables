@@ -1,0 +1,159 @@
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-container">
+      <!-- Logo -->
+      <div class="navbar-brand">
+        <a routerLink="/" class="brand-link">
+          <i class="fas fa-dumbbell brand-icon"></i>
+          <span class="brand-text">FuerzApp</span>
+        </a>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <div class="navbar-nav desktop-nav">
+        <div class="nav-links">
+          <!-- Public Links -->
+          <div class="nav-group">
+            <a routerLink="/calculators" routerLinkActive="active" class="nav-link">
+              <i class="fas fa-calculator"></i>
+              Calculators
+            </a>
+            <a routerLink="/standards" routerLinkActive="active" class="nav-link">
+              <i class="fas fa-chart-bar"></i>
+              Standards
+            </a>
+          </div>
+
+          <!-- Authenticated User Links -->
+          <div *ngIf="isLoggedIn()" class="nav-group">
+            <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">
+              <i class="fas fa-tachometer-alt"></i>
+              Dashboard
+            </a>
+            <a routerLink="/workouts" routerLinkActive="active" class="nav-link">
+              <i class="fas fa-dumbbell"></i>
+              Workouts
+            </a>
+            <a routerLink="/templates" routerLinkActive="active" class="nav-link">
+              <i class="fas fa-clipboard-list"></i>
+              Templates
+            </a>
+          </div>
+
+          <!-- Admin Links -->
+          <div *ngIf="isAdmin()" class="nav-group">
+            <a routerLink="/admin" routerLinkActive="active" class="nav-link admin-link">
+              <i class="fas fa-cog"></i>
+              Admin
+            </a>
+          </div>
+        </div>
+
+        <!-- User Menu -->
+        <div class="user-menu">
+          <div *ngIf="!isLoggedIn()" class="auth-buttons">
+            <a routerLink="/auth/login" class="btn btn-outline">Login</a>
+            <a routerLink="/auth/register" class="btn btn-primary">Sign Up</a>
+          </div>
+
+          <div *ngIf="isLoggedIn()" class="user-dropdown">
+            <button class="user-button" (click)="toggleMenu()">
+              <div class="user-avatar">
+                <i class="fas fa-user"></i>
+              </div>
+              <span class="user-name">{{ currentUser?.name }}</span>
+              <i class="fas fa-chevron-down dropdown-icon"></i>
+            </button>
+
+            <div class="dropdown-menu" [ngClass]="{ 'show': isMenuOpen }">
+              <a routerLink="/profile" class="dropdown-item" (click)="closeMenu()">
+                <i class="fas fa-user"></i>
+                Profile
+              </a>
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item logout-btn" (click)="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button class="mobile-menu-btn" (click)="toggleMenu()">
+        <span class="hamburger-line" [ngClass]="{ 'active': isMenuOpen }"></span>
+        <span class="hamburger-line" [ngClass]="{ 'active': isMenuOpen }"></span>
+        <span class="hamburger-line" [ngClass]="{ 'active': isMenuOpen }"></span>
+      </button>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" [ngClass]="{ 'show': isMenuOpen }">
+      <div class="mobile-nav-content">
+        <!-- Public Links -->
+        <div class="mobile-nav-section">
+          <a routerLink="/calculators" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">
+            <i class="fas fa-calculator"></i>
+            Calculators
+          </a>
+          <a routerLink="/standards" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">
+            <i class="fas fa-chart-bar"></i>
+            Standards
+          </a>
+        </div>
+
+        <!-- Authenticated User Links -->
+        <div *ngIf="isLoggedIn()" class="mobile-nav-section">
+          <div class="mobile-nav-divider"></div>
+          <a routerLink="/dashboard" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">
+            <i class="fas fa-tachometer-alt"></i>
+            Dashboard
+          </a>
+          <a routerLink="/workouts" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">
+            <i class="fas fa-dumbbell"></i>
+            Workouts
+          </a>
+          <a routerLink="/templates" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">
+            <i class="fas fa-clipboard-list"></i>
+            Templates
+          </a>
+          <a routerLink="/profile" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">
+            <i class="fas fa-user"></i>
+            Profile
+          </a>
+        </div>
+
+        <!-- Admin Links -->
+        <div *ngIf="isAdmin()" class="mobile-nav-section">
+          <div class="mobile-nav-divider"></div>
+          <a routerLink="/admin" routerLinkActive="active" class="mobile-nav-link admin-link" (click)="closeMenu()">
+            <i class="fas fa-cog"></i>
+            Admin
+          </a>
+        </div>
+
+        <!-- Auth Buttons -->
+        <div class="mobile-nav-section">
+          <div class="mobile-nav-divider"></div>
+          <div *ngIf="!isLoggedIn()" class="mobile-auth-buttons">
+            <a routerLink="/auth/login" class="mobile-nav-link" (click)="closeMenu()">
+              <i class="fas fa-sign-in-alt"></i>
+              Login
+            </a>
+            <a routerLink="/auth/register" class="mobile-nav-link" (click)="closeMenu()">
+              <i class="fas fa-user-plus"></i>
+              Sign Up
+            </a>
+          </div>
+          <div *ngIf="isLoggedIn()">
+            <button class="mobile-nav-link logout-btn" (click)="logout()">
+              <i class="fas fa-sign-out-alt"></i>
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
