@@ -1,12 +1,20 @@
-import { platformBrowserDynamic } from "@angular/platform-browser-dynamic"
-import { AppModule } from "./app/app.module"
-import { environment } from "./environments/environment"
-import { enableProdMode } from "@angular/core"
+import { bootstrapApplication } from '@angular/platform-browser';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { importProvidersFrom } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-if (environment.production) {
-  enableProdMode()
-}
+import { AppComponent } from './app/app.component';
+import { routes } from './app/app.routes';
+import { authInterceptor } from './app/core/interceptors/auth.interceptor';
+import { errorInterceptor } from './app/core/interceptors/error.interceptor';
 
-platformBrowserDynamic()
-  .bootstrapModule(AppModule)
-  .catch((err) => console.error(err))
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideRouter(routes),
+    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
+    provideAnimations(),
+    importProvidersFrom(FormsModule, ReactiveFormsModule),
+  ],
+}).catch((err) => console.error(err));

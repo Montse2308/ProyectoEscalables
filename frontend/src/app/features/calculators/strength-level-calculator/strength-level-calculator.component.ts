@@ -3,9 +3,13 @@ import { FormBuilder, type FormGroup, Validators } from '@angular/forms';
 import { CalculatorService } from '../../../core/services/calculator.service';
 import { ExerciseService } from '../../../core/services/exercise.service';
 import { Exercise } from '../../../core/models/exercise.model';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-strength-level-calculator',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './strength-level-calculator.component.html',
   styleUrls: ['./strength-level-calculator.component.scss'],
 })

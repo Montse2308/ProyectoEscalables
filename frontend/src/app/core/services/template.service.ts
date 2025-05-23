@@ -1,34 +1,34 @@
-import { Injectable } from "@angular/core"
-import type { HttpClient } from "@angular/common/http"
-import type { Observable } from "rxjs"
-import { environment } from "../../../environments/environment"
-import type { Template } from "../models/template.model"
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { Template } from '../models/template.model';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class TemplateService {
-  private apiUrl = `${environment.apiUrl}/templates`
+  private apiUrl = `${environment.apiUrl}/templates`;
 
   constructor(private http: HttpClient) {}
 
   getTemplates(): Observable<Template[]> {
-    return this.http.get<Template[]>(this.apiUrl)
+    return this.http.get<Template[]>(this.apiUrl);
   }
 
   getTemplate(id: string): Observable<Template> {
-    return this.http.get<Template>(`${this.apiUrl}/${id}`)
+    return this.http.get<Template>(`${this.apiUrl}/${id}`);
   }
 
   createTemplate(template: any): Observable<Template> {
-    return this.http.post<Template>(this.apiUrl, template)
+    return this.http.post<Template>(this.apiUrl, template);
   }
 
   updateTemplate(id: string, template: any): Observable<Template> {
-    return this.http.put<Template>(`${this.apiUrl}/${id}`, template)
+    return this.http.put<Template>(`${this.apiUrl}/${id}`, template);
   }
 
   deleteTemplate(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`)
+    return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
 }

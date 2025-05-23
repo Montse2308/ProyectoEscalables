@@ -1,0 +1,142 @@
+<div class="workout-detail-container" *ngIf="workout">
+  <div class="header">
+    <button class="back-btn" (click)="goBack()">
+      <i class="material-icons">arrow_back</i>
+      Back to Workouts
+    </button>
+    <div class="actions">
+      <button class="btn btn-outline" (click)="editWorkout()">
+        <i class="material-icons">edit</i>
+        Edit Workout
+      </button>
+    </div>
+  </div>
+
+  <div class="workout-info">
+    <div class="main-info">
+      <h1>{{ workout.name }}</h1>
+      <div class="meta">
+        <div class="date">
+          <i class="material-icons">event</i>
+          {{ workout.date | date : "EEEE, MMMM dd, yyyy" }}
+        </div>
+        <div class="template" *ngIf="workout.fromTemplate">
+          <i class="material-icons">description</i>
+          From template: {{ workout.fromTemplate }}
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <i class="material-icons">fitness_center</i>
+        <div class="stat-content">
+          <div class="value">{{ getExerciseCount() }}</div>
+          <div class="label">Exercises</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <i class="material-icons">repeat</i>
+        <div class="stat-content">
+          <div class="value">{{ getTotalSets() }}</div>
+          <div class="label">Total Sets</div>
+        </div>
+      </div>
+      <div class="stat-card" *ngIf="workout.duration">
+        <i class="material-icons">schedule</i>
+        <div class="stat-content">
+          <div class="value">{{ workout.duration }}</div>
+          <div class="label">Minutes</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <i class="material-icons">trending_up</i>
+        <div class="stat-content">
+          <div class="value">{{ getTotalVolume() | number : "1.0-0" }}</div>
+          <div class="label">Total Volume (kg)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="exercises-section">
+    <h2>Exercises</h2>
+    <div class="exercises-list">
+      <div
+        class="exercise-card"
+        *ngFor="let exercise of workout.exercises; let i = index"
+      >
+        <div class="exercise-header">
+          <div class="exercise-info">
+            <h3>{{ exercise.exercise.name }}</h3>
+            <div class="exercise-meta">
+              <span class="muscle-group">{{
+                exercise.exercise.muscleGroup
+              }}</span>
+            </div>
+          </div>
+          <div class="exercise-summary">{{ exercise.sets.length }} sets</div>
+        </div>
+
+        <div class="sets-table">
+          <div class="table-header">
+            <div class="set-col">Set</div>
+            <div class="reps-col">Reps</div>
+            <div class="weight-col">Weight (kg)</div>
+            <div class="rpe-col">RPE</div>
+            <div class="notes-col">Notes</div>
+          </div>
+          <div class="table-body">
+            <div
+              class="set-row"
+              *ngFor="let set of exercise.sets; let setIndex = index"
+            >
+              <div class="set-col">{{ setIndex + 1 }}</div>
+              <div class="reps-col">{{ set.reps }}</div>
+              <div class="weight-col">{{ set.weight }}</div>
+              <div class="rpe-col">
+                <span *ngIf="set.rpe" class="rpe-badge">{{ set.rpe }}</span>
+                <span *ngIf="!set.rpe" class="no-data">-</span>
+              </div>
+              <div class="notes-col">
+                <span *ngIf="set.notes" class="notes">{{ set.notes }}</span>
+                <span *ngIf="!set.notes" class="no-data">-</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-stats">
+          <div class="stat">
+            <span class="label">Best Set:</span>
+            <span class="value">{{ getBestSet(exercise) }}</span>
+          </div>
+          <div class="stat">
+            <span class="label">Volume:</span>
+            <span class="value"
+              >{{ getExerciseVolume(exercise) | number : "1.0-0" }} kg</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes-section" *ngIf="workout.notes">
+    <h2>Workout Notes</h2>
+    <div class="notes-content">
+      <p>{{ workout.notes }}</p>
+    </div>
+  </div>
+</div>
+
+<div class="loading" *ngIf="loading">
+  <div class="spinner"></div>
+  <p>Loading workout...</p>
+</div>
+
+<div class="error" *ngIf="error">
+  <i class="material-icons">error</i>
+  <p>{{ error }}</p>
+  <button class="btn btn-primary" (click)="goBack()">Go Back</button>
+</div>

@@ -1,14 +1,18 @@
 import { Component, type OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { StandardService } from '../../../core/services/standard.service';
 import { ExerciseService } from '../../../core/services/exercise.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Exercise } from '../../../core/models/exercise.model';
 import { Standard } from '../../../core/models/standard.model';
 import { User } from '../../../core/models/user.model';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-standards-view',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './standards-view.component.html',
   styleUrls: ['./standards-view.component.scss'],
 })

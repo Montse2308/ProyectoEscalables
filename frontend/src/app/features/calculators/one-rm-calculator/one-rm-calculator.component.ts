@@ -1,9 +1,13 @@
 import { Component, type OnInit } from '@angular/core';
 import { FormBuilder, type FormGroup, Validators } from '@angular/forms';
 import { CalculatorService } from '../../../core/services/calculator.service';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-one-rm-calculator',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './one-rm-calculator.component.html',
   styleUrls: ['./one-rm-calculator.component.scss'],
 })

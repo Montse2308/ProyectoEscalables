@@ -10,9 +10,14 @@ import { TemplateService } from '../../../core/services/template.service';
 import { ExerciseService } from '../../../core/services/exercise.service';
 import { Exercise } from '../../../core/models/exercise.model';
 import { Template } from '../../../core/models/template.model';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-template-form',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, FormsModule],
   templateUrl: './template-form.component.html',
   styleUrls: ['./template-form.component.scss'],
 })

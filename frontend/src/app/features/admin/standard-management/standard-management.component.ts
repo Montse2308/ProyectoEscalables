@@ -9,9 +9,13 @@ import { StandardService } from '../../../core/services/standard.service';
 import { ExerciseService } from '../../../core/services/exercise.service';
 import { Exercise } from '../../../core/models/exercise.model';
 import { Standard } from '../../../core/models/standard.model';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-standard-management',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './standard-management.component.html',
   styleUrls: ['./standard-management.component.scss'],
 })

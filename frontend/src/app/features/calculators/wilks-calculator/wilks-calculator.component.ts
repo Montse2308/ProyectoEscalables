@@ -1,9 +1,13 @@
 import { Component, type OnInit } from '@angular/core';
 import { FormBuilder, type FormGroup, Validators } from '@angular/forms';
 import { CalculatorService } from '../../../core/services/calculator.service';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-wilks-calculator',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './wilks-calculator.component.html',
   styleUrls: ['./wilks-calculator.component.scss'],
 })

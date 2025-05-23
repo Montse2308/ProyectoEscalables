@@ -2,9 +2,13 @@ import { Component, type OnInit } from '@angular/core';
 import { FormBuilder, type FormGroup, Validators } from '@angular/forms';
 import { ExerciseService } from '../../../core/services/exercise.service';
 import { Exercise } from '../../../core/models/exercise.model';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-exercise-management',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './exercise-management.component.html',
   styleUrls: ['./exercise-management.component.scss'],
 })

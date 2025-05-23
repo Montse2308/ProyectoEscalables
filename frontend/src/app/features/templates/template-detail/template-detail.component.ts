@@ -3,9 +3,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TemplateService } from '../../../core/services/template.service';
 import { WorkoutService } from '../../../core/services/workout.service';
 import { Template } from '../../../core/models/template.model';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-template-detail',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   templateUrl: './template-detail.component.html',
   styleUrls: ['./template-detail.component.scss'],
 })

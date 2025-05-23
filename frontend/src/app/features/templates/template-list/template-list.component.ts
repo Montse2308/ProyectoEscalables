@@ -2,9 +2,14 @@ import { Component, type OnInit } from '@angular/core';
 import { TemplateService } from '../../../core/services/template.service';
 import { Template } from '../../../core/models/template.model';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-template-list',
+  standalone: true,
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './template-list.component.html',
   styleUrls: ['./template-list.component.scss'],
 })

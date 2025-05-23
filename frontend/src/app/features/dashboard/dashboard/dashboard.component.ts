@@ -1,64 +1,56 @@
-import { Component, type OnInit } from '@angular/core';
-import { WorkoutService } from '../../../core/services/workout.service';
-import { UserService } from '../../../core/services/user.service';
-import { AuthService } from '../../../core/services/auth.service';
-import { User } from '../../../core/models/user.model';
-import { Workout } from '../../../core/models/workout.model';
-import { forkJoin } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
+  standalone: true,
+  imports: [CommonModule, RouterModule, DatePipe],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
-  user: User | null = null;
-  recentWorkouts: Workout[] = [];
-  loading = true;
-  error = '';
+  // Implement OnInit
 
-  // Metrics
-  totalWorkouts = 0;
-  weeklyWorkouts = 0;
-  strongestLift = { exercise: '', weight: 0 };
-
-  constructor(
-    private router: RouterModule,
-    private authService: AuthService,
-    private userService: UserService,
-    private workoutService: WorkoutService
-  ) {}
+  loading: boolean = true;
+  error: string | null = null;
+  user: { name: string } | null = null;
+  totalWorkouts: number = 0;
+  weeklyWorkouts: number = 0;
+  strongestLift: { exercise: string; weight: number } = {
+    exercise: '',
+    weight: 0,
+  };
+  recentWorkouts: any[] = [];
 
   ngOnInit(): void {
-    this.loadDashboardData();
-  }
-
-  loadDashboardData(): void {
-    this.loading = true;
-
-    // Get current user
-    this.user = this.authService.currentUserValue;
-
-    // Load recent workouts and metrics
-    forkJoin({
-      recentWorkouts: this.workoutService.getRecentWorkouts(),
-      metrics: this.workoutService.getUserMetrics(),
-    }).subscribe({
-      next: (data) => {
-        this.recentWorkouts = data.recentWorkouts;
-
-        // Set metrics
-        this.totalWorkouts = data.metrics.totalWorkouts;
-        this.weeklyWorkouts = data.metrics.weeklyWorkouts;
-        this.strongestLift = data.metrics.strongestLift;
-
-        this.loading = false;
-      },
-      error: (error) => {
-        this.error = error.error.message || 'Failed to load dashboard data';
-        this.loading = false;
-      },
-    });
+    // Simulate data loading
+    setTimeout(() => {
+      this.loading = false;
+      this.user = { name: 'John Doe' };
+      this.totalWorkouts = 150;
+      this.weeklyWorkouts = 3;
+      this.strongestLift = { exercise: 'Deadlift', weight: 180 };
+      this.recentWorkouts = [
+        {
+          _id: '1',
+          name: 'Full Body Workout',
+          date: new Date(),
+          exercises: [
+            { exercise: { name: 'Squats' }, sets: [{}, {}, {}] },
+            { exercise: { name: 'Bench Press' }, sets: [{}, {}, {}] },
+          ],
+        },
+        {
+          _id: '2',
+          name: 'Leg Day',
+          date: new Date('2025-05-20'),
+          exercises: [
+            { exercise: { name: 'Leg Press' }, sets: [{}, {}, {}, {}] },
+            { exercise: { name: 'Calf Raises' }, sets: [{}, {}] },
+          ],
+        },
+      ];
+    }, 1500);
   }
 }

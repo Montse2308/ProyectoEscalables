@@ -10,9 +10,14 @@ import { WorkoutService } from '../../../core/services/workout.service';
 import { ExerciseService } from '../../../core/services/exercise.service';
 import { Exercise } from '../../../core/models/exercise.model';
 import { Workout } from '../../../core/models/workout.model';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-workout-form',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, FormsModule],
   templateUrl: './workout-form.component.html',
   styleUrls: ['./workout-form.component.scss'],
 })

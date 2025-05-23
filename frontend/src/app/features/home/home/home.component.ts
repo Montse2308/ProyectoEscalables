@@ -1,103 +1,86 @@
-import { Component, type OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router'; // Import Router
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-home',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  isLoggedIn = false;
+  isLoggedIn: boolean = false;
+
+  stats = [
+    { number: '200+', label: 'Entrenamientos Registrados' },
+    { number: '50K+', label: 'Kg Levantados' },
+    { number: '1000+', label: 'Usuarios Activos' },
+  ];
 
   features = [
+    {
+      icon: 'track_changes',
+      title: 'Seguimiento Detallado',
+      description:
+        'Registra tus series, repeticiones y pesos con facilidad. Visualiza tu progreso con gráficos intuitivos.',
+      link: '/workouts/new',
+    },
     {
       icon: 'calculate',
       title: 'Calculadoras Avanzadas',
       description:
-        'Calcula tu 1RM, puntuación Wilks y nivel de fuerza con precisión científica.',
+        'Calcula tu 1RM, volumen total, intensidad y más para optimizar tu entrenamiento.',
       link: '/calculators',
     },
     {
-      icon: 'fitness_center',
-      title: 'Seguimiento de Entrenamientos',
+      icon: 'analytics',
+      title: 'Análisis de Rendimiento',
       description:
-        'Registra tus entrenamientos y observa tu progreso a lo largo del tiempo.',
-      link: '/workouts',
-    },
-    {
-      icon: 'assignment',
-      title: 'Plantillas Personalizadas',
-      description:
-        'Crea y comparte rutinas de entrenamiento adaptadas a tus objetivos.',
-      link: '/templates',
-    },
-    {
-      icon: 'trending_up',
-      title: 'Análisis de Progreso',
-      description:
-        'Visualiza tu evolución con gráficos detallados y métricas avanzadas.',
+        'Identifica tendencias, fortalezas y debilidades. Toma decisiones informadas para mejorar.',
       link: '/dashboard',
     },
     {
-      icon: 'leaderboard',
-      title: 'Estándares de Fuerza',
+      icon: 'fitness_center',
+      title: 'Base de Datos de Ejercicios',
       description:
-        'Compara tu rendimiento con estándares internacionales de powerlifting.',
-      link: '/standards',
+        'Accede a una amplia biblioteca de ejercicios con instrucciones y consejos.',
+      link: '/exercises',
     },
-    {
-      icon: 'person',
-      title: 'Perfil Personalizado',
-      description:
-        'Gestiona tu información personal y configuraciones de entrenamiento.',
-      link: '/profile',
-    },
-  ];
-
-  stats = [
-    { number: '10,000+', label: 'Usuarios Activos' },
-    { number: '500,000+', label: 'Entrenamientos Registrados' },
-    { number: '50,000+', label: 'PRs Alcanzados' },
-    { number: '1,000+', label: 'Plantillas Creadas' },
   ];
 
   testimonials = [
     {
-      name: 'Carlos Mendoza',
-      role: 'Powerlifter Competitivo',
-      image: '/assets/images/testimonial-1.jpg',
       quote:
-        'FuerzApp me ha ayudado a mejorar mis marcas personales de forma consistente. Las calculadoras son increíblemente precisas.',
-    },
-    {
+        'FuerzApp ha transformado completamente cómo abordo mi entrenamiento. El seguimiento detallado me permite ver mi progreso real.',
       name: 'Ana García',
-      role: 'Entrenadora Personal',
-      image: '/assets/images/testimonial-2.jpg',
-      quote:
-        'Uso FuerzApp con todos mis clientes. La capacidad de crear plantillas personalizadas es fantástica.',
+      role: 'Atleta de Powerlifting',
+      image: 'assets/images/testimonial-ana.jpg',
     },
     {
-      name: 'Miguel Torres',
-      role: 'Atleta Amateur',
-      image: '/assets/images/testimonial-3.jpg',
       quote:
-        'El seguimiento del progreso es muy motivador. Ver mis gráficos de evolución me impulsa a entrenar más duro.',
+        'Las calculadoras son una maravilla. Me ayudan a estructurar mis sesiones y a no estancarme en mis levantamientos.',
+      name: 'Carlos Rivera',
+      role: 'Entrenador Personal',
+      image: 'assets/images/testimonial-carlos.jpg',
+    },
+    {
+      quote:
+        'Simple, efectiva y potente. Es la única aplicación que necesito para mis entrenamientos de fuerza.',
+      name: 'Sofía López',
+      role: 'Entusiasta del Fitness',
+      image: 'assets/images/testimonial-sofia.jpg',
     },
   ];
-
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.isLoggedIn = this.authService.isAuthenticated();
+    this.isLoggedIn = this.authService.isLoggedIn();
   }
 
   navigateToRegister(): void {
-    this.router.navigate(['/auth/register']);
-  }
-
-  navigateToLogin(): void {
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['/register']);
   }
 
   navigateToDashboard(): void {
@@ -105,14 +88,10 @@ export class HomeComponent implements OnInit {
   }
 
   navigateToFeature(link: string): void {
-    if (this.isLoggedIn || link === '/calculators') {
-      this.router.navigate([link]);
-    } else {
-      this.router.navigate(['/auth/login']);
-    }
+    this.router.navigate([link]);
   }
 
-  isAuthenticated(): boolean {
-    return !!localStorage.getItem('token');
+  navigateToLogin(): void {
+    this.router.navigate(['/login']);
   }
 }
