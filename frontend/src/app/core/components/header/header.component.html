@@ -14,11 +14,19 @@
         <div class="nav-links">
           <!-- Public Links -->
           <div class="nav-group">
-            <a routerLink="/calculators" routerLinkActive="active" class="nav-link">
+            <a
+              routerLink="/calculators"
+              routerLinkActive="active"
+              class="nav-link"
+            >
               <i class="fas fa-calculator"></i>
               Calculators
             </a>
-            <a routerLink="/standards" routerLinkActive="active" class="nav-link">
+            <a
+              routerLink="/standards"
+              routerLinkActive="active"
+              class="nav-link"
+            >
               <i class="fas fa-chart-bar"></i>
               Standards
             </a>
@@ -26,15 +34,27 @@
 
           <!-- Authenticated User Links -->
           <div *ngIf="isLoggedIn()" class="nav-group">
-            <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">
+            <a
+              routerLink="/dashboard"
+              routerLinkActive="active"
+              class="nav-link"
+            >
               <i class="fas fa-tachometer-alt"></i>
               Dashboard
             </a>
-            <a routerLink="/workouts" routerLinkActive="active" class="nav-link">
+            <a
+              routerLink="/workouts"
+              routerLinkActive="active"
+              class="nav-link"
+            >
               <i class="fas fa-dumbbell"></i>
               Workouts
             </a>
-            <a routerLink="/templates" routerLinkActive="active" class="nav-link">
+            <a
+              routerLink="/templates"
+              routerLinkActive="active"
+              class="nav-link"
+            >
               <i class="fas fa-clipboard-list"></i>
               Templates
             </a>
@@ -42,7 +62,11 @@
 
           <!-- Admin Links -->
           <div *ngIf="isAdmin()" class="nav-group">
-            <a routerLink="/admin" routerLinkActive="active" class="nav-link admin-link">
+            <a
+              routerLink="/admin"
+              routerLinkActive="active"
+              class="nav-link admin-link"
+            >
               <i class="fas fa-cog"></i>
               Admin
             </a>
@@ -65,8 +89,12 @@
               <i class="fas fa-chevron-down dropdown-icon"></i>
             </button>
 
-            <div class="dropdown-menu" [ngClass]="{ 'show': isMenuOpen }">
-              <a routerLink="/profile" class="dropdown-item" (click)="closeMenu()">
+            <div class="dropdown-menu" [ngClass]="{ show: isMenuOpen }">
+              <a
+                routerLink="/profile"
+                class="dropdown-item"
+                (click)="closeMenu()"
+              >
                 <i class="fas fa-user"></i>
                 Profile
               </a>
@@ -82,22 +110,32 @@
 
       <!-- Mobile Menu Button -->
       <button class="mobile-menu-btn" (click)="toggleMenu()">
-        <span class="hamburger-line" [ngClass]="{ 'active': isMenuOpen }"></span>
-        <span class="hamburger-line" [ngClass]="{ 'active': isMenuOpen }"></span>
-        <span class="hamburger-line" [ngClass]="{ 'active': isMenuOpen }"></span>
+        <span class="hamburger-line" [ngClass]="{ active: isMenuOpen }"></span>
+        <span class="hamburger-line" [ngClass]="{ active: isMenuOpen }"></span>
+        <span class="hamburger-line" [ngClass]="{ active: isMenuOpen }"></span>
       </button>
     </div>
 
     <!-- Mobile Navigation -->
-    <div class="mobile-nav" [ngClass]="{ 'show': isMenuOpen }">
+    <div class="mobile-nav" [ngClass]="{ show: isMenuOpen }">
       <div class="mobile-nav-content">
         <!-- Public Links -->
         <div class="mobile-nav-section">
-          <a routerLink="/calculators" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">
+          <a
+            routerLink="/calculators"
+            routerLinkActive="active"
+            class="mobile-nav-link"
+            (click)="closeMenu()"
+          >
             <i class="fas fa-calculator"></i>
             Calculators
           </a>
-          <a routerLink="/standards" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">
+          <a
+            routerLink="/standards"
+            routerLinkActive="active"
+            class="mobile-nav-link"
+            (click)="closeMenu()"
+          >
             <i class="fas fa-chart-bar"></i>
             Standards
           </a>
@@ -106,19 +144,39 @@
         <!-- Authenticated User Links -->
         <div *ngIf="isLoggedIn()" class="mobile-nav-section">
           <div class="mobile-nav-divider"></div>
-          <a routerLink="/dashboard" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">
+          <a
+            routerLink="/dashboard"
+            routerLinkActive="active"
+            class="mobile-nav-link"
+            (click)="closeMenu()"
+          >
             <i class="fas fa-tachometer-alt"></i>
             Dashboard
           </a>
-          <a routerLink="/workouts" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">
+          <a
+            routerLink="/workouts"
+            routerLinkActive="active"
+            class="mobile-nav-link"
+            (click)="closeMenu()"
+          >
             <i class="fas fa-dumbbell"></i>
             Workouts
           </a>
-          <a routerLink="/templates" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">
+          <a
+            routerLink="/templates"
+            routerLinkActive="active"
+            class="mobile-nav-link"
+            (click)="closeMenu()"
+          >
             <i class="fas fa-clipboard-list"></i>
             Templates
           </a>
-          <a routerLink="/profile" routerLinkActive="active" class="mobile-nav-link" (click)="closeMenu()">
+          <a
+            routerLink="/profile"
+            routerLinkActive="active"
+            class="mobile-nav-link"
+            (click)="closeMenu()"
+          >
             <i class="fas fa-user"></i>
             Profile
           </a>
@@ -127,7 +185,12 @@
         <!-- Admin Links -->
         <div *ngIf="isAdmin()" class="mobile-nav-section">
           <div class="mobile-nav-divider"></div>
-          <a routerLink="/admin" routerLinkActive="active" class="mobile-nav-link admin-link" (click)="closeMenu()">
+          <a
+            routerLink="/admin"
+            routerLinkActive="active"
+            class="mobile-nav-link admin-link"
+            (click)="closeMenu()"
+          >
             <i class="fas fa-cog"></i>
             Admin
           </a>
@@ -137,11 +200,19 @@
         <div class="mobile-nav-section">
           <div class="mobile-nav-divider"></div>
           <div *ngIf="!isLoggedIn()" class="mobile-auth-buttons">
-            <a routerLink="/auth/login" class="mobile-nav-link" (click)="closeMenu()">
+            <a
+              routerLink="/auth/login"
+              class="mobile-nav-link"
+              (click)="closeMenu()"
+            >
               <i class="fas fa-sign-in-alt"></i>
               Login
             </a>
-            <a routerLink="/auth/register" class="mobile-nav-link" (click)="closeMenu()">
+            <a
+              routerLink="/auth/register"
+              class="mobile-nav-link"
+              (click)="closeMenu()"
+            >
               <i class="fas fa-user-plus"></i>
               Sign Up
             </a>

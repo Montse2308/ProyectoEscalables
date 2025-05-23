@@ -3,228 +3,336 @@
     <h1>User Profile</h1>
     <p>Manage your personal information and body measurements</p>
   </div>
-  
+
   <div *ngIf="loadingUser" class="loading-spinner">
     <div class="spinner-border" role="status">
       <span class="sr-only">Loading...</span>
     </div>
   </div>
-  
+
   <div *ngIf="!loadingUser && user" class="profile-content">
     <div class="profile-tabs">
-      <button 
-        class="tab-button" 
-        [ngClass]="{'active': activeTab === 'profile'}" 
+      <button
+        class="tab-button"
+        [ngClass]="{ active: activeTab === 'profile' }"
         (click)="setActiveTab('profile')"
       >
         Personal Information
       </button>
-      <button 
-        class="tab-button" 
-        [ngClass]="{'active': activeTab === 'measurements'}" 
+      <button
+        class="tab-button"
+        [ngClass]="{ active: activeTab === 'measurements' }"
         (click)="setActiveTab('measurements')"
       >
         Body Measurements
       </button>
     </div>
-    
+
     <div class="profile-card">
       <!-- Personal Information Tab -->
       <div *ngIf="activeTab === 'profile'" class="tab-content">
         <h2>Personal Information</h2>
-        
+
         <form [formGroup]="profileForm" (ngSubmit)="onSubmitProfile()">
           <div class="form-group">
             <label for="name">Full Name</label>
-            <input 
-              type="text" 
-              formControlName="name" 
-              class="form-control" 
-              [ngClass]="{ 'is-invalid': f['name'].touched && f['name'].errors }" 
+            <input
+              type="text"
+              formControlName="name"
+              class="form-control"
+              [ngClass]="{
+                'is-invalid': f['name'].touched && f['name'].errors
+              }"
             />
-            <div *ngIf="f['name'].touched && f['name'].errors" class="invalid-feedback">
+            <div
+              *ngIf="f['name'].touched && f['name'].errors"
+              class="invalid-feedback"
+            >
               <div *ngIf="f['name'].errors['required']">Name is required</div>
             </div>
           </div>
-          
+
           <div class="form-group">
             <label for="email">Email</label>
-            <input 
-              type="email" 
-              formControlName="email" 
-              class="form-control" 
-              disabled
+            <input
+              type="email"
+              formControlName="email"
+              class="form-control"
+              [disabled]="true"
             />
             <small class="form-text text-muted">Email cannot be changed</small>
           </div>
-          
+
           <div class="form-group">
             <label for="gender">Gender</label>
-            <select 
-              formControlName="gender" 
-              class="form-control" 
-              [ngClass]="{ 'is-invalid': f['gender'].touched && f['gender'].errors }"
+            <select
+              formControlName="gender"
+              class="form-control"
+              [ngClass]="{
+                'is-invalid': f['gender'].touched && f['gender'].errors
+              }"
             >
               <option value="">Select Gender</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
               <option value="other">Other</option>
             </select>
-            <div *ngIf="f['gender'].touched && f['gender'].errors" class="invalid-feedback">
-              <div *ngIf="f['gender'].errors['required']">Gender is required</div>
+            <div
+              *ngIf="f['gender'].touched && f['gender'].errors"
+              class="invalid-feedback"
+            >
+              <div *ngIf="f['gender'].errors['required']">
+                Gender is required
+              </div>
             </div>
           </div>
-          
+
           <div class="form-row">
             <div class="form-group col-md-4">
               <label for="age">Age</label>
-              <input 
-                type="number" 
-                formControlName="age" 
-                class="form-control" 
-                [ngClass]="{ 'is-invalid': f['age'].touched && f['age'].errors }" 
+              <input
+                type="number"
+                formControlName="age"
+                class="form-control"
+                [ngClass]="{
+                  'is-invalid': f['age'].touched && f['age'].errors
+                }"
               />
-              <div *ngIf="f['age'].touched && f['age'].errors" class="invalid-feedback">
+              <div
+                *ngIf="f['age'].touched && f['age'].errors"
+                class="invalid-feedback"
+              >
                 <div *ngIf="f['age'].errors['required']">Age is required</div>
-                <div *ngIf="f['age'].errors['min']">Age must be at least 13</div>
-                <div *ngIf="f['age'].errors['max']">Age must be less than 100</div>
+                <div *ngIf="f['age'].errors['min']">
+                  Age must be at least 13
+                </div>
+                <div *ngIf="f['age'].errors['max']">
+                  Age must be less than 100
+                </div>
               </div>
             </div>
-            
+
             <div class="form-group col-md-4">
               <label for="weight">Weight (kg)</label>
-              <input 
-                type="number" 
-                formControlName="weight" 
-                class="form-control" 
-                [ngClass]="{ 'is-invalid': f['weight'].touched && f['weight'].errors }" 
+              <input
+                type="number"
+                formControlName="weight"
+                class="form-control"
+                [ngClass]="{
+                  'is-invalid': f['weight'].touched && f['weight'].errors
+                }"
               />
-              <div *ngIf="f['weight'].touched && f['weight'].errors" class="invalid-feedback">
-                <div *ngIf="f['weight'].errors['required']">Weight is required</div>
-                <div *ngIf="f['weight'].errors['min']">Weight must be at least 30 kg</div>
-                <div *ngIf="f['weight'].errors['max']">Weight must be less than 300 kg</div>
+              <div
+                *ngIf="f['weight'].touched && f['weight'].errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="f['weight'].errors['required']">
+                  Weight is required
+                </div>
+                <div *ngIf="f['weight'].errors['min']">
+                  Weight must be at least 30 kg
+                </div>
+                <div *ngIf="f['weight'].errors['max']">
+                  Weight must be less than 300 kg
+                </div>
               </div>
             </div>
-            
+
             <div class="form-group col-md-4">
               <label for="height">Height (cm)</label>
-              <input 
-                type="number" 
-                formControlName="height" 
-                class="form-control" 
-                [ngClass]="{ 'is-invalid': f['height'].touched && f['height'].errors }" 
+              <input
+                type="number"
+                formControlName="height"
+                class="form-control"
+                [ngClass]="{
+                  'is-invalid': f['height'].touched && f['height'].errors
+                }"
               />
-              <div *ngIf="f['height'].touched && f['height'].errors" class="invalid-feedback">
-                <div *ngIf="f['height'].errors['required']">Height is required</div>
-                <div *ngIf="f['height'].errors['min']">Height must be at least 100 cm</div>
-                <div *ngIf="f['height'].errors['max']">Height must be less than 250 cm</div>
+              <div
+                *ngIf="f['height'].touched && f['height'].errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="f['height'].errors['required']">
+                  Height is required
+                </div>
+                <div *ngIf="f['height'].errors['min']">
+                  Height must be at least 100 cm
+                </div>
+                <div *ngIf="f['height'].errors['max']">
+                  Height must be less than 250 cm
+                </div>
               </div>
             </div>
           </div>
-          
+
           <div class="form-group">
-            <button type="submit" [disabled]="profileForm.invalid || loading" class="btn btn-primary">
-              <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            <button
+              type="submit"
+              [disabled]="profileForm.invalid || loading"
+              class="btn btn-primary"
+            >
+              <span
+                *ngIf="loading"
+                class="spinner-border spinner-border-sm mr-1"
+              ></span>
               Save Changes
             </button>
           </div>
         </form>
       </div>
-      
+
       <!-- Body Measurements Tab -->
       <div *ngIf="activeTab === 'measurements'" class="tab-content">
         <h2>Body Measurements</h2>
-        <p class="measurements-info">Track your body measurements to monitor your physical progress (all measurements in cm)</p>
-        
-        <form [formGroup]="bodyMeasurementsForm" (ngSubmit)="onSubmitMeasurements()">
+        <p class="measurements-info">
+          Track your body measurements to monitor your physical progress (all
+          measurements in cm)
+        </p>
+
+        <form
+          [formGroup]="bodyMeasurementsForm"
+          (ngSubmit)="onSubmitMeasurements()"
+        >
           <div class="form-row">
             <div class="form-group col-md-6">
               <label for="chest">Chest</label>
-              <input 
-                type="number" 
-                formControlName="chest" 
-                class="form-control" 
-                [ngClass]="{ 'is-invalid': m['chest'].touched && m['chest'].errors }" 
+              <input
+                type="number"
+                formControlName="chest"
+                class="form-control"
+                [ngClass]="{
+                  'is-invalid': m['chest'].touched && m['chest'].errors
+                }"
               />
-              <div *ngIf="m['chest'].touched && m['chest'].errors" class="invalid-feedback">
-                <div *ngIf="m['chest'].errors['min']">Chest must be at least 30 cm</div>
-                <div *ngIf="m['chest'].errors['max']">Chest must be less than 200 cm</div>
+              <div
+                *ngIf="m['chest'].touched && m['chest'].errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="m['chest'].errors['min']">
+                  Chest must be at least 30 cm
+                </div>
+                <div *ngIf="m['chest'].errors['max']">
+                  Chest must be less than 200 cm
+                </div>
               </div>
             </div>
-            
+
             <div class="form-group col-md-6">
               <label for="waist">Waist</label>
-              <input 
-                type="number" 
-                formControlName="waist" 
-                class="form-control" 
-                [ngClass]="{ 'is-invalid': m['waist'].touched && m['waist'].errors }" 
+              <input
+                type="number"
+                formControlName="waist"
+                class="form-control"
+                [ngClass]="{
+                  'is-invalid': m['waist'].touched && m['waist'].errors
+                }"
               />
-              <div *ngIf="m['waist'].touched && m['waist'].errors" class="invalid-feedback">
-                <div *ngIf="m['waist'].errors['min']">Waist must be at least 30 cm</div>
-                <div *ngIf="m['waist'].errors['max']">Waist must be less than 200 cm</div>
+              <div
+                *ngIf="m['waist'].touched && m['waist'].errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="m['waist'].errors['min']">
+                  Waist must be at least 30 cm
+                </div>
+                <div *ngIf="m['waist'].errors['max']">
+                  Waist must be less than 200 cm
+                </div>
               </div>
             </div>
           </div>
-          
+
           <div class="form-row">
             <div class="form-group col-md-6">
               <label for="hips">Hips</label>
-              <input 
-                type="number" 
-                formControlName="hips" 
-                class="form-control" 
-                [ngClass]="{ 'is-invalid': m['hips'].touched && m['hips'].errors }" 
+              <input
+                type="number"
+                formControlName="hips"
+                class="form-control"
+                [ngClass]="{
+                  'is-invalid': m['hips'].touched && m['hips'].errors
+                }"
               />
-              <div *ngIf="m['hips'].touched && m['hips'].errors" class="invalid-feedback">
-                <div *ngIf="m['hips'].errors['min']">Hips must be at least 30 cm</div>
-                <div *ngIf="m['hips'].errors['max']">Hips must be less than 200 cm</div>
+              <div
+                *ngIf="m['hips'].touched && m['hips'].errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="m['hips'].errors['min']">
+                  Hips must be at least 30 cm
+                </div>
+                <div *ngIf="m['hips'].errors['max']">
+                  Hips must be less than 200 cm
+                </div>
               </div>
             </div>
-            
+
             <div class="form-group col-md-6">
               <label for="arms">Arms</label>
-              <input 
-                type="number" 
-                formControlName="arms" 
-                class="form-control" 
-                [ngClass]="{ 'is-invalid': m['arms'].touched && m['arms'].errors }" 
+              <input
+                type="number"
+                formControlName="arms"
+                class="form-control"
+                [ngClass]="{
+                  'is-invalid': m['arms'].touched && m['arms'].errors
+                }"
               />
-              <div *ngIf="m['arms'].touched && m['arms'].errors" class="invalid-feedback">
-                <div *ngIf="m['arms'].errors['min']">Arms must be at least 10 cm</div>
-                <div *ngIf="m['arms'].errors['max']">Arms must be less than 100 cm</div>
+              <div
+                *ngIf="m['arms'].touched && m['arms'].errors"
+                class="invalid-feedback"
+              >
+                <div *ngIf="m['arms'].errors['min']">
+                  Arms must be at least 10 cm
+                </div>
+                <div *ngIf="m['arms'].errors['max']">
+                  Arms must be less than 100 cm
+                </div>
               </div>
             </div>
           </div>
-          
+
           <div class="form-group">
             <label for="legs">Legs</label>
-            <input 
-              type="number" 
-              formControlName="legs" 
-              class="form-control" 
-              [ngClass]="{ 'is-invalid': m['legs'].touched && m['legs'].errors }" 
+            <input
+              type="number"
+              formControlName="legs"
+              class="form-control"
+              [ngClass]="{
+                'is-invalid': m['legs'].touched && m['legs'].errors
+              }"
             />
-            <div *ngIf="m['legs'].touched && m['legs'].errors" class="invalid-feedback">
-              <div *ngIf="m['legs'].errors['min']">Legs must be at least 20 cm</div>
-              <div *ngIf="m['legs'].errors['max']">Legs must be less than 150 cm</div>
+            <div
+              *ngIf="m['legs'].touched && m['legs'].errors"
+              class="invalid-feedback"
+            >
+              <div *ngIf="m['legs'].errors['min']">
+                Legs must be at least 20 cm
+              </div>
+              <div *ngIf="m['legs'].errors['max']">
+                Legs must be less than 150 cm
+              </div>
             </div>
           </div>
-          
+
           <div class="form-group">
-            <button type="submit" [disabled]="bodyMeasurementsForm.invalid || loading" class="btn btn-primary">
-              <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            <button
+              type="submit"
+              [disabled]="bodyMeasurementsForm.invalid || loading"
+              class="btn btn-primary"
+            >
+              <span
+                *ngIf="loading"
+                class="spinner-border spinner-border-sm mr-1"
+              ></span>
               Save Measurements
             </button>
           </div>
         </form>
       </div>
     </div>
-    
+
     <div *ngIf="updateSuccess" class="alert alert-success mt-3">
       Your profile has been updated successfully!
     </div>
-    
+
     <div *ngIf="error" class="alert alert-danger mt-3">
       {{ error }}
     </div>
