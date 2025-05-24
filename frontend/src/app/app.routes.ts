@@ -24,9 +24,8 @@ export const routes: Routes = [
         (m) => m.RegisterComponent
       ),
   },
-  // NUEVA RUTA PARA EL HUB DE CALCULADORAS
   {
-    path: 'calculators', // Ruta principal para el hub
+    path: 'calculators', 
     loadComponent: () =>
       import(
         './features/calculators/calculators-hub/calculators-hub.component'

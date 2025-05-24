@@ -1,13 +1,13 @@
 <div class="calculator-container">
   <div class="calculator-card">
-    <h2 class="calculator-title">1RM Calculator</h2>
+    <h2 class="calculator-title">Calculadora de 1RM</h2>
     <p class="calculator-description">
-      Calculate your one-rep max (1RM) based on the weight you can lift for multiple repetitions.
+      Calcula tu repetición máxima (1RM) con base en el peso y las repeticiones que puedes levantar.
     </p>
     
     <form [formGroup]="calculatorForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <label for="weight">Weight (kg)</label>
+        <label for="weight">Peso (kg)</label>
         <input 
           type="number" 
           formControlName="weight" 
@@ -21,7 +21,7 @@
       </div>
       
       <div class="form-group">
-        <label for="reps">Repetitions</label>
+        <label for="reps">Repeticiones</label>
         <input 
           type="number" 
           formControlName="reps" 
@@ -38,13 +38,13 @@
       <div class="form-group">
         <button type="submit" [disabled]="calculatorForm.invalid || loading" class="btn btn-primary">
           <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-          Calculate
+          Calcular
         </button>
       </div>
     </form>
     
     <div *ngIf="result !== null" class="result-container">
-      <h3>Your estimated 1RM:</h3>
+      <h3>Tu 1RM estimado es:</h3>
       <div class="result-value">{{ result }} kg</div>
     </div>
     
