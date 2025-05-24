@@ -88,10 +88,6 @@
 }
 
 
-// (Mantén tus estilos existentes de wilks-calculator.component.scss)
-// ...
-
-// Nuevos estilos o ajustes:
 .input-section {
   margin-top: 1.5rem;
   padding-top: 1rem;
@@ -129,11 +125,11 @@
 .form-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem; // O usa margin en los col-md-6 si prefieres
+  gap: 1rem; 
 
   .col-md-6 {
-    flex: 1 1 calc(50% - 0.5rem); // Para dos columnas con gap
-    min-width: 200px; // Evita que se encojan demasiado
+    flex: 1 1 calc(50% - 0.5rem); 
+    min-width: 200px; 
   }
 }
 

@@ -37,8 +37,8 @@ export class CalculatorsHubComponent {
       icon: 'calculate',
     },
     {
-      name: 'Calculadora de Nivel de Fuerza General', // Anteriormente "Strength Level Calculator"
-      description: 'Determina tu nivel de fuerza general basado en estándares de powerlifting.',
+      name: 'Calculadora de Powerlifting', // Anteriormente "Strength Level Calculator"
+      description: 'Mide tu nivel en powerlifting con puntos IPF según tu peso, género y marcas.',
       link: '/calculators/strength-level',
       icon: 'emoji_events',
     },
