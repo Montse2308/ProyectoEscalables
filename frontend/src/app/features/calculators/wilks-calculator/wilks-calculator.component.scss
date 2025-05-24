@@ -86,3 +86,87 @@
     gap: 1rem;
   }
 }
+
+
+// (Mantén tus estilos existentes de wilks-calculator.component.scss)
+// ...
+
+// Nuevos estilos o ajustes:
+.input-section {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.detailed-inputs {
+  .exercise-input {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: var(--border-radius, 6px);
+
+    h4 {
+      margin-bottom: 1rem;
+      color: var(--primary-color, #c62828);
+      font-size: 1.1rem;
+      border-bottom: 2px solid var(--primary-color, #c62828);
+      padding-bottom: 0.5rem;
+      display: inline-block;
+    }
+  }
+}
+
+.detailed-instructions {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 1rem;
+  background-color: #eef2f7;
+  padding: 0.75rem;
+  border-radius: 4px;
+  border-left: 3px solid var(--primary-color, #c62828);
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem; // O usa margin en los col-md-6 si prefieres
+
+  .col-md-6 {
+    flex: 1 1 calc(50% - 0.5rem); // Para dos columnas con gap
+    min-width: 200px; // Evita que se encojan demasiado
+  }
+}
+
+.btn-lg {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.rm-details {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1.5rem;
+  background-color: #e9ecef;
+  padding: 1rem;
+  border-radius: var(--border-radius);
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 1.2rem;
+  }
+
+  li {
+    padding: 0.3rem 0;
+    font-size: 1rem;
+  }
+}
+
+.info-text {
+  display: block;
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: #6c757d;
+}

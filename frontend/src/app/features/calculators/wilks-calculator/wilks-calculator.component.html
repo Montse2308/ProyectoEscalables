@@ -1,77 +1,191 @@
 <div class="calculator-container">
   <div class="calculator-card">
-    <h2 class="calculator-title">Wilks Score Calculator</h2>
+    <h2 class="calculator-title">Calculadora de Puntuación Wilks</h2>
     <p class="calculator-description">
-      The Wilks Coefficient is a formula used in powerlifting to compare the strength of lifters across different weight classes.
+      La Puntuación Wilks (o Coeficiente de Wilks) es una fórmula utilizada en powerlifting
+      para comparar la fuerza relativa de levantadores de diferentes categorías de peso corporal y género.
+      Un puntaje más alto indica una mayor fuerza relativa.
     </p>
-    
+
     <form [formGroup]="calculatorForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <label for="bodyWeight">Body Weight (kg)</label>
-        <input 
-          type="number" 
-          formControlName="bodyWeight" 
-          class="form-control" 
-          [ngClass]="{ 'is-invalid': f['bodyWeight'].touched && f['bodyWeight'].errors }" 
+        <label for="bodyWeight">Tu Peso Corporal (kg)</label>
+        <input
+          type="number"
+          formControlName="bodyWeight"
+          class="form-control"
+          placeholder="Ej. 75"
+          [ngClass]="{ 'is-invalid': f['bodyWeight'].touched && f['bodyWeight'].errors }"
         />
         <div *ngIf="f['bodyWeight'].touched && f['bodyWeight'].errors" class="invalid-feedback">
-          <div *ngIf="f['bodyWeight'].errors['required']">Body weight is required</div>
-          <div *ngIf="f['bodyWeight'].errors['min']">Body weight must be at least 30 kg</div>
-          <div *ngIf="f['bodyWeight'].errors['max']">Body weight must be less than 300 kg</div>
+          <div *ngIf="f['bodyWeight'].errors['required']">El peso corporal es requerido.</div>
+          <div *ngIf="f['bodyWeight'].errors['min']">El peso corporal debe ser al menos 30 kg.</div>
+          <div *ngIf="f['bodyWeight'].errors['max']">El peso corporal debe ser menor a 300 kg.</div>
         </div>
       </div>
-      
+
       <div class="form-group">
-        <label for="liftedWeight">Weight Lifted (kg)</label>
-        <input 
-          type="number" 
-          formControlName="liftedWeight" 
-          class="form-control" 
-          [ngClass]="{ 'is-invalid': f['liftedWeight'].touched && f['liftedWeight'].errors }" 
-        />
-        <div *ngIf="f['liftedWeight'].touched && f['liftedWeight'].errors" class="invalid-feedback">
-          <div *ngIf="f['liftedWeight'].errors['required']">Weight lifted is required</div>
-          <div *ngIf="f['liftedWeight'].errors['min']">Weight lifted must be greater than 0</div>
-        </div>
-      </div>
-      
-      <div class="form-group">
-        <label for="gender">Gender</label>
+        <label for="gender">Género</label>
         <div class="gender-selector">
           <div class="gender-option">
             <input type="radio" id="male" formControlName="gender" value="male">
-            <label for="male">Male</label>
+            <label for="male">Masculino</label>
           </div>
           <div class="gender-option">
             <input type="radio" id="female" formControlName="gender" value="female">
-            <label for="female">Female</label>
+            <label for="female">Femenino</label>
           </div>
         </div>
       </div>
-      
+
       <div class="form-group">
-        <button type="submit" [disabled]="calculatorForm.invalid || loading" class="btn btn-primary">
+        <label for="inputType">¿Cómo deseas ingresar el peso levantado?</label>
+        <select formControlName="inputType" class="form-control" (change)="onInputTypeChange()">
+          <option value="direct">Ya conozco mi total de 1RM (Sentadilla + Banca + Peso Muerto)</option>
+          <option value="detailed">Ingresar cada levantamiento por separado (para calcular 1RM y el total)</option>
+        </select>
+      </div>
+
+      <div *ngIf="inputType === 'direct'" class="input-section">
+        <div class="form-group">
+          <label for="liftedWeightTotal">Suma Total de tus 1RM (kg)</label>
+          <input
+            type="number"
+            formControlName="liftedWeightTotal"
+            class="form-control"
+            placeholder="Ej. 500"
+            [ngClass]="{ 'is-invalid': f['liftedWeightTotal'].touched && f['liftedWeightTotal'].errors }"
+          />
+          <div *ngIf="f['liftedWeightTotal'].touched && f['liftedWeightTotal'].errors" class="invalid-feedback">
+            <div *ngIf="f['liftedWeightTotal'].errors['required']">El total levantado es requerido.</div>
+            <div *ngIf="f['liftedWeightTotal'].errors['min']">El total levantado debe ser mayor a 0.</div>
+          </div>
+          <small class="form-text text-muted">
+            Ingresa la suma de tu mejor repetición máxima (1RM) en Sentadilla, Press de Banca y Peso Muerto.
+          </small>
+        </div>
+      </div>
+
+      <div *ngIf="inputType === 'detailed'" class="input-section detailed-inputs">
+        <p class="detailed-instructions">
+          Ingresa el peso levantado y las repeticiones para cada ejercicio.
+          Si ingresas más de 1 repetición, calcularemos tu 1RM estimado para ese ejercicio.
+        </p>
+        <div class="exercise-input">
+          <h4>Sentadilla</h4>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="squatWeight">Peso (kg)</label>
+              <input type="number" formControlName="squatWeight" class="form-control" placeholder="Ej. 100"
+                     [ngClass]="{ 'is-invalid': f['squatWeight'].touched && f['squatWeight'].errors }">
+              <div *ngIf="f['squatWeight'].touched && f['squatWeight'].errors" class="invalid-feedback">
+                <div *ngIf="f['squatWeight'].errors['required']">Peso de sentadilla requerido.</div>
+                <div *ngIf="f['squatWeight'].errors['min']">Debe ser mayor a 0.</div>
+              </div>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="squatReps">Repeticiones</label>
+              <input type="number" formControlName="squatReps" class="form-control" placeholder="Ej. 5"
+                     [ngClass]="{ 'is-invalid': f['squatReps'].touched && f['squatReps'].errors }">
+              <div *ngIf="f['squatReps'].touched && f['squatReps'].errors" class="invalid-feedback">
+                <div *ngIf="f['squatReps'].errors['required']">Reps de sentadilla requeridas.</div>
+                <div *ngIf="f['squatReps'].errors['min']">Mínimo 1 rep.</div>
+                <div *ngIf="f['squatReps'].errors['max']">Máximo 36 reps.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-input">
+          <h4>Press de Banca</h4>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="benchWeight">Peso (kg)</label>
+              <input type="number" formControlName="benchWeight" class="form-control" placeholder="Ej. 80"
+                     [ngClass]="{ 'is-invalid': f['benchWeight'].touched && f['benchWeight'].errors }">
+               <div *ngIf="f['benchWeight'].touched && f['benchWeight'].errors" class="invalid-feedback">
+                <div *ngIf="f['benchWeight'].errors['required']">Peso de banca requerido.</div>
+                <div *ngIf="f['benchWeight'].errors['min']">Debe ser mayor a 0.</div>
+              </div>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="benchReps">Repeticiones</label>
+              <input type="number" formControlName="benchReps" class="form-control" placeholder="Ej. 5"
+                     [ngClass]="{ 'is-invalid': f['benchReps'].touched && f['benchReps'].errors }">
+              <div *ngIf="f['benchReps'].touched && f['benchReps'].errors" class="invalid-feedback">
+                <div *ngIf="f['benchReps'].errors['required']">Reps de banca requeridas.</div>
+                <div *ngIf="f['benchReps'].errors['min']">Mínimo 1 rep.</div>
+                <div *ngIf="f['benchReps'].errors['max']">Máximo 36 reps.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-input">
+          <h4>Peso Muerto</h4>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="deadliftWeight">Peso (kg)</label>
+              <input type="number" formControlName="deadliftWeight" class="form-control" placeholder="Ej. 120"
+                     [ngClass]="{ 'is-invalid': f['deadliftWeight'].touched && f['deadliftWeight'].errors }">
+              <div *ngIf="f['deadliftWeight'].touched && f['deadliftWeight'].errors" class="invalid-feedback">
+                <div *ngIf="f['deadliftWeight'].errors['required']">Peso muerto requerido.</div>
+                <div *ngIf="f['deadliftWeight'].errors['min']">Debe ser mayor a 0.</div>
+              </div>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="deadliftReps">Repeticiones</label>
+              <input type="number" formControlName="deadliftReps" class="form-control" placeholder="Ej. 3"
+                     [ngClass]="{ 'is-invalid': f['deadliftReps'].touched && f['deadliftReps'].errors }">
+              <div *ngIf="f['deadliftReps'].touched && f['deadliftReps'].errors" class="invalid-feedback">
+                <div *ngIf="f['deadliftReps'].errors['required']">Reps de peso muerto requeridas.</div>
+                <div *ngIf="f['deadliftReps'].errors['min']">Mínimo 1 rep.</div>
+                <div *ngIf="f['deadliftReps'].errors['max']">Máximo 36 reps.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <button type="submit" [disabled]="calculatorForm.invalid || loading" class="btn btn-primary btn-lg">
           <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-          Calculate
+          Calcular Puntuación Wilks
         </button>
       </div>
     </form>
-    
-    <div *ngIf="result !== null" class="result-container">
-      <h3>Your Wilks Score:</h3>
-      <div class="result-value">{{ result }}</div>
-      <div class="result-interpretation">
-        <p>Interpretation:</p>
-        <ul>
-          <li *ngIf="result < 200">Beginner: &lt; 200</li>
-          <li *ngIf="result >= 200 && result < 300" [ngClass]="{'highlighted': result >= 200 && result < 300}">Novice: 200-300</li>
-          <li *ngIf="result >= 300 && result < 400" [ngClass]="{'highlighted': result >= 300 && result < 400}">Intermediate: 300-400</li>
-          <li *ngIf="result >= 400 && result < 500" [ngClass]="{'highlighted': result >= 400 && result < 500}">Advanced: 400-500</li>
-          <li *ngIf="result >= 500" [ngClass]="{'highlighted': result >= 500}">Elite: 500+</li>
+
+    <div *ngIf="!loading && result !== null" class="result-container">
+      <div *ngIf="inputType === 'detailed' && totalRMFromDetailed !== null">
+        <h3>Estimaciones de 1RM:</h3>
+        <ul class="rm-details">
+          <li>Sentadilla: <strong>{{ squatRM | number:'1.0-2' }} kg</strong></li>
+          <li>Press de Banca: <strong>{{ benchRM | number:'1.0-2' }} kg</strong></li>
+          <li>Peso Muerto: <strong>{{ deadliftRM | number:'1.0-2' }} kg</strong></li>
+          <li>Total 1RM Estimado: <strong>{{ totalRMFromDetailed | number:'1.0-2' }} kg</strong></li>
         </ul>
       </div>
+
+      <h3>Tu Puntuación Wilks Estimada:</h3>
+      <div class="result-value">{{ result | number:'1.2-2' }}</div>
+      <div class="result-interpretation">
+        <p>Interpretación General del Puntaje Wilks:</p>
+        <ul>
+          <li [class.highlighted]="result !== null && result < 200">Principiante: Menos de 200</li>
+          <li [class.highlighted]="result !== null && result >= 200 && result < 300">Novato: 200 - 299.99</li>
+          <li [class.highlighted]="result !== null && result >= 300 && result < 400">Intermedio: 300 - 399.99</li>
+          <li [class.highlighted]="result !== null && result >= 400 && result < 500">Avanzado: 400 - 499.99</li>
+          <li [class.highlighted]="result !== null && result >= 500">Élite: 500 o más</li>
+        </ul>
+        <small class.info-text>
+          Nota: Esta interpretación es una guía general. Los estándares pueden variar ligeramente
+          entre federaciones y contextos competitivos.
+        </small>
+      </div>
     </div>
-    
-    <div *ngIf="error" class="alert alert-danger mt-3">{{ error }}</div>
+
+    <div *ngIf="error" class="alert alert-danger mt-3">
+      <strong>Error:</strong> {{ error }}
+    </div>
   </div>
 </div>
