@@ -1,0 +1,25 @@
+<div class="calculators-hub-container">
+  <div class="hub-header">
+    <h1>Calculadoras de Fuerza</h1>
+    <p>Selecciona una calculadora para estimar tus métricas y optimizar tu entrenamiento.</p>
+  </div>
+
+  <div class="calculators-grid">
+    <div
+      *ngFor="let calculator of calculators"
+      class="calculator-card"
+      [routerLink]="calculator.link"
+    >
+      <div class="calculator-icon-container" *ngIf="calculator.icon">
+        <i class="material-icons">{{ calculator.icon }}</i>
+        </div>
+      <div class="calculator-info">
+        <h2>{{ calculator.name }}</h2>
+        <p>{{ calculator.description }}</p>
+      </div>
+      <div class="calculator-arrow">
+        <i class="material-icons">arrow_forward</i>
+      </div>
+    </div>
+  </div>
+</div>

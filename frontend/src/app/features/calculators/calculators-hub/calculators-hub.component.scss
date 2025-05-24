@@ -1,0 +1,110 @@
+.calculators-hub-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1rem 2rem;
+  font-family: 'Roboto', sans-serif;
+}
+
+.hub-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    font-size: 1.1rem;
+    color: #666;
+  }
+}
+
+.calculators-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.calculator-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  }
+
+  .calculator-icon-container {
+    font-size: 2.5rem; // Tamaño del ícono
+    color: var(--primary-color, #c62828); // Usa tu color primario
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+    height: 60px;
+    background-color: rgba(198, 40, 40, 0.1); // Un fondo suave para el ícono
+    border-radius: 50%;
+    margin-left: auto;
+    margin-right: auto;
+
+    .material-icons {
+      font-size: inherit; // Para que el ícono tome el tamaño del contenedor
+    }
+  }
+
+  .calculator-info {
+    text-align: center;
+    flex-grow: 1;
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: #444;
+    }
+
+    p {
+      font-size: 0.95rem;
+      color: #777;
+      line-height: 1.6;
+    }
+  }
+
+  .calculator-arrow {
+    text-align: right;
+    margin-top: 1rem;
+    color: var(--primary-color, #c62828);
+    .material-icons {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+// Estilos para Material Icons si no están globales
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px; /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'liga';
+}

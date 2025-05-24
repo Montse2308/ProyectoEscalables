@@ -43,10 +43,10 @@ export class HomeComponent implements OnInit {
     },
     {
       icon: 'fitness_center',
-      title: 'Base de Datos de Ejercicios',
+      title: 'Estandares de Fuerza',
       description:
-        'Accede a una amplia biblioteca de ejercicios con instrucciones y consejos.',
-      link: '/exercises',
+        'Accede a una extensa base de datos de estándares de fuerza para comparar tu rendimiento.',
+      link: '/standards',
     },
   ];
 
@@ -56,21 +56,21 @@ export class HomeComponent implements OnInit {
         'FuerzApp ha transformado completamente cómo abordo mi entrenamiento. El seguimiento detallado me permite ver mi progreso real.',
       name: 'Ana García',
       role: 'Atleta de Powerlifting',
-      image: 'assets/images/testimonial-ana.jpg',
+      image: 'images/testimonial-1.jpg',
     },
     {
       quote:
         'Las calculadoras son una maravilla. Me ayudan a estructurar mis sesiones y a no estancarme en mis levantamientos.',
       name: 'Carlos Rivera',
       role: 'Entrenador Personal',
-      image: 'assets/images/testimonial-carlos.jpg',
+      image: 'images/testimonial-2.jpg',
     },
     {
       quote:
         'Simple, efectiva y potente. Es la única aplicación que necesito para mis entrenamientos de fuerza.',
-      name: 'Sofía López',
+      name: 'Andrés López',
       role: 'Entusiasta del Fitness',
-      image: 'assets/images/testimonial-sofia.jpg',
+      image: 'images/testimonial-3.jpg',
     },
   ];
   constructor(private router: Router, private authService: AuthService) {}
