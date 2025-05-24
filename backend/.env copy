@@ -2,10 +2,10 @@
 PORT=3000
 
 # URL de conexión a MongoDB
-MONGODB_URI=mongodb://localhost:27017/fuerzap
+MONGODB_URI=mongodb://localhost:27017/example
 
 # Clave secreta para JWT
-JWT_SECRET=feb13b734b10225c9046da6f968a4b04e6d529fff10bcde4208a350a56aae170
+JWT_SECRET=clave
 
 # Entorno (development o production)
 NODE_ENV=development
