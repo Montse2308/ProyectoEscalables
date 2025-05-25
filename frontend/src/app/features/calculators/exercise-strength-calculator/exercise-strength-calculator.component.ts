@@ -26,10 +26,10 @@ interface StrengthCalculationResult {
 @Component({
   selector: 'app-exercise-strength-calculator', // Mantenemos el selector
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TitleCasePipe, DecimalPipe],
+  imports: [CommonModule, ReactiveFormsModule, DecimalPipe],
   templateUrl: './exercise-strength-calculator.component.html',
   styleUrls: ['./exercise-strength-calculator.component.scss'],
-  providers: [TitleCasePipe, DecimalPipe]
+  providers: [DecimalPipe]
 })
 export class ExerciseStrengthCalculatorComponent implements OnInit, OnDestroy {
   calculatorForm!: FormGroup;

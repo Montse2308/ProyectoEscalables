@@ -12,11 +12,12 @@
           type="number" 
           formControlName="weight" 
           class="form-control" 
+          placeholder="Ej. 80"
           [ngClass]="{ 'is-invalid': f['weight'].touched && f['weight'].errors }" 
         />
         <div *ngIf="f['weight'].touched && f['weight'].errors" class="invalid-feedback">
-          <div *ngIf="f['weight'].errors['required']">Weight is required</div>
-          <div *ngIf="f['weight'].errors['min']">Weight must be greater than 0</div>
+          <div *ngIf="f['weight'].errors['required']">El peso es requerido</div>
+          <div *ngIf="f['weight'].errors['min']">El peso debe ser mayor a 0</div>
         </div>
       </div>
       
@@ -26,12 +27,13 @@
           type="number" 
           formControlName="reps" 
           class="form-control" 
+          placeholder="Ej. 5"
           [ngClass]="{ 'is-invalid': f['reps'].touched && f['reps'].errors }" 
         />
         <div *ngIf="f['reps'].touched && f['reps'].errors" class="invalid-feedback">
-          <div *ngIf="f['reps'].errors['required']">Repetitions is required</div>
-          <div *ngIf="f['reps'].errors['min']">Repetitions must be at least 1</div>
-          <div *ngIf="f['reps'].errors['max']">Repetitions must be less than 37</div>
+          <div *ngIf="f['reps'].errors['required']">Las repeticiones son requeridas</div>
+          <div *ngIf="f['reps'].errors['min']">Mínimo 1 repetición</div>
+          <div *ngIf="f['reps'].errors['max']">Máximo 36 repeticiones</div>
         </div>
       </div>
       
