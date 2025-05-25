@@ -1,15 +1,17 @@
+// frontend/src/app/features/templates/template-list/template-list.component.ts
 import { Component, type OnInit } from '@angular/core';
 import { TemplateService } from '../../../core/services/template.service';
-import { Template } from '../../../core/models/template.model';
+import { Template } from '../../../core/models/template.model'; // Asegúrate que este modelo no tenga isPublic
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common'; // Importar DatePipe
 
 @Component({
   selector: 'app-template-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, DatePipe], // Añadir DatePipe a imports
   templateUrl: './template-list.component.html',
   styleUrls: ['./template-list.component.scss'],
 })
@@ -39,8 +41,8 @@ export class TemplateListComponent implements OnInit {
         this.filterTemplates();
         this.loading = false;
       },
-      error: (error) => {
-        this.error = error.error.message || 'Failed to load templates';
+      error: (err) => {
+        this.error = err.error?.message || 'Error al cargar las plantillas.';
         this.loading = false;
       },
     });
@@ -89,22 +91,22 @@ export class TemplateListComponent implements OnInit {
   deleteTemplate(): void {
     if (!this.templateToDelete) return;
 
-    this.loading = true;
+    this.loading = true; // Puedes usar un loading específico para el borrado si quieres
     this.templateService.deleteTemplate(this.templateToDelete._id).subscribe({
       next: () => {
         this.loading = false;
         this.confirmDelete = false;
         this.templateToDelete = null;
-        this.loadTemplates();
+        this.loadTemplates(); // Recargar la lista
       },
-      error: (error) => {
-        this.error = error.error.message || 'Failed to delete template';
+      error: (err) => {
+        this.error = err.error?.message || 'Error al eliminar la plantilla.';
         this.loading = false;
       },
     });
   }
 
   getExerciseCount(template: Template): number {
-    return template.exercises.length;
+    return template.exercises ? template.exercises.length : 0;
   }
 }

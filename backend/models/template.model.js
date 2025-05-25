@@ -1,4 +1,5 @@
-const mongoose = require("mongoose")
+// backend/models/template.model.js
+const mongoose = require("mongoose");
 
 const templateExerciseSchema = new mongoose.Schema({
   exercise: {
@@ -19,15 +20,16 @@ const templateExerciseSchema = new mongoose.Schema({
   restTime: {
     type: Number, // in seconds
     default: 60,
+    min: 0, // Añadido min 0
   },
   notes: String,
-})
+}, { _id: false }); // _id no es necesario para subdocumentos embebidos así, a menos que se requiera explícitamente.
 
 const templateSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
+      required: [true, "El nombre de la plantilla es requerido."],
       trim: true,
     },
     user: {
@@ -40,22 +42,15 @@ const templateSchema = new mongoose.Schema(
       trim: true,
     },
     exercises: [templateExerciseSchema],
-    isPublic: {
-      type: Boolean,
-      default: false,
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    updatedAt: {
-      type: Date,
-      default: Date.now,
-    },
+    // isPublic: { // ELIMINADO
+    //   type: Boolean,
+    //   default: false,
+    // },
+    // createdAt y updatedAt son manejados por timestamps
   },
-  { timestamps: true },
-)
+  { timestamps: true }
+);
 
-const Template = mongoose.model("Template", templateSchema)
+const Template = mongoose.model("Template", templateSchema);
 
-module.exports = Template
+module.exports = Template;

@@ -13,22 +13,22 @@
       
       <div class="template-title">
         <h1>{{ template.name }}</h1>
-        <span *ngIf="template.isPublic" class="badge badge-success">Pública</span>
-      </div>
+        </div>
       
       <div class="template-actions">
         <button class="btn btn-outline-secondary" (click)="editTemplate()">
-          Editar Plantilla
+          <i class="fas fa-edit"></i> Editar Plantilla
         </button>
         <button class="btn btn-primary" (click)="startWorkout()" [disabled]="startingWorkout">
           <span *ngIf="startingWorkout" class="spinner-border spinner-border-sm mr-1"></span>
-          Iniciar Entrenamiento
+          <i class="fas fa-play"></i> Iniciar Entrenamiento
         </button>
       </div>
     </div>
     
-    <div *ngIf="template.description" class="template-description">
-      <p>{{ template.description }}</p>
+    <div *ngIf="template.description" class="template-description card card-body bg-light mb-3">
+      <h5 class="card-title">Descripción</h5>
+      <p class="card-text">{{ template.description }}</p>
     </div>
     
     <div class="template-stats">
@@ -36,57 +36,42 @@
         <div class="stat-value">{{ getExerciseCount() }}</div>
         <div class="stat-label">Ejercicios</div>
       </div>
-      
       <div class="stat-item">
         <div class="stat-value">{{ getTotalSets() }}</div>
         <div class="stat-label">Series Totales</div>
       </div>
-      
-      <div class="stat-item">
-        <div class="stat-value">~{{ getEstimatedDuration() | number:'1.0-0' }}</div>
-        <div class="stat-label">Minutos Estimados</div>
+      <div class="stat-item"> 
+        <div class="stat-value">{{ formatDurationDisplay(getEstimatedDuration()) }}</div>
+        <div class="stat-label">Duración Estimada</div> 
       </div>
     </div>
-    
     <div class="exercises-section">
-      <h2>Ejercicios</h2>
-      
+      <h2>Ejercicios en esta Plantilla</h2>
+      <div *ngIf="template.exercises && template.exercises.length === 0" class="alert alert-info">
+        Esta plantilla no tiene ejercicios definidos todavía.
+      </div>
       <div class="exercises-list">
-        <div *ngFor="let exerciseItem of template.exercises; let i = index" class="exercise-item">
-          <div class="exercise-number">{{ i + 1 }}</div>
-          
-          <div class="exercise-details">
-            <h3>{{ exerciseItem.exercise.name }}</h3>
-            
-            <div class="exercise-meta">
-              <span class="badge badge-primary">{{ exerciseItem.exercise.muscleGroups.join(', ') | titlecase }}</span>
-              
-              <span class="badge badge-secondary">{{ exerciseItem.exercise.movementType | titlecase }}</span>
-              
-              <span *ngIf="exerciseItem.exercise.exerciseType === 'compound'" class="badge badge-info">Compuesto</span>
-              <span *ngIf="exerciseItem.exercise.exerciseType === 'specific'" class="badge badge-light">Específico</span>
-
+        <div *ngFor="let exerciseItem of template.exercises; let i = index" class="exercise-item card mb-2">
+          <div class="card-header exercise-item-header">
+            <div class="exercise-number">{{ i + 1 }}</div>
+            <h5 class="mb-0">{{ exerciseItem.exercise.name }}</h5>
+          </div>
+          <div class="card-body">
+            <div class="exercise-meta mb-2">
+              <span class="badge badge-primary mr-1">{{ exerciseItem.exercise.muscleGroups.join(', ') | titlecase }}</span>
+              <span class="badge badge-secondary mr-1">{{ exerciseItem.exercise.movementType | titlecase }}</span>
+              <span *ngIf="exerciseItem.exercise.exerciseType === 'compound'" class="badge badge-info mr-1">Compuesto</span>
+              <span *ngIf="exerciseItem.exercise.exerciseType === 'specific'" class="badge badge-light mr-1">Específico</span>
               <span *ngIf="exerciseItem.exercise.isPowerlifting" class="badge badge-success">Powerlifting</span>
             </div>
             
             <div class="exercise-prescription">
-              <div class="prescription-item">
-                <span class="prescription-label">Series:</span>
-                <span class="prescription-value">{{ exerciseItem.sets }}</span>
-              </div>
-              
-              <div class="prescription-item">
-                <span class="prescription-label">Repeticiones:</span>
-                <span class="prescription-value">{{ exerciseItem.reps }}</span>
-              </div>
-              
-              <div class="prescription-item">
-                <span class="prescription-label">Descanso:</span>
-                <span class="prescription-value">{{ exerciseItem.restTime }}s</span>
-              </div>
+              <span class="prescription-item"><strong>Series:</strong> {{ exerciseItem.sets }}</span>
+              <span class="prescription-item"><strong>Reps:</strong> {{ exerciseItem.reps }}</span>
+              <span class="prescription-item"><strong>Descanso:</strong> {{ exerciseItem.restTime }}s</span>
             </div>
             
-            <p *ngIf="exerciseItem.notes" class="exercise-notes">{{ exerciseItem.notes }}</p>
+            <p *ngIf="exerciseItem.notes" class="exercise-notes mt-2 mb-0 text-muted"><small><strong>Notas:</strong> {{ exerciseItem.notes }}</small></p>
           </div>
         </div>
       </div>
