@@ -1,193 +1,199 @@
 <div class="admin-container">
   <div class="admin-header">
-    <h1>Exercise Management</h1>
-    <p>Create, edit, and manage exercises in the database</p>
+    <h1>Gestión de Ejercicios</h1>
+    <p>Crear, editar y gestionar los ejercicios en la base de datos.</p>
   </div>
-  
+
   <div class="admin-content">
     <div class="admin-card">
-      <h2>{{ editMode ? 'Edit Exercise' : 'Add New Exercise' }}</h2>
-      
+      <h2>{{ editMode ? 'Editar Ejercicio' : 'Añadir Nuevo Ejercicio' }}</h2>
+
       <form [formGroup]="exerciseForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
-          <label for="name">Exercise Name</label>
-          <input 
-            type="text" 
-            formControlName="name" 
-            class="form-control" 
-            [ngClass]="{ 'is-invalid': f['name'].touched && f['name'].errors }" 
+          <label for="name">Nombre del Ejercicio</label>
+          <input
+            type="text"
+            formControlName="name"
+            class="form-control"
+            [ngClass]="{ 'is-invalid': f['name'].touched && f['name'].errors }"
           />
           <div *ngIf="f['name'].touched && f['name'].errors" class="invalid-feedback">
-            <div *ngIf="f['name'].errors['required']">Exercise name is required</div>
+            <div *ngIf="f['name'].errors['required']">El nombre del ejercicio es requerido.</div>
           </div>
         </div>
-        
-        <div class="form-row">
-          <div class="form-group col-md-6">
-            <label for="muscleGroup">Muscle Group</label>
-            <select 
-              formControlName="muscleGroup" 
-              class="form-control" 
-              [ngClass]="{ 'is-invalid': f['muscleGroup'].touched && f['muscleGroup'].errors }"
-            >
-              <option value="">Select Muscle Group</option>
-              <option value="chest">Chest</option>
-              <option value="back">Back</option>
-              <option value="shoulders">Shoulders</option>
-              <option value="arms">Arms</option>
-              <option value="legs">Legs</option>
-              <option value="core">Core</option>
-              <option value="full body">Full Body</option>
-            </select>
-            <div *ngIf="f['muscleGroup'].touched && f['muscleGroup'].errors" class="invalid-feedback">
-              <div *ngIf="f['muscleGroup'].errors['required']">Muscle group is required</div>
-            </div>
-          </div>
-          
-          <div class="form-group col-md-6">
-            <label for="movementType">Movement Type</label>
-            <select 
-              formControlName="movementType" 
-              class="form-control" 
-              [ngClass]="{ 'is-invalid': f['movementType'].touched && f['movementType'].errors }"
-            >
-              <option value="">Select Movement Type</option>
-              <option value="push">Push</option>
-              <option value="pull">Pull</option>
-              <option value="squat">Squat</option>
-              <option value="hinge">Hinge</option>
-              <option value="carry">Carry</option>
-              <option value="rotation">Rotation</option>
-              <option value="isometric">Isometric</option>
-            </select>
-            <div *ngIf="f['movementType'].touched && f['movementType'].errors" class="invalid-feedback">
-              <div *ngIf="f['movementType'].errors['required']">Movement type is required</div>
-            </div>
-          </div>
-        </div>
-        
+
         <div class="form-group">
-          <label for="description">Description</label>
-          <textarea 
-            formControlName="description" 
-            class="form-control" 
+          <label for="exerciseType">Tipo de Ejercicio</label>
+          <select formControlName="exerciseType" class="form-control">
+            <option value="specific">Específico / Aislamiento</option>
+            <option value="compound">Compuesto</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="muscleGroups">
+            {{ f['exerciseType'].value === 'compound' ? 'Grupos Musculares (selecciona uno o más)' : 'Grupo Muscular (selecciona uno)' }}
+          </label>
+
+          <select
+            *ngIf="f['exerciseType'].value === 'specific'"
+            formControlName="muscleGroups"
+            class="form-control"
+            [ngClass]="{ 'is-invalid': f['muscleGroups'].touched && f['muscleGroups'].errors }"
+          >
+            <option value="" disabled>Selecciona un grupo muscular</option>
+            <option *ngFor="let group of muscleGroupOptions" [value]="group.value">
+              {{ group.label }}
+            </option>
+          </select>
+
+          <select
+            *ngIf="f['exerciseType'].value === 'compound'"
+            formControlName="muscleGroups"
+            class="form-control"
+            multiple
+            [ngClass]="{ 'is-invalid': f['muscleGroups'].touched && f['muscleGroups'].errors }"
+            size="6"
+          >
+            <option *ngFor="let group of muscleGroupOptions" [value]="group.value">
+              {{ group.label }}
+            </option>
+          </select>
+          <small *ngIf="f['exerciseType'].value === 'compound'" class="form-text text-muted">
+            Mantén presionada la tecla Ctrl (o Cmd en Mac) para seleccionar múltiples opciones.
+          </small>
+
+          <div *ngIf="f['muscleGroups'].touched && f['muscleGroups'].errors" class="invalid-feedback">
+            <div *ngIf="f['muscleGroups'].errors['required'] || f['muscleGroups'].errors['minlength']">
+              Debes seleccionar al menos un grupo muscular.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="movementType">Tipo de Movimiento</label>
+          <select
+            formControlName="movementType"
+            class="form-control"
+            [ngClass]="{ 'is-invalid': f['movementType'].touched && f['movementType'].errors }"
+          >
+            <option value="" disabled>Selecciona un tipo de movimiento</option>
+            <option *ngFor="let type of movementTypeOptions" [value]="type.value">
+              {{ type.label }}
+            </option>
+          </select>
+          <div *ngIf="f['movementType'].touched && f['movementType'].errors" class="invalid-feedback">
+            <div *ngIf="f['movementType'].errors['required']">El tipo de movimiento es requerido.</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Descripción (Opcional)</label>
+          <textarea
+            formControlName="description"
+            class="form-control"
             rows="3"
+            placeholder="Ej. Énfasis en la parte clavicular del pectoral..."
           ></textarea>
         </div>
-        
-        <div class="form-row checkbox-row">
-          <div class="form-check">
-            <input 
-              type="checkbox" 
-              formControlName="isCompound" 
-              class="form-check-input" 
-              id="isCompound"
-            />
-            <label class="form-check-label" for="isCompound">Compound Exercise</label>
-          </div>
-          
-          <div class="form-check">
-            <input 
-              type="checkbox" 
-              formControlName="isPowerlifting" 
-              class="form-check-input" 
-              id="isPowerlifting"
-            />
-            <label class="form-check-label" for="isPowerlifting">Powerlifting Exercise</label>
-          </div>
+
+        <div class="form-check mb-3">
+          <input
+            type="checkbox"
+            formControlName="isPowerlifting"
+            class="form-check-input"
+            id="isPowerlifting"
+          />
+          <label class="form-check-label" for="isPowerlifting">¿Es un ejercicio de Powerlifting?</label>
+          <small class="form-text d-block text-muted">Marcar si es uno de los tres levantamientos básicos (Sentadilla, Press de Banca, Peso Muerto) o una variante directa usada en powerlifting.</small>
         </div>
-        
+
         <div class="form-actions">
           <button type="submit" [disabled]="exerciseForm.invalid || loading" class="btn btn-primary">
             <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-            {{ editMode ? 'Update Exercise' : 'Add Exercise' }}
+            {{ editMode ? 'Actualizar Ejercicio' : 'Añadir Ejercicio' }}
           </button>
-          
           <button *ngIf="editMode" type="button" class="btn btn-outline-secondary" (click)="resetForm()">
-            Cancel
+            Cancelar Edición
           </button>
         </div>
       </form>
-      
+
       <div *ngIf="submitSuccess" class="alert alert-success mt-3">
-        Exercise {{ editMode ? 'updated' : 'added' }} successfully!
+        Ejercicio {{ editMode ? 'actualizado' : 'añadido' }} ¡correctamente!
       </div>
-      
       <div *ngIf="error" class="alert alert-danger mt-3">
         {{ error }}
       </div>
     </div>
-    
+
     <div class="admin-card mt-4">
       <div class="card-header-with-search">
-        <h2>Exercise List</h2>
-        
+        <h2>Lista de Ejercicios</h2>
         <div class="search-box">
-          <input 
-            type="text" 
-            [(ngModel)]="searchTerm" 
-            (input)="onSearchChange()" 
-            placeholder="Search exercises..." 
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            [ngModelOptions]="{standalone: true}"
+            (input)="onSearchChange()"
+            placeholder="Buscar ejercicios..."
             class="form-control"
           />
         </div>
       </div>
-      
+
       <div *ngIf="loadingExercises" class="loading-spinner">
         <div class="spinner-border" role="status">
-          <span class="sr-only">Loading...</span>
+          <span class="sr-only">Cargando...</span>
         </div>
       </div>
-      
+
       <div *ngIf="!loadingExercises && filteredExercises.length === 0" class="no-data">
-        <p>No exercises found. Add your first exercise using the form above.</p>
+        <p>No se encontraron ejercicios. Añade tu primer ejercicio usando el formulario de arriba.</p>
       </div>
-      
+
       <div *ngIf="!loadingExercises && filteredExercises.length > 0" class="exercise-list">
         <div *ngFor="let exercise of filteredExercises" class="exercise-item">
           <div class="exercise-details">
             <h3>{{ exercise.name }}</h3>
             <div class="exercise-meta">
-              <span class="badge badge-primary">{{ exercise.muscleGroup | titlecase }}</span>
-              <span class="badge badge-secondary">{{ exercise.movementType | titlecase }}</span>
-              <span *ngIf="exercise.isCompound" class="badge badge-info">Compound</span>
-              <span *ngIf="exercise.isPowerlifting" class="badge badge-success">Powerlifting</span>
+              <span class="badge badge-info">{{ exercise.exerciseType === 'compound' ? 'Compuesto' : 'Específico' }}</span>
+              <span *ngFor="let group of exercise.muscleGroups" class="badge badge-primary mr-1">{{ group | titlecase }}</span>
+              <span class="badge badge-secondary">{{ getMovementTypeLabel(exercise.movementType) | titlecase }}</span>              <span *ngIf="exercise.isPowerlifting" class="badge badge-success">Powerlifting</span>
             </div>
             <p *ngIf="exercise.description" class="exercise-description">{{ exercise.description }}</p>
           </div>
-          
           <div class="exercise-actions">
             <button class="btn btn-sm btn-outline-primary" (click)="editExercise(exercise)">
-              Edit
+              Editar
             </button>
             <button class="btn btn-sm btn-outline-danger" (click)="confirmDeleteExercise(exercise)">
-              Delete
+              Eliminar
             </button>
           </div>
         </div>
       </div>
     </div>
   </div>
-  
-  <!-- Delete Confirmation Modal -->
+
   <div *ngIf="confirmDelete" class="modal-overlay">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Confirm Delete</h5>
-          <button type="button" class="close" (click)="cancelDelete()">
+          <h5 class="modal-title">Confirmar Eliminación</h5>
+          <button type="button" class="close" (click)="cancelDelete()" aria-label="Cerrar">
             <span>&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <p>Are you sure you want to delete the exercise "{{ exerciseToDelete?.name }}"?</p>
-          <p class="text-danger">This action cannot be undone.</p>
+          <p>¿Estás seguro de que quieres eliminar el ejercicio "{{ exerciseToDelete?.name }}"?</p>
+          <p class="text-danger">Esta acción no se puede deshacer.</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" (click)="cancelDelete()">Cancel</button>
+          <button type="button" class="btn btn-outline-secondary" (click)="cancelDelete()">Cancelar</button>
           <button type="button" class="btn btn-danger" [disabled]="loading" (click)="deleteExercise()">
             <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-            Delete
+            Eliminar
           </button>
         </div>
       </div>

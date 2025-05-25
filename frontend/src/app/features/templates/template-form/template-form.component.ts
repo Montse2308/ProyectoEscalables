@@ -209,13 +209,14 @@ export class TemplateFormComponent implements OnInit {
 
   onSearchChange(): void {
     if (!this.searchTerm.trim()) {
-      this.filteredExercises = [...this.exercises];
+      this.filteredExercises = [...this.exercises]; //
     } else {
-      const search = this.searchTerm.toLowerCase().trim();
+      const search = this.searchTerm.toLowerCase().trim(); // [cite: 760]
       this.filteredExercises = this.exercises.filter(
-        (exercise) =>
+        (exercise: Exercise) => // Especificar el tipo Exercise aquí es una buena práctica
           exercise.name.toLowerCase().includes(search) ||
-          exercise.muscleGroup.toLowerCase().includes(search) ||
+          // LÍNEA CORREGIDA:
+          (exercise.muscleGroups && exercise.muscleGroups.some(mg => mg.toLowerCase().includes(search))) ||
           exercise.movementType.toLowerCase().includes(search)
       );
     }

@@ -1,28 +1,28 @@
 <div class="template-detail-container">
   <div *ngIf="loading" class="loading-spinner">
     <div class="spinner-border" role="status">
-      <span class="sr-only">Loading...</span>
+      <span class="sr-only">Cargando...</span>
     </div>
   </div>
   
   <div *ngIf="!loading && template" class="template-detail-content">
     <div class="template-detail-header">
       <button class="btn btn-sm btn-outline-secondary back-button" (click)="goBack()">
-        <i class="fas fa-arrow-left"></i> Back to Templates
+        <i class="fas fa-arrow-left"></i> Volver a Plantillas
       </button>
       
       <div class="template-title">
         <h1>{{ template.name }}</h1>
-        <span *ngIf="template.isPublic" class="badge badge-success">Public</span>
+        <span *ngIf="template.isPublic" class="badge badge-success">Pública</span>
       </div>
       
       <div class="template-actions">
         <button class="btn btn-outline-secondary" (click)="editTemplate()">
-          Edit Template
+          Editar Plantilla
         </button>
         <button class="btn btn-primary" (click)="startWorkout()" [disabled]="startingWorkout">
           <span *ngIf="startingWorkout" class="spinner-border spinner-border-sm mr-1"></span>
-          Start Workout
+          Iniciar Entrenamiento
         </button>
       </div>
     </div>
@@ -34,54 +34,59 @@
     <div class="template-stats">
       <div class="stat-item">
         <div class="stat-value">{{ getExerciseCount() }}</div>
-        <div class="stat-label">Exercises</div>
+        <div class="stat-label">Ejercicios</div>
       </div>
       
       <div class="stat-item">
         <div class="stat-value">{{ getTotalSets() }}</div>
-        <div class="stat-label">Total Sets</div>
+        <div class="stat-label">Series Totales</div>
       </div>
       
       <div class="stat-item">
         <div class="stat-value">~{{ getEstimatedDuration() | number:'1.0-0' }}</div>
-        <div class="stat-label">Est. Minutes</div>
+        <div class="stat-label">Minutos Estimados</div>
       </div>
     </div>
     
     <div class="exercises-section">
-      <h2>Exercises</h2>
+      <h2>Ejercicios</h2>
       
       <div class="exercises-list">
-        <div *ngFor="let exercise of template.exercises; let i = index" class="exercise-item">
+        <div *ngFor="let exerciseItem of template.exercises; let i = index" class="exercise-item">
           <div class="exercise-number">{{ i + 1 }}</div>
           
           <div class="exercise-details">
-            <h3>{{ exercise.exercise.name }}</h3>
+            <h3>{{ exerciseItem.exercise.name }}</h3>
             
             <div class="exercise-meta">
-              <span class="badge badge-primary">{{ exercise.exercise.muscleGroup | titlecase }}</span>
-              <span class="badge badge-secondary">{{ exercise.exercise.movementType | titlecase }}</span>
-              <span *ngIf="exercise.exercise.isCompound" class="badge badge-info">Compound</span>
+              <span class="badge badge-primary">{{ exerciseItem.exercise.muscleGroups.join(', ') | titlecase }}</span>
+              
+              <span class="badge badge-secondary">{{ exerciseItem.exercise.movementType | titlecase }}</span>
+              
+              <span *ngIf="exerciseItem.exercise.exerciseType === 'compound'" class="badge badge-info">Compuesto</span>
+              <span *ngIf="exerciseItem.exercise.exerciseType === 'specific'" class="badge badge-light">Específico</span>
+
+              <span *ngIf="exerciseItem.exercise.isPowerlifting" class="badge badge-success">Powerlifting</span>
             </div>
             
             <div class="exercise-prescription">
               <div class="prescription-item">
-                <span class="prescription-label">Sets:</span>
-                <span class="prescription-value">{{ exercise.sets }}</span>
+                <span class="prescription-label">Series:</span>
+                <span class="prescription-value">{{ exerciseItem.sets }}</span>
               </div>
               
               <div class="prescription-item">
-                <span class="prescription-label">Reps:</span>
-                <span class="prescription-value">{{ exercise.reps }}</span>
+                <span class="prescription-label">Repeticiones:</span>
+                <span class="prescription-value">{{ exerciseItem.reps }}</span>
               </div>
               
               <div class="prescription-item">
-                <span class="prescription-label">Rest:</span>
-                <span class="prescription-value">{{ exercise.restTime }}s</span>
+                <span class="prescription-label">Descanso:</span>
+                <span class="prescription-value">{{ exerciseItem.restTime }}s</span>
               </div>
             </div>
             
-            <p *ngIf="exercise.notes" class="exercise-notes">{{ exercise.notes }}</p>
+            <p *ngIf="exerciseItem.notes" class="exercise-notes">{{ exerciseItem.notes }}</p>
           </div>
         </div>
       </div>

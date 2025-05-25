@@ -267,14 +267,15 @@ export class WorkoutFormComponent implements OnInit {
 
   onSearchChange(): void {
     if (!this.searchTerm.trim()) {
-      this.filteredExercises = [...this.exercises];
+      this.filteredExercises = [...this.exercises]; // [cite: 895]
     } else {
-      const search = this.searchTerm.toLowerCase().trim();
+      const search = this.searchTerm.toLowerCase().trim(); // [cite: 896]
       this.filteredExercises = this.exercises.filter(
-        (exercise) =>
+        (exercise: Exercise) => // Es bueno tipar 'exercise' aquí
           exercise.name.toLowerCase().includes(search) ||
-          exercise.muscleGroup.toLowerCase().includes(search) ||
-          exercise.movementType.toLowerCase().includes(search)
+          // LÍNEA CORREGIDA:
+          (exercise.muscleGroups && exercise.muscleGroups.some(mg => mg.toLowerCase().includes(search))) ||
+          exercise.movementType.toLowerCase().includes(search) // [cite: 896]
       );
     }
   }
