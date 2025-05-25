@@ -94,58 +94,63 @@
               </div>
               
               
+<!-- Sección corregida de sets -->
 <div formArrayName="sets" class="sets-container mt-3">
-  <ng-container *ngFor="let setCtrl of getSetsArray(i).controls; let i = index">
-    <div class="sets-header">
-      <h5>Series Realizadas</h5>
-      <button type="button" class="btn btn-sm btn-outline-success" (click)="addSetToExercise(i)">
-        <i class="fas fa-plus-circle"></i> Añadir Serie
-      </button>
-    </div>
-    
-    <div *ngIf="getSetsArray(i).length === 0" class="alert alert-warning small mt-2">
-        Añade al menos una serie para este ejercicio.
-    </div>
+  <!-- Encabezado FUERA del loop de sets -->
+  <div class="sets-header">
+    <h5>Series Realizadas</h5>
+    <button type="button" class="btn btn-sm btn-outline-success" (click)="addSetToExercise(i)">
+      <i class="fas fa-plus-circle"></i> Añadir Serie
+    </button>
+  </div>
 
-    <div class="sets-table-container mt-2" *ngIf="getSetsArray(i).length > 0">
-      <table class="table table-sm sets-table">
-        <thead class="thead-light">
-          <tr>
-            <th class="text-center">Serie</th>
-            <th>Peso (kg)</th>
-            <th>Repeticiones</th>
-            <th>Descanso (seg)</th> <th>Notas de Serie</th>
-            <th class="text-center">Acción</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let setCtrl of getSetsArray(i).controls; let j = index" [formGroupName]="j">
-            <td class="text-center font-weight-bold">{{ j + 1 }}</td>
-            <td>
-              <input type="number" formControlName="weight" class="form-control form-control-sm" placeholder="Peso"
-                     [ngClass]="{ 'is-invalid': getSetsArray(i).at(j).get('weight')?.touched && getSetsArray(i).at(j).get('weight')?.errors }"/>
-            </td>
-            <td>
-              <input type="number" formControlName="reps" class="form-control form-control-sm" placeholder="Reps"
-                     [ngClass]="{ 'is-invalid': getSetsArray(i).at(j).get('reps')?.touched && getSetsArray(i).at(j).get('reps')?.errors }"/>
-            </td>
-            <td> <input type="number" formControlName="restTime" class="form-control form-control-sm" placeholder="Segundos"
-                     [ngClass]="{ 'is-invalid': getSetsArray(i).at(j).get('restTime')?.touched && getSetsArray(i).at(j).get('restTime')?.errors }"/>
-            </td>
-            <td>
-              <input type="text" formControlName="notes" class="form-control form-control-sm" placeholder="Opcional"/>
-            </td>
-            <td class="text-center">
-              <button type="button" class="btn btn-xs btn-outline-danger" (click)="removeSet(i, j)" 
-                      [disabled]="getSetsArray(i).length <= 1" title="Eliminar serie">
-                <i class="fas fa-times"></i>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </ng-container>
+  <!-- Mensaje si no hay series -->
+  <div *ngIf="getSetsArray(i).length === 0" class="alert alert-warning small mt-2">
+    Añade al menos una serie para este ejercicio.
+  </div>
+
+  <!-- Tabla de series (solo si hay sets) -->
+  <div class="sets-table-container mt-2" *ngIf="getSetsArray(i).length > 0">
+    <table class="table table-sm sets-table">
+      <thead class="thead-light">
+        <tr>
+          <th class="text-center">Serie</th>
+          <th>Peso (kg)</th>
+          <th>Repeticiones</th>
+          <th>Descanso (seg)</th>
+          <th>Notas de Serie</th>
+          <th class="text-center">Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Loop CORRECTO sobre los sets -->
+        <tr *ngFor="let setCtrl of getSetsArray(i).controls; let j = index" [formGroupName]="j">
+          <td class="text-center font-weight-bold">{{ j + 1 }}</td>
+          <td>
+            <input type="number" formControlName="weight" class="form-control form-control-sm" placeholder="Peso"
+                   [ngClass]="{ 'is-invalid': getSetsArray(i).at(j).get('weight')?.touched && getSetsArray(i).at(j).get('weight')?.errors }"/>
+          </td>
+          <td>
+            <input type="number" formControlName="reps" class="form-control form-control-sm" placeholder="Reps"
+                   [ngClass]="{ 'is-invalid': getSetsArray(i).at(j).get('reps')?.touched && getSetsArray(i).at(j).get('reps')?.errors }"/>
+          </td>
+          <td>
+            <input type="number" formControlName="restTime" class="form-control form-control-sm" placeholder="Segundos"
+                   [ngClass]="{ 'is-invalid': getSetsArray(i).at(j).get('restTime')?.touched && getSetsArray(i).at(j).get('restTime')?.errors }"/>
+          </td>
+          <td>
+            <input type="text" formControlName="notes" class="form-control form-control-sm" placeholder="Opcional"/>
+          </td>
+          <td class="text-center">
+            <button type="button" class="btn btn-xs btn-outline-danger" (click)="removeSet(i, j)" 
+                    [disabled]="getSetsArray(i).length <= 1" title="Eliminar serie">
+              <i class="fas fa-times"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
             </div>
           </div>
