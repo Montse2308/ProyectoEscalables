@@ -1,255 +1,212 @@
-import { Component, type OnInit, LOCALE_ID, Inject } from '@angular/core'; // Importar LOCALE_ID, Inject
-import { FormBuilder, FormGroup, Validators } from '@angular/forms'; // Añadir Validators
+import { Component, type OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms'; // Validators ya no es tan necesario aquí
 import { StandardService } from '../../../core/services/standard.service';
 import { ExerciseService } from '../../../core/services/exercise.service';
-import { AuthService } from '../../../core/services/auth.service';
 import { Exercise } from '../../../core/models/exercise.model';
-import { Standard, StrengthLevelRatios } from '../../../core/models/standard.model'; // Usar el modelo Standard actualizado
-import { User } from '../../../core/models/user.model';
-import { CommonModule, TitleCasePipe, DecimalPipe } from '@angular/common'; // Añadir DecimalPipe
+import { Standard, StrengthLevelRatios } from '../../../core/models/standard.model';
+import { CommonModule, TitleCasePipe, DecimalPipe } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { Subscription, combineLatest } from 'rxjs';
+import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators';
 
-// Para registrar el locale 'es' si no está globalmente
-// import { registerLocaleData } from '@angular/common';
-// import localeEs from '@angular/common/locales/es';
-// registerLocaleData(localeEs, 'es');
-
-interface CalculatedStrengthLevel {
-  level: keyof StrengthLevelRatios;
-  targetWeight: number;
-  isCurrentUserLevel?: boolean;
+interface DynamicTableRow {
+  bodyWeight: number;
+  levels: StrengthLevelRatios; 
 }
 
 @Component({
   selector: 'app-standards-view',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TitleCasePipe, DecimalPipe], // Añadir TitleCasePipe, DecimalPipe
+  imports: [CommonModule, ReactiveFormsModule, TitleCasePipe, DecimalPipe],
   templateUrl: './standards-view.component.html',
   styleUrls: ['./standards-view.component.scss'],
-  providers: [TitleCasePipe, DecimalPipe] // Proveer pipes si se usan en el TS o internamente
+  providers: [TitleCasePipe, DecimalPipe]
 })
-export class StandardsViewComponent implements OnInit {
-  standardsForm!: FormGroup;
-  exercises: Exercise[] = []; // Solo ejercicios para los que hay estándares o que sean relevantes
-  allStandards: Standard[] = []; // Todos los estándares cargados
+export class StandardsViewComponent implements OnInit, OnDestroy {
+  allExercises: Exercise[] = [];
+  allStandards: Standard[] = [];
+  filteredAndSortedStandards: Standard[] = [];
+  
+  filterForm!: FormGroup; 
+  
+  activeStandardForTable: Standard | null = null;
+  dynamicTableRows: DynamicTableRow[] = [];
+  
+  private bodyWeightRanges = {
+    male: { start: 50, end: 140, step: 5 },
+    female: { start: 40, end: 120, step: 5 }
+  };
+
   loading = false;
   error = '';
   
-  currentUser: User | null = null;
-  userBodyWeight = 0; // Peso corporal del usuario actual
-  
-  selectedExerciseId: string | null = null;
-  userSubmittedOneRM: number | null = null;
-  
-  // Resultados para mostrar
-  currentUserLevel: string | null = null; // 'principiante', 'novato', etc.
-  currentUserPercentageToNext: number | null = null;
-  calculatedLevelsForUser: CalculatedStrengthLevel[] = []; // Tabla de niveles en KG para el usuario
-  
   readonly strengthLevelKeys: Array<keyof StrengthLevelRatios> = ['principiante', 'novato', 'intermedio', 'avanzado', 'elite'];
   readonly strengthLevelLabels: Record<keyof StrengthLevelRatios, string> = {
-    principiante: 'Principiante',
-    novato: 'Novato',
-    intermedio: 'Intermedio',
-    avanzado: 'Avanzado',
-    elite: 'Élite',
+    principiante: 'Principiante', novato: 'Novato', intermedio: 'Intermedio',
+    avanzado: 'Avanzado', elite: 'Élite',
   };
 
+  private subscriptions = new Subscription();
 
   constructor(
     private formBuilder: FormBuilder,
     private standardService: StandardService,
-    private exerciseService: ExerciseService,
-    private authService: AuthService,
-    private titleCasePipe: TitleCasePipe,
-    @Inject(LOCALE_ID) private locale: string // Inyectar locale
+    private exerciseService: ExerciseService
   ) {}
 
   ngOnInit(): void {
-    this.initForm();
-    this.loadData();
-    
-    this.authService.currentUser.subscribe(user => {
-        this.currentUser = user;
-        this.userBodyWeight = this.currentUser?.weight || 0;
-        // Si el formulario ya tiene valores, recalcular si cambia el usuario (peso/género)
-        if (this.standardsForm.valid && this.selectedExerciseId) {
-            this.displayUserStrengthComparison();
+    this.initFilterForm();
+    this.loadInitialData();
+    this.setupFilterFormListeners();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
+  initFilterForm(): void {
+    this.filterForm = this.formBuilder.group({
+        searchTerm: [''],
+        displayGender: ['male'] 
+    });
+  }
+
+  setupFilterFormListeners(): void {
+    const filterSub = combineLatest([
+        this.filterForm.get('searchTerm')!.valueChanges.pipe(startWith(this.filterForm.get('searchTerm')?.value || ''), debounceTime(300), distinctUntilChanged()),
+        this.filterForm.get('displayGender')!.valueChanges.pipe(startWith(this.filterForm.get('displayGender')?.value || 'male'), distinctUntilChanged())
+    ]).subscribe(([searchTerm, displayGender]) => {
+        this.applyFiltersAndSort(searchTerm, displayGender);
+        
+        if (this.activeStandardForTable) {
+            const currentActiveTableExerciseId = (this.activeStandardForTable.exercise as Exercise)?._id;
+
+            // Verificar si el género del estándar activo es diferente al género del filtro Y si tenemos un ID de ejercicio activo
+            if (this.activeStandardForTable.gender !== displayGender && currentActiveTableExerciseId) {
+                // El género ha cambiado, intentamos encontrar el estándar para el nuevo género pero MISMO ejercicio
+                const newActiveStandard = this.allStandards.find(s => {
+                    // CORRECCIÓN AQUÍ: Acceder de forma segura a s.exercise._id
+                    const standardExerciseId = s.exercise?._id;
+                    return standardExerciseId === currentActiveTableExerciseId && s.gender === displayGender;
+                });
+                this.setActiveStandardForTable(newActiveStandard || null);
+            } else if (this.activeStandardForTable.gender === displayGender) {
+                // El género no cambió, pero el término de búsqueda sí pudo haberlo hecho.
+                // Verificamos si el estándar activo actual sigue estando en la lista filtrada.
+                const isActiveStandardStillFiltered = this.filteredAndSortedStandards.some(
+                    std => std._id === this.activeStandardForTable?._id
+                );
+                if (isActiveStandardStillFiltered) {
+                     this.generateDynamicTable(); // El estándar activo sigue siendo válido, regenerar tabla.
+                } else {
+                    this.setActiveStandardForTable(null); // El estándar activo ya no está en la lista filtrada, deseleccionar.
+                }
+            }
+
+            else if (this.activeStandardForTable.gender !== displayGender && !currentActiveTableExerciseId) {
+                 this.setActiveStandardForTable(null);
+            }
         }
     });
+    this.subscriptions.add(filterSub);
   }
 
-  initForm(): void {
-    this.standardsForm = this.formBuilder.group({
-      exercise: ['', Validators.required],
-      oneRM: ['', [Validators.required, Validators.min(1)]],
-      // Campos opcionales para que un no autenticado ingrese sus datos
-      guestGender: ['male'],
-      guestBodyWeight: ['', [Validators.min(20), Validators.max(300)]]
-    });
-
-    // Si el usuario está logueado, pre-llenar y deshabilitar guestGender y guestBodyWeight
-    if (this.authService.isLoggedIn()) {
-        this.standardsForm.get('guestGender')?.disable();
-        this.standardsForm.get('guestBodyWeight')?.disable();
-    } else {
-        this.standardsForm.get('guestGender')?.setValidators(Validators.required);
-        this.standardsForm.get('guestBodyWeight')?.setValidators([Validators.required, Validators.min(20), Validators.max(300)]);
-    }
-    this.standardsForm.get('guestGender')?.updateValueAndValidity();
-    this.standardsForm.get('guestBodyWeight')?.updateValueAndValidity();
-  }
-
-  loadData(): void {
+  loadInitialData(): void {
     this.loading = true;
+    this.error = '';
     Promise.all([
-      this.exerciseService.getExercises().toPromise(), // Obtener todos los ejercicios
-      this.standardService.getStandards().toPromise(), // Obtener todos los estándares
+      this.exerciseService.getExercises().toPromise(),
+      this.standardService.getStandards().toPromise(),
     ])
     .then(([exercisesData, standardsData]) => {
-      this.allStandards = standardsData || [];
-      // Filtrar ejercicios para mostrar solo aquellos que tienen estándares definidos
-      const exercisesWithStandardsIds = new Set(this.allStandards.map(s => s.exercise._id || s.exercise));
-      this.exercises = (exercisesData || [])
-          .filter(ex => exercisesWithStandardsIds.has(ex._id) && (ex.isPowerlifting || ex.exerciseType === 'compound')) // Mostrar compuestos o de powerlifting con estándares
-          .sort((a,b) => a.name.localeCompare(b.name));
+      this.allExercises = (exercisesData || [])
+                            .filter(ex => ex.isPowerlifting || ex.exerciseType === 'compound')
+                            .sort((a,b) => a.name.localeCompare(b.name));
+      
+      this.allStandards = (standardsData || []).map((s_raw: any) => {
+        const s = s_raw as Standard;
+        let exerciseIdFromStandard: string | undefined;
 
+        if (s.exercise && typeof s.exercise === 'object' && (s.exercise as any)._id) {
+          exerciseIdFromStandard = (s.exercise as any)._id;
+        } else if (typeof s.exercise === 'string') {
+          exerciseIdFromStandard = s.exercise;
+        }
+
+        const fullExerciseObject = exerciseIdFromStandard
+          ? this.allExercises.find(ex => ex._id === exerciseIdFromStandard)
+          : undefined;
+
+        return { ...s, exercise: fullExerciseObject || s.exercise };
+      })
+      .sort((a, b) => {
+        const nameA = (typeof a.exercise === 'object' && a.exercise !== null) ? (a.exercise as Exercise).name : '';
+        const nameB = (typeof b.exercise === 'object' && b.exercise !== null) ? (b.exercise as Exercise).name : '';
+        return (nameA + a.gender).localeCompare(nameB + b.gender);
+      });
+      
+      this.applyFiltersAndSort(this.filterForm.get('searchTerm')?.value || '', this.filterForm.get('displayGender')?.value || 'male');
       this.loading = false;
     })
-    .catch((error) => {
-      this.error = error.error?.message || 'Error al cargar datos para los estándares.';
+    .catch((err) => {
+      this.error = err.error?.message || 'Error al cargar datos iniciales.';
       this.loading = false;
-    });
-  }
-
-  onSubmit(): void {
-    if (this.standardsForm.invalid) {
-      this.standardsForm.markAllAsTouched();
-      this.error = "Por favor, completa todos los campos requeridos.";
-      this.clearResults();
-      return;
-    }
-    this.error = '';
-    this.selectedExerciseId = this.f['exercise'].value;
-    this.userSubmittedOneRM = parseFloat(this.f['oneRM'].value);
-    this.displayUserStrengthComparison();
-  }
-
-  displayUserStrengthComparison(): void {
-    if (!this.selectedExerciseId || this.userSubmittedOneRM === null) {
-      this.clearResults();
-      return;
-    }
-
-    let currentGender: string;
-    let currentBodyWeight: number;
-
-    if (this.currentUser) {
-        currentGender = this.currentUser.gender || 'male';
-        currentBodyWeight = this.currentUser.weight || 0;
-    } else {
-        currentGender = this.f['guestGender'].value;
-        currentBodyWeight = parseFloat(this.f['guestBodyWeight'].value);
-        if (isNaN(currentBodyWeight) || currentBodyWeight <=0) {
-            this.error = "Por favor, ingresa un peso corporal válido.";
-            this.clearResults();
-            return;
-        }
-    }
-    this.userBodyWeight = currentBodyWeight; // Actualizar para la tabla
-
-    const standardForExercise = this.allStandards.find(
-      (s) => (s.exercise._id || s.exercise) === this.selectedExerciseId && s.gender === currentGender
-    );
-
-    if (!standardForExercise || !standardForExercise.ratios) {
-      this.error = `No se encontraron estándares de ratios para este ejercicio y género (${currentGender}).`;
-      this.clearResults();
-      return;
-    }
-
-    this.calculatedLevelsForUser = [];
-    let userLevelKey: keyof StrengthLevelRatios | null = null;
-    let nextLevelKey: keyof StrengthLevelRatios | null = null;
-    let previousLevelWeight = 0;
-
-    // Calcular pesos absolutos para cada nivel basado en ratios y peso corporal del usuario
-    for (const key of this.strengthLevelKeys) {
-        const ratio = standardForExercise.ratios[key];
-        const targetWeight = currentBodyWeight * ratio;
-        this.calculatedLevelsForUser.push({ level: key, targetWeight });
-
-        if (this.userSubmittedOneRM >= targetWeight) {
-            userLevelKey = key;
-            previousLevelWeight = targetWeight; // Peso del nivel actual o superado
-        }
-    }
-    
-    this.currentUserLevel = userLevelKey ? this.strengthLevelLabels[userLevelKey] : "Por debajo de Principiante";
-
-    // Calcular porcentaje al siguiente nivel
-    if (userLevelKey && userLevelKey !== 'elite') {
-        const currentIndex = this.strengthLevelKeys.indexOf(userLevelKey);
-        nextLevelKey = this.strengthLevelKeys[currentIndex + 1];
-        const nextLevelTargetWeight = this.calculatedLevelsForUser.find(l => l.level === nextLevelKey)?.targetWeight || 0;
-        
-        if (nextLevelTargetWeight > previousLevelWeight) { // Evitar división por cero si los pesos son iguales
-            const progressInCurrentRange = this.userSubmittedOneRM - previousLevelWeight;
-            const rangeToNextLevel = nextLevelTargetWeight - previousLevelWeight;
-            this.currentUserPercentageToNext = (progressInCurrentRange / rangeToNextLevel) * 100;
-            if (this.currentUserPercentageToNext > 100) this.currentUserPercentageToNext = 100;
-            if (this.currentUserPercentageToNext < 0) this.currentUserPercentageToNext = 0;
-        } else if (this.userSubmittedOneRM >= nextLevelTargetWeight) {
-            this.currentUserPercentageToNext = 100; // Ya alcanzó o superó el siguiente nivel
-        } else {
-            this.currentUserPercentageToNext = 0;
-        }
-    } else if (userLevelKey === 'elite') {
-        this.currentUserPercentageToNext = 100; // Ya es élite
-    } else { // Por debajo de principiante
-        const beginnerWeight = this.calculatedLevelsForUser.find(l => l.level === 'principiante')?.targetWeight || 0;
-        if (beginnerWeight > 0) {
-            this.currentUserPercentageToNext = (this.userSubmittedOneRM / beginnerWeight) * 100;
-             if (this.currentUserPercentageToNext > 100) this.currentUserPercentageToNext = 100;
-             if (this.currentUserPercentageToNext < 0) this.currentUserPercentageToNext = 0;
-        } else {
-            this.currentUserPercentageToNext = 0;
-        }
-    }
-
-    // Marcar el nivel actual del usuario en la tabla
-    this.calculatedLevelsForUser.forEach(level => {
-        level.isCurrentUserLevel = level.level === userLevelKey;
     });
   }
   
-  clearResults(): void {
-    this.currentUserLevel = null;
-    this.currentUserPercentageToNext = null;
-    this.calculatedLevelsForUser = [];
-    // No limpiar selectedExerciseId y userSubmittedOneRM para que el usuario no tenga que reingresar todo
-  }
-
-  get f() {
-    return this.standardsForm.controls;
-  }
-
-  getSelectedExerciseName(): string {
-    if (!this.selectedExerciseId) return 'N/A';
-    const exercise = this.exercises.find(e => e._id === this.selectedExerciseId);
-    return exercise ? exercise.name : 'Desconocido';
-  }
-
-  getNextLevelLabel(): string {
-    if (!this.currentUserLevel || this.currentUserLevel.toLowerCase() === 'élite') return 'Élite+';
-    const currentKey = this.strengthLevelKeys.find(k => this.strengthLevelLabels[k] === this.currentUserLevel);
-    if (currentKey) {
-        const currentIndex = this.strengthLevelKeys.indexOf(currentKey);
-        if (currentIndex < this.strengthLevelKeys.length -1) {
-            return this.strengthLevelLabels[this.strengthLevelKeys[currentIndex + 1]];
+  applyFiltersAndSort(searchTerm: string, displayGender: string): void {
+    const lowerSearchTerm = searchTerm.toLowerCase();
+    this.filteredAndSortedStandards = this.allStandards
+        .filter(s => {
+            const exerciseName = ((s.exercise as Exercise)?.name || '').toLowerCase();
+            return s.gender === displayGender && exerciseName.includes(lowerSearchTerm);
+        })
+        .sort((a, b) => (((a.exercise as Exercise)?.name || '').localeCompare(((b.exercise as Exercise)?.name || ''))));
+    
+    if (this.activeStandardForTable && !this.filteredAndSortedStandards.some(std => std._id === this.activeStandardForTable?._id)) {
+        if(this.activeStandardForTable.gender !== displayGender){ 
+             this.setActiveStandardForTable(null);
         }
     }
-    if (this.currentUserLevel === "Por debajo de Principiante") return "Principiante";
-    return '';
+  }
+
+  setActiveStandardForTable(standard: Standard | null): void {
+    this.activeStandardForTable = standard;
+    this.generateDynamicTable();
+  }
+
+  generateDynamicTable(): void {
+    if (!this.activeStandardForTable || !this.activeStandardForTable.ratios) {
+      this.dynamicTableRows = [];
+      return;
+    }
+    const newTableRows: DynamicTableRow[] = [];
+    const ratios = this.activeStandardForTable.ratios;
+    const currentGender = this.activeStandardForTable.gender as keyof typeof this.bodyWeightRanges;
+    const range = this.bodyWeightRanges[currentGender] || this.bodyWeightRanges.male;
+
+    for (let bw = range.start; bw <= range.end; bw += range.step) {
+      const calculatedRow: StrengthLevelRatios = {} as StrengthLevelRatios; // Inicializar como objeto vacío
+      this.strengthLevelKeys.forEach(key => {
+        calculatedRow[key] = bw * ratios[key];
+      });
+      newTableRows.push({ bodyWeight: bw, levels: calculatedRow });
+    }
+    this.dynamicTableRows = newTableRows;
+  }
+
+  getExerciseNameFromStd(standardOrExercise: Standard | Exercise | string | undefined | null): string {
+    if (!standardOrExercise) return 'Desconocido';
+    if (typeof standardOrExercise === 'string') { // Es un ID
+        const exercise = this.allExercises.find((e) => e._id === standardOrExercise);
+        return exercise ? exercise.name : 'ID: ' + standardOrExercise;
+    }
+    // Es un objeto Standard o Exercise
+    const exerciseObj = (standardOrExercise as Standard).exercise || standardOrExercise;
+    if (typeof exerciseObj === 'string') { // El campo exercise es un ID
+         const exercise = this.allExercises.find((e) => e._id === exerciseObj);
+        return exercise ? exercise.name : 'ID: ' + exerciseObj;
+    }
+    return (exerciseObj as Exercise)?.name || 'Nombre Desconocido';
   }
 }

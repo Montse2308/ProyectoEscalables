@@ -1,155 +1,92 @@
 <div class="standards-container">
   <div class="standards-header">
-    <h1>Estándares de Fuerza</h1>
-    <p>Compara tus niveles de fuerza con los estándares establecidos para tu género y peso corporal,
-      basados en factores de relación de peso corporal.</p>
+    <h1>Explorar Estándares de Fuerza</h1>
+    <p>
+      Consulta los factores de relación de peso corporal y visualiza los pesos objetivo (kg)
+      para diferentes niveles de fuerza, ejercicios y pesos corporales.
+    </p>
   </div>
 
-  <div *ngIf="loading && !exercises.length" class="loading-spinner">
+  <div *ngIf="loading && filteredAndSortedStandards.length === 0" class="loading-spinner">
     <div class="spinner-border" role="status"><span class="sr-only">Cargando datos...</span></div>
   </div>
 
-  <div *ngIf="!loading || exercises.length > 0" class="standards-content">
-    <div class="standards-form-card">
-      <h2>Comprueba tu Nivel de Fuerza</h2>
-      <p class="text-muted small mb-3">
-        Selecciona un ejercicio e ingresa tu 1RM (Una Repetición Máxima) para ese ejercicio.
-        Si no has iniciado sesión, también deberás ingresar tu género y peso corporal.
-      </p>
-
-      <form [formGroup]="standardsForm" (ngSubmit)="onSubmit()">
+  <div *ngIf="!loading || filteredAndSortedStandards.length > 0 || error" class="standards-content">
+    <div class="filters-card mb-4">
+      <h2>Filtrar Estándares</h2>
+      <form [formGroup]="filterForm">
         <div class="form-row">
-          <div class="form-group col-md-6">
-            <label for="exercise">Ejercicio</label>
-            <select
-              formControlName="exercise"
-              class="form-control"
-              [ngClass]="{ 'is-invalid': f['exercise'].touched && f['exercise'].errors }"
-            >
-              <option value="" disabled>Selecciona un Ejercicio</option>
-              <option *ngFor="let exercise of exercises" [value]="exercise._id">{{ exercise.name }}</option>
+          <div class="form-group col-md-7">
+            <label for="searchTerm">Buscar Ejercicio por Nombre</label>
+            <input type="text" id="searchTerm" formControlName="searchTerm" class="form-control" placeholder="Ej. Press de Banca...">
+          </div>
+          <div class="form-group col-md-5">
+            <label for="displayGender">Mostrar Estándares Para</label>
+            <select id="displayGender" formControlName="displayGender" class="form-control">
+              <option value="male">Hombres</option>
+              <option value="female">Mujeres</option>
             </select>
-            <div *ngIf="f['exercise'].touched && f['exercise'].errors" class="invalid-feedback">
-              <div *ngIf="f['exercise'].errors['required']">El ejercicio es requerido.</div>
-            </div>
-             <div *ngIf="!loading && exercises.length === 0 && allStandards.length > 0" class="alert alert-warning mt-2 small">
-              No hay ejercicios configurados para mostrar estándares (ej. compuestos o de powerlifting con estándares definidos).
-            </div>
-             <div *ngIf="!loading && allStandards.length === 0" class="alert alert-info mt-2 small">
-              Aún no hay estándares de fuerza definidos por el administrador.
-            </div>
           </div>
-
-          <div class="form-group col-md-6">
-            <label for="oneRM">Tu 1RM Actual (kg) para este Ejercicio</label>
-            <input
-              type="number"
-              formControlName="oneRM"
-              class="form-control"
-              placeholder="Ej. 100"
-              [ngClass]="{ 'is-invalid': f['oneRM'].touched && f['oneRM'].errors }"
-            />
-            <div *ngIf="f['oneRM'].touched && f['oneRM'].errors" class="invalid-feedback">
-              <div *ngIf="f['oneRM'].errors['required']">Tu 1RM es requerido.</div>
-              <div *ngIf="f['oneRM'].errors['min']">El 1RM debe ser mayor a 0.</div>
-            </div>
-          </div>
-        </div>
-
-        <div *ngIf="!currentUser" class="guest-inputs mt-3">
-            <p class="text-info small">Como no has iniciado sesión, por favor proporciona tu género y peso corporal:</p>
-            <div class="form-row">
-                 <div class="form-group col-md-6">
-                    <label for="guestGender">Tu Género</label>
-                    <select formControlName="guestGender" class="form-control" [ngClass]="{ 'is-invalid': f['guestGender'].touched && f['guestGender'].errors }">
-                        <option value="male">Masculino</option>
-                        <option value="female">Femenino</option>
-                    </select>
-                     <div *ngIf="f['guestGender'].touched && f['guestGender'].errors?.['required']" class="invalid-feedback">
-                        El género es requerido.
-                    </div>
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="guestBodyWeight">Tu Peso Corporal (kg)</label>
-                    <input type="number" formControlName="guestBodyWeight" class="form-control" placeholder="Ej. 70"
-                           [ngClass]="{ 'is-invalid': f['guestBodyWeight'].touched && f['guestBodyWeight'].errors }">
-                    <div *ngIf="f['guestBodyWeight'].touched && f['guestBodyWeight'].errors" class="invalid-feedback">
-                        <div *ngIf="f['guestBodyWeight'].errors['required']">Peso corporal requerido.</div>
-                        <div *ngIf="f['guestBodyWeight'].errors['min']">Mínimo 20kg.</div>
-                         <div *ngIf="f['guestBodyWeight'].errors['max']">Máximo 300kg.</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="form-actions mt-3">
-          <button type="submit" [disabled]="standardsForm.invalid || loading" class="btn btn-primary">
-            <span *ngIf="loading && standardsForm.valid" class="spinner-border spinner-border-sm mr-1"></span>
-            Ver Mi Nivel de Fuerza
-          </button>
         </div>
       </form>
     </div>
 
-    <div *ngIf="error" class="alert alert-danger mt-3">
+    <div *ngIf="error" class="alert alert-danger">
       {{ error }}
     </div>
 
-    <div *ngIf="!error && calculatedLevelsForUser.length > 0 && userSubmittedOneRM !== null" class="standards-result-card mt-4">
-      <h2>Tu Nivel de Fuerza para: {{ getSelectedExerciseName() }}</h2>
-
-      <div class="user-info mb-3">
-        <span class="user-stat">Tu Peso Corporal: <strong>{{ userBodyWeight | number:'1.0-1' }} kg</strong></span> |
-        <span class="user-stat ml-2">Tu 1RM Ingresado: <strong>{{ userSubmittedOneRM | number:'1.0-1' }} kg</strong></span>
+    <div class="standards-list-card mb-4">
+      <h3>Estándares de Ratios Disponibles (Factores x Peso Corporal)</h3>
+      <div *ngIf="filteredAndSortedStandards.length === 0 && !loading && !error" class="no-data-small">
+        <p>No se encontraron estándares para los filtros seleccionados. Intenta con otros criterios o espera a que un administrador los defina.</p>
       </div>
-
-      <div class="strength-level-result">
-        <h3 *ngIf="currentUserLevel">Estás en el nivel: <span class="level-highlight">{{ currentUserLevel }}</span></h3>
-        <div *ngIf="currentUserPercentageToNext !== null && currentUserLevel !== 'Élite'" class="strength-bar-container mt-2">
-          <div class="strength-levels">
-             <span *ngFor="let sl of strengthLevelKeys" class="level" [class.active]="strengthLevelLabels[sl] === currentUserLevel">
-                {{ strengthLevelLabels[sl] }}
-             </span>
-          </div>
-          <div class="strength-bar">
-            <div class="progress-bar" [style.width.%]="currentUserPercentageToNext" title="{{currentUserPercentageToNext | number:'1.0-0'}}%"></div>
-          </div>
-          <div class="percentiles mt-1">
-            <div class="percentile-info">
-              <div class="percentile-label">Progreso hacia {{ getNextLevelLabel() }}:</div>
-              <div class="percentile-value">{{ currentUserPercentageToNext | number:'1.0-0' }}%</div>
-            </div>
-          </div>
-        </div>
-         <div *ngIf="currentUserLevel === 'Élite'" class="alert alert-success small mt-2">
-            ¡Felicidades, has alcanzado el nivel Élite para este ejercicio según tu peso corporal!
-        </div>
-         <div *ngIf="currentUserLevel === 'Por debajo de Principiante'" class="alert alert-info small mt-2">
-            Sigue entrenando para alcanzar el nivel Principiante. ¡Tú puedes!
-        </div>
-      </div>
-
-      <div class="standards-table mt-4">
-        <h3>Estándares de Fuerza (kg) para {{ getSelectedExerciseName() }}</h3>
-        <p class="text-muted small">Calculados para un peso corporal de {{ userBodyWeight | number:'1.0-1' }} kg (Género: {{ (currentUser ? currentUser.gender : standardsForm.get('guestGender')?.value) | titlecase }}).</p>
-        <div class="table-responsive">
-          <table class="table table-bordered table-hover text-center">
-            <thead class="thead-light">
-              <tr>
-                <th *ngFor="let level of calculatedLevelsForUser">{{ strengthLevelLabels[level.level] }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td *ngFor="let level of calculatedLevelsForUser" [class.highlighted-cell]="level.isCurrentUserLevel">
-                  {{ level.targetWeight | number:'1.0-1' }} kg
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <div *ngIf="filteredAndSortedStandards.length > 0" class="table-responsive">
+        <table class="table table-sm table-hover table-striped standards-ratio-table">
+          <thead>
+            <tr>
+              <th>Ejercicio</th>
+              <th *ngFor="let level of strengthLevelKeys" class="text-center ratio-header">{{ strengthLevelLabels[level] }}</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let std of filteredAndSortedStandards" [class.active-standard-row]="activeStandardForTable?._id === std._id">
+              <td>{{ getExerciseNameFromStd(std) }}</td>
+              <td *ngFor="let key of strengthLevelKeys" class="text-center">
+                {{ std.ratios && std.ratios[key] !== undefined ? (std.ratios[key] | number:'1.1-3') + 'x' : '--' }}
+              </td>
+              <td>
+                <button class="btn btn-sm btn-info" (click)="setActiveStandardForTable(std)">
+                  <i class="fas fa-table"></i> Ver Tabla Detallada
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-  </div>
+
+    <div *ngIf="activeStandardForTable" class="dynamic-kg-table-card mb-4">
+      <h3>Tabla Detallada de Pesos (kg) para: <strong>{{ getExerciseNameFromStd(activeStandardForTable) }}</strong>
+        ({{ activeStandardForTable.gender | titlecase }})
+      </h3>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center">
+          <thead class="thead-dark">
+            <tr>
+              <th>Peso Corporal (kg)</th>
+              <th *ngFor="let key of strengthLevelKeys">{{ strengthLevelLabels[key] }} (kg)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of dynamicTableRows">
+              <td><strong>{{ row.bodyWeight }} kg</strong></td>
+              <td *ngFor="let key of strengthLevelKeys">{{ row.levels[key] | number:'1.0-1' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    </div>
 </div>

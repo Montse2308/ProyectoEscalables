@@ -257,3 +257,105 @@ tr.highlighted td {
     font-size: 0.75rem;
   }
 }
+
+
+
+// Estilos para la nueva tarjeta de filtros
+.filters-card {
+  background-color: #f8f9fa; // Un color de fondo ligeramente diferente
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+
+  h2 {
+    font-size: 1.3rem;
+    color: var(--dark-gray, #343a40);
+    margin-bottom: 1rem;
+  }
+}
+
+// Estilos para la lista de estándares con ratios
+.standards-list-card {
+  h3 {
+    font-size: 1.4rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+  }
+  .no-data-small p { // Para el mensaje de no datos en la lista
+    font-size: 0.9rem;
+    color: #6c757d;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+  }
+  .standards-ratio-table {
+      th.ratio-header {
+          font-size: 0.8rem; // Hacer cabeceras de ratios un poco más pequeñas si es necesario
+      }
+      td {
+        font-size: 0.9rem;
+      }
+      .btn-sm {
+        font-size: 0.8rem;
+        padding: 0.2rem 0.5rem;
+      }
+  }
+  .active-standard-row {
+    background-color: var(--primary-light-color, #ffebee) !important; // Resaltar fila activa
+    font-weight: bold;
+  }
+}
+
+
+// Estilos para la tabla dinámica de KG
+.dynamic-kg-table-card {
+  h3 {
+    font-size: 1.4rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    strong {
+        color: var(--secondary-color, #007bff); // O algún otro color para destacar
+    }
+  }
+  p.text-muted { // Para el subtítulo de la tabla
+      margin-bottom: 1rem;
+  }
+  .table-bordered th, .table-bordered td {
+    vertical-align: middle;
+  }
+  .thead-dark th { // Para que los encabezados de la tabla dinámica resalten
+      background-color: #343a40;
+      color: #fff;
+  }
+}
+
+.ml-2 { margin-left: 0.5rem !important; } // Si no usas Bootstrap
+.w-100 { width: 100% !important; } // Para botones de ancho completo
+.text-center { text-align: center !important; }
+.mb-3 { margin-bottom: 1rem !important; }
+.mb-4 { margin-bottom: 1.5rem !important; }
+.mt-1 { margin-top: 0.25rem !important; }
+.mt-2 { margin-top: 0.5rem !important; }
+.mt-3 { margin-top: 1rem !important; }
+.mt-4 { margin-top: 1.5rem !important; }
+.mr-1 { margin-right: 0.25rem !important; }
+
+.highlighted-cell {
+  background-color: var(--primary-light-color, #e3f2fd);
+  font-weight: bold;
+  color: var(--primary-color, #0d6efd);
+  border: 2px solid var(--primary-color, #0d6efd);
+}
+
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.alert-sm { // Para alertas más pequeñas en el formulario
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+}
