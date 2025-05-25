@@ -289,3 +289,50 @@ th {
     gap: 0.5rem;
   }
 }
+
+.col-lg-2dot4 {
+  @media (min-width: 992px) { // lg breakpoint de Bootstrap
+    flex: 0 0 20%;
+    max-width: 20%;
+  }
+}
+.ml-2 { margin-left: 0.5rem !important; } // Si no usas Bootstrap, o para asegurar
+.editing-info {
+  font-style: italic;
+  color: #555;
+  background-color: #f0f0f0;
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+.ratios-section h3 {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.standards-list-table-container {
+  overflow-x: auto; /* Para tablas anchas en móviles */
+}
+
+// En el SCSS del componente o global:
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -5px;
+  margin-left: -5px;
+  .form-group {
+    padding-right: 5px;
+    padding-left: 5px;
+  }
+}
+// Asumiendo una estructura similar a Bootstrap para col-md-6, etc.
+.col-md-6 { flex: 0 0 50%; max-width: 50%; }
+.col-md-4 { flex: 0 0 33.333333%; max-width: 33.333333%; }
+.mt-3 { margin-top: 1rem !important; }
+.mb-3 { margin-bottom: 1rem !important; }
+.mt-4 { margin-top: 1.5rem !important; }
+
+// Para el botón de scrollToForm
+::ng-deep html { // O solo 'html' si no está encapsulado
+  scroll-behavior: smooth;
+}
