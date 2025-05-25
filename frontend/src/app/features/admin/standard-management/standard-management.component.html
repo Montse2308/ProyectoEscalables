@@ -124,7 +124,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let std of standards">
-              <td>{{ std.exercise?.name || 'ID: ' + std.exercise }}</td> <td>{{ std.gender | titlecase }}</td>
+              <td>{{ std.exercise.name || 'ID: ' + std.exercise }}</td> <td>{{ std.gender | titlecase }}</td>
               <td *ngFor="let level of strengthLevelsDef" class="text-center">{{ std.ratios[level.key] }}x</td>
               <td>
                 <button 
