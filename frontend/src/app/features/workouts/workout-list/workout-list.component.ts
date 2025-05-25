@@ -30,18 +30,26 @@ export class WorkoutListComponent implements OnInit {
 
   loadWorkouts(): void {
     this.loading = true;
+    this.error = ''; 
     this.workoutService.getWorkouts().subscribe({
-      next: (data) => {
-        this.workouts = data;
+      next: (response: any) => {
+        console.log('Respuesta de getWorkouts:', response); 
+        this.workouts = response.workouts || [];
         this.filterWorkouts();
         this.loading = false;
+        if (this.workouts.length === 0 && !this.searchTerm) {
+            console.log('No se cargaron entrenamientos o la lista está vacía.');
+        }
       },
-      error: (error) => {
-        this.error = error.error.message || 'Failed to load workouts';
+      error: (err) => {
+        this.error = err.error?.message || 'Error al cargar los entrenamientos.';
+        console.error('Error detallado en loadWorkouts:', err); // DEBUG: Ver el error completo
         this.loading = false;
       },
     });
   }
+
+  
 
   onSearchChange(): void {
     this.filterWorkouts();

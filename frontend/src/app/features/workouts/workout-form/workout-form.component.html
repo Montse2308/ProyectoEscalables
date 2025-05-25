@@ -1,190 +1,152 @@
 <div class="workout-form-container">
   <div class="workout-form-header">
-    <h1>{{ editMode ? 'Edit Workout' : 'Log New Workout' }}</h1>
-    <p>{{ editMode ? 'Update your workout details and performance' : 'Record your workout details and performance' }}</p>
+    <h1>{{ editMode ? 'Editar Entrenamiento' : 'Registrar Nuevo Entrenamiento' }}</h1>
+    <p>{{ editMode ? 'Actualiza los detalles y el rendimiento de tu entrenamiento.' : 'Registra los detalles y el rendimiento de tu entrenamiento.' }}</p>
   </div>
-  
-  <div *ngIf="loadingData" class="loading-spinner">
-    <div class="spinner-border" role="status">
-      <span class="sr-only">Loading...</span>
+
+  <div *ngIf="loadingData && !workoutForm" class="loading-spinner"> <div class="spinner-border" role="status">
+      <span class="sr-only">Cargando datos...</span>
     </div>
   </div>
-  
-  <div *ngIf="!loadingData" class="workout-form-content">
-    <form [formGroup]="workoutForm" (ngSubmit)="onSubmit()">
+
+  <div *ngIf="!loadingData || workoutForm" class="workout-form-content"> <form [formGroup]="workoutForm" (ngSubmit)="onSubmit()">
       <div class="workout-form-card">
-        <h2>Workout Details</h2>
+        <h2>Detalles del Entrenamiento</h2>
         
         <div class="form-row">
           <div class="form-group col-md-6">
-            <label for="name">Workout Name</label>
-            <input 
-              type="text" 
-              formControlName="name" 
-              class="form-control" 
-              [ngClass]="{ 'is-invalid': f['name'].touched && f['name'].errors }" 
+            <label for="name">Nombre del Entrenamiento</label>
+            <input
+              type="text"
+              id="name"
+              formControlName="name"
+              class="form-control"
+              placeholder="Ej. Día de Pecho y Tríceps"
+              [ngClass]="{ 'is-invalid': f['name'].touched && f['name'].errors }"
             />
-            <div *ngIf="f['name'].touched && f['name'].errors" class="invalid-feedback">
-              <div *ngIf="f['name'].errors['required']">Workout name is required</div>
+            <div *ngIf="f['name'].touched && f['name'].errors?.['required']" class="invalid-feedback">
+              El nombre es requerido.
             </div>
           </div>
           
           <div class="form-group col-md-6">
-            <label for="date">Date</label>
-            <input 
-              type="date" 
-              formControlName="date" 
-              class="form-control" 
-              [ngClass]="{ 'is-invalid': f['date'].touched && f['date'].errors }" 
+            <label for="date">Fecha</label>
+            <input
+              type="date"
+              id="date"
+              formControlName="date"
+              class="form-control"
+              [ngClass]="{ 'is-invalid': f['date'].touched && f['date'].errors }"
             />
-            <div *ngIf="f['date'].touched && f['date'].errors" class="invalid-feedback">
-              <div *ngIf="f['date'].errors['required']">Date is required</div>
+            <div *ngIf="f['date'].touched && f['date'].errors?.['required']" class="invalid-feedback">
+              La fecha es requerida.
             </div>
           </div>
         </div>
         
-        <div class="form-row">
-          <div class="form-group col-md-6">
-            <label for="duration">Duration (minutes)</label>
-            <input 
-              type="number" 
-              formControlName="duration" 
-              class="form-control" 
-              [ngClass]="{ 'is-invalid': f['duration'].touched && f['duration'].errors }" 
-            />
-            <div *ngIf="f['duration'].touched && f['duration'].errors" class="invalid-feedback">
-              <div *ngIf="f['duration'].errors['min']">Duration must be at least 0</div>
-            </div>
-          </div>
-          
-          <div class="form-group col-md-6">
-            <label for="notes">Notes (Optional)</label>
-            <textarea 
-              formControlName="notes" 
-              class="form-control" 
-              rows="1"
-            ></textarea>
-          </div>
+        <div class="form-group"> <label for="notes">Notas Generales (Opcional)</label>
+          <textarea
+            id="notes"
+            formControlName="notes"
+            class="form-control"
+            rows="2"
+            placeholder="Ej. Sentí buena energía hoy, aumentar pesos la próxima semana..."
+          ></textarea>
         </div>
-      </div>
+        </div>
       
       <div class="workout-form-card">
         <div class="exercises-header">
-          <h2>Exercises</h2>
-          <button type="button" class="btn btn-sm btn-outline-primary" (click)="addExercise()">
-            Add Exercise
+          <h2>Ejercicios</h2>
+          <button type="button" class="btn btn-sm btn-outline-primary" (click)="onAddExerciseClicked()">
+            <i class="fas fa-plus"></i> Añadir Ejercicio
           </button>
         </div>
         
-        <div *ngIf="exercisesArray.length === 0" class="no-exercises">
-          <p>No exercises added yet. Click "Add Exercise" to start logging your workout.</p>
+        <div *ngIf="exercisesArray.length === 0" class="no-exercises alert alert-info">
+          <p>No has añadido ejercicios. Haz clic en "Añadir Ejercicio" para empezar.</p>
         </div>
         
         <div formArrayName="exercises" class="exercises-list">
-          <div *ngFor="let exerciseGroup of exercisesArray.controls; let i = index" class="exercise-item">
-            <div [formGroupName]="i" class="exercise-form">
+          <div *ngFor="let exerciseGroup of exercisesArray.controls; let i = index" class="exercise-item card mb-3">
+            <div class="card-body" [formGroupName]="i">
               <div class="exercise-header">
-                <h3>Exercise {{ i + 1 }}</h3>
-                <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeExercise(i)">
-                  Remove
+                <h4 class="card-title mb-0">Ejercicio {{ i + 1 }}</h4>
+                <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeExercise(i)" title="Eliminar este ejercicio">
+                  <i class="fas fa-trash-alt"></i> Eliminar Ejercicio
                 </button>
               </div>
               
               <div class="form-group">
-                <label for="exercise-{{i}}">Exercise</label>
-                <div class="exercise-select-container">
-                  <input 
-                    type="text" 
-                    [(ngModel)]="searchTerm" 
-                    [ngModelOptions]="{standalone: true}" 
-                    (input)="onSearchChange()" 
-                    placeholder="Search exercises..." 
-                    class="form-control exercise-search"
-                  />
-                  <select 
-                    formControlName="exercise" 
-                    class="form-control" 
-                    [ngClass]="{ 'is-invalid': exercisesArray.at(i).get('exercise')?.touched && exercisesArray.at(i).get('exercise')?.errors }"
-                  >
-                    <option value="">Select Exercise</option>
-                    <option *ngFor="let exercise of filteredExercises" [value]="exercise._id">{{ exercise.name }}</option>
-                  </select>
-                  <div *ngIf="exercisesArray.at(i).get('exercise')?.touched && exercisesArray.at(i).get('exercise')?.errors" class="invalid-feedback">
-                    <div *ngIf="exercisesArray.at(i).get('exercise')?.errors?.['required']">Exercise is required</div>
-                  </div>
+                <label [for]="'exercise-' + i">Selecciona el Ejercicio</label>
+                <select
+                  [id]="'exercise-' + i"
+                  formControlName="exercise"
+                  class="form-control"
+                  [ngClass]="{ 'is-invalid': getExerciseFormGroup(i).get('exercise')?.touched && getExerciseFormGroup(i).get('exercise')?.errors }"
+                >
+                  <option value="" disabled>-- Elige un ejercicio --</option>
+                  <option *ngFor="let ex of allAvailableExercises" [value]="ex._id">{{ ex.name }}</option>
+                </select>
+                <div *ngIf="getExerciseFormGroup(i).get('exercise')?.touched && getExerciseFormGroup(i).get('exercise')?.errors?.['required']" class="invalid-feedback">
+                  Debes seleccionar un ejercicio.
                 </div>
               </div>
               
-              <div formArrayName="sets" class="sets-container">
-                <div class="sets-header">
-                  <h4>Sets</h4>
-                  <button type="button" class="btn btn-sm btn-outline-primary" (click)="addSet(i)">
-                    Add Set
-                  </button>
-                </div>
-                
-                <div class="sets-table-container">
-                  <table class="sets-table">
-                    <thead>
-                      <tr>
-                        <th>Set</th>
-                        <th>Weight (kg)</th>
-                        <th>Reps</th>
-                        <th>RPE</th>
-                        <th>Notes</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let setGroup of getSetsArray(i).controls; let j = index" [formGroupName]="j">
-                        <td>{{ j + 1 }}</td>
-                        <td>
-                          <input 
-                            type="number" 
-                            formControlName="weight" 
-                            class="form-control" 
-                            [ngClass]="{ 'is-invalid': getSetsArray(i).at(j).get('weight')?.touched && getSetsArray(i).at(j).get('weight')?.errors }" 
-                          />
-                        </td>
-                        <td>
-                          <input 
-                            type="number" 
-                            formControlName="reps" 
-                            class="form-control" 
-                            [ngClass]="{ 'is-invalid': getSetsArray(i).at(j).get('reps')?.touched && getSetsArray(i).at(j).get('reps')?.errors }" 
-                          />
-                        </td>
-                        <td>
-                          <input 
-                            type="number" 
-                            formControlName="rpe" 
-                            class="form-control" 
-                            placeholder="0-10" 
-                          />
-                        </td>
-                        <td>
-                          <input 
-                            type="text" 
-                            formControlName="notes" 
-                            class="form-control" 
-                            placeholder="Optional" 
-                          />
-                        </td>
-                        <td>
-                          <button 
-                            type="button" 
-                            class="btn btn-sm btn-outline-danger" 
-                            (click)="removeSet(i, j)"
-                            [disabled]="getSetsArray(i).length <= 1"
-                          >
-                            Remove
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+              
+<div formArrayName="sets" class="sets-container mt-3">
+  <ng-container *ngFor="let setCtrl of getSetsArray(0).controls; let i = index">
+    <div class="sets-header">
+      <h5>Series Realizadas</h5>
+      <button type="button" class="btn btn-sm btn-outline-success" (click)="addSetToExercise(i)">
+        <i class="fas fa-plus-circle"></i> Añadir Serie
+      </button>
+    </div>
+    
+    <div *ngIf="getSetsArray(i).length === 0" class="alert alert-warning small mt-2">
+        Añade al menos una serie para este ejercicio.
+    </div>
+
+    <div class="sets-table-container mt-2" *ngIf="getSetsArray(i).length > 0">
+      <table class="table table-sm sets-table">
+        <thead class="thead-light">
+          <tr>
+            <th class="text-center">Serie</th>
+            <th>Peso (kg)</th>
+            <th>Repeticiones</th>
+            <th>Descanso (seg)</th> <th>Notas de Serie</th>
+            <th class="text-center">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let setCtrl of getSetsArray(i).controls; let j = index" [formGroupName]="j">
+            <td class="text-center font-weight-bold">{{ j + 1 }}</td>
+            <td>
+              <input type="number" formControlName="weight" class="form-control form-control-sm" placeholder="Peso"
+                     [ngClass]="{ 'is-invalid': getSetsArray(i).at(j).get('weight')?.touched && getSetsArray(i).at(j).get('weight')?.errors }"/>
+            </td>
+            <td>
+              <input type="number" formControlName="reps" class="form-control form-control-sm" placeholder="Reps"
+                     [ngClass]="{ 'is-invalid': getSetsArray(i).at(j).get('reps')?.touched && getSetsArray(i).at(j).get('reps')?.errors }"/>
+            </td>
+            <td> <input type="number" formControlName="restTime" class="form-control form-control-sm" placeholder="Segundos"
+                     [ngClass]="{ 'is-invalid': getSetsArray(i).at(j).get('restTime')?.touched && getSetsArray(i).at(j).get('restTime')?.errors }"/>
+            </td>
+            <td>
+              <input type="text" formControlName="notes" class="form-control form-control-sm" placeholder="Opcional"/>
+            </td>
+            <td class="text-center">
+              <button type="button" class="btn btn-xs btn-outline-danger" (click)="removeSet(i, j)" 
+                      [disabled]="getSetsArray(i).length <= 1" title="Eliminar serie">
+                <i class="fas fa-times"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+</div>
             </div>
           </div>
         </div>
@@ -192,23 +154,22 @@
       
       <div class="form-actions">
         <button type="button" class="btn btn-outline-secondary" (click)="cancel()">
-          Cancel
+          Cancelar
         </button>
-        <button type="button" class="btn btn-outline-success" [disabled]="workoutForm.invalid || loading" (click)="onSubmit(true)">
+        <button type="button" class="btn btn-success" [disabled]="workoutForm.invalid || loading" (click)="onSubmit(true)">
           <span *ngIf="loading && isCompleting" class="spinner-border spinner-border-sm mr-1"></span>
-          Complete & Save
+          <i class="fas fa-check-circle"></i> Finalizar y Guardar
         </button>
         <button type="submit" [disabled]="workoutForm.invalid || loading" class="btn btn-primary">
           <span *ngIf="loading && !isCompleting" class="spinner-border spinner-border-sm mr-1"></span>
-          {{ editMode ? 'Update' : 'Save' }} Workout
+          <i class="fas fa-save"></i> {{ editMode ? 'Actualizar Borrador' : 'Guardar Borrador' }}
         </button>
       </div>
     </form>
     
     <div *ngIf="submitSuccess" class="alert alert-success mt-3">
-      Workout {{ editMode ? 'updated' : 'created' }} successfully!
+      Entrenamiento {{ editMode ? 'actualizado' : 'guardado' }} ¡correctamente!
     </div>
-    
     <div *ngIf="error" class="alert alert-danger mt-3">
       {{ error }}
     </div>

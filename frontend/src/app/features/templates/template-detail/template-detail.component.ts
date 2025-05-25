@@ -8,11 +8,13 @@ import { Exercise } from '../../../core/models/exercise.model'; // Importar Exer
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DecimalPipe } from '@angular/common'; // Para el pipe 'number'
+import { Workout } from '../../../core/models/workout.model'; // Importar Workout
+
 
 @Component({
   selector: 'app-template-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule], // Añadir DecimalPipe si no está
+  imports: [CommonModule, RouterModule], 
   templateUrl: './template-detail.component.html',
   styleUrls: ['./template-detail.component.scss'],
 })
@@ -60,13 +62,21 @@ export class TemplateDetailComponent implements OnInit {
     if (!this.template) return;
 
     this.startingWorkout = true;
+    this.error = ''; // Limpiar error previo
     this.workoutService.startWorkoutFromTemplate(this.template._id).subscribe({
-      next: (workout) => {
+      next: (newlyCreatedWorkout: Workout) => {
         this.startingWorkout = false;
-        this.router.navigate(['/workouts', workout._id]);
+        // Navegar al formulario de workout en modo edición, pasando los datos de la plantilla
+        // y el workout recién creado (que ya tiene los ejercicios y sets pre-poblados)
+        this.router.navigate(['/workouts/edit', newlyCreatedWorkout._id], {
+          state: { 
+            templateData: this.template, // Plantilla original para referencia (ej. notas generales)
+            workoutShell: newlyCreatedWorkout // El workout creado por el backend
+          }
+        });
       },
-      error: (error) => {
-        this.error = error.error?.message || 'Error al iniciar el entrenamiento desde la plantilla';
+      error: (err) => {
+        this.error = err.error?.message || 'Error al iniciar el entrenamiento desde la plantilla.';
         this.startingWorkout = false;
       },
     });

@@ -1,143 +1,164 @@
-<div class="workout-detail-container" *ngIf="workout">
+<div class="workout-detail-container" *ngIf="workout; else loadingOrError">
   <div class="header">
-    <button class="back-btn" (click)="goBack()">
+    <button class="back-btn btn btn-sm btn-outline-secondary" (click)="goBack()">
       <i class="material-icons">arrow_back</i>
       Volver a Entrenamientos
     </button>
     <div class="actions">
-      <button class="btn btn-outline" (click)="editWorkout()">
+      <button class="btn btn-outline-primary" (click)="editWorkout()">
         <i class="material-icons">edit</i>
         Editar Entrenamiento
       </button>
     </div>
   </div>
 
-  <div class="workout-info">
-    <div class="main-info">
-      <h1>{{ workout.name }}</h1>
-      <div class="meta">
-        <div class="date">
-          <i class="material-icons">event</i>
-          {{ workout.date | date : "EEEE, dd 'de' MMMM 'de' yyyy" : '' : 'es' }} </div>
-        <div class="template" *ngIf="workout.fromTemplate">
-          <i class="material-icons">description</i>
-          Desde plantilla: {{ workout.fromTemplate }} </div>
-      </div>
-    </div>
+  <div class="workout-info-card card mt-3">
+    <div class="card-body">
+        <div class="main-info">
+            <h1 class="card-title">{{ workout.name }}</h1>
+            <div class="meta">
+                <div class="date text-muted">
+                <i class="material-icons">event</i>
+                {{ workout.date | date : "EEEE, dd 'de' MMMM 'de' ಗYYYY" : '' : 'es' }}
+                <span *ngIf="workout.isCompleted" class="badge badge-success ml-2">Completado</span>
+                <span *ngIf="!workout.isCompleted" class="badge badge-warning ml-2">En Progreso</span>
+                </div>
+                <div class="template text-muted" *ngIf="workout.fromTemplate">
+                <i class="material-icons">description</i>
+                Basado en plantilla: {{ fromTemplateName }}
+                </div>
+            </div>
+        </div>
 
-    <div class="stats-grid">
-      <div class="stat-card">
-        <i class="material-icons">fitness_center</i>
-        <div class="stat-content">
-          <div class="value">{{ getExerciseCount() }}</div>
-          <div class="label">Ejercicios</div>
+        <hr>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="material-icons text-primary">fitness_center</i>
+                <div class="stat-content">
+                <div class="value">{{ getExerciseCount() }}</div>
+                <div class="label">Ejercicios</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="material-icons text-info">repeat</i>
+                <div class="stat-content">
+                <div class="value">{{ getTotalSets() }}</div>
+                <div class="label">Series Totales</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="material-icons text-success">schedule</i>
+                <div class="stat-content">
+                <div class="value">{{ calculatedDurationDisplay }}</div>
+                <div class="label">Duración Estimada</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="material-icons text-danger">trending_up</i>
+                <div class="stat-content">
+                <div class="value">{{ getTotalVolume() | number : "1.0-0" }}</div>
+                <div class="label">Volumen Total (kg)</div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="stat-card">
-        <i class="material-icons">repeat</i>
-        <div class="stat-content">
-          <div class="value">{{ getTotalSets() }}</div>
-          <div class="label">Series Totales</div>
-        </div>
-      </div>
-      <div class="stat-card" *ngIf="workout.duration">
-        <i class="material-icons">schedule</i>
-        <div class="stat-content">
-          <div class="value">{{ workout.duration }}</div>
-          <div class="label">Minutos</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <i class="material-icons">trending_up</i>
-        <div class="stat-content">
-          <div class="value">{{ getTotalVolume() | number : "1.0-0" }}</div>
-          <div class="label">Volumen Total (kg)</div>
-        </div>
-      </div>
     </div>
   </div>
 
-  <div class="exercises-section">
+
+  <div class="exercises-section mt-4">
     <h2>Ejercicios Realizados</h2>
-    <div class="exercises-list">
+    <div *ngIf="!workout.exercises || workout.exercises.length === 0" class="alert alert-info">
+        No se registraron ejercicios para este entrenamiento.
+    </div>
+    <div class="exercises-list" *ngIf="workout.exercises && workout.exercises.length > 0">
       <div
-        class="exercise-card"
+        class="exercise-card card mb-3"
         *ngFor="let exercisePerformed of workout.exercises; let i = index" 
       >
-        <div class="exercise-header">
-          <div class="exercise-info">
-            <h3>{{ exercisePerformed.exercise.name }}</h3>
-            <div class="exercise-meta">
-              <span class="muscle-group">
-                {{ exercisePerformed.exercise.muscleGroups.join(', ') | titlecase }}
-              </span>
-              <span *ngIf="exercisePerformed.exercise.exerciseType" class="badge exercise-type-badge">
+        <div class="card-header exercise-header">
+            <h5 class="mb-0">
+                <span class="exercise-number">{{i + 1}}.</span> 
+                {{ exercisePerformed.exercise.name || 'Ejercicio no disponible' }}
+            </h5>
+            <div class="exercise-summary text-muted">{{ exercisePerformed.sets.length || 0 }} series</div>
+        </div>
+        <div class="card-body" *ngIf="exercisePerformed.exercise">
+            <div class="exercise-meta mb-2">
+                <span class="badge badge-pill badge-info mr-1" *ngFor="let group of exercisePerformed.exercise.muscleGroups">{{ group | titlecase }}</span>
+                <span *ngIf="exercisePerformed.exercise.exerciseType" class="badge badge-pill exercise-type-badge {{ exercisePerformed.exercise.exerciseType === 'compound' ? 'badge-primary' : 'badge-secondary' }}">
                 {{ exercisePerformed.exercise.exerciseType === 'compound' ? 'Compuesto' : 'Específico' }}
-              </span>
+                </span>
             </div>
-          </div>
-          <div class="exercise-summary">{{ exercisePerformed.sets.length }} series</div>
-        </div>
 
-        <div class="sets-table">
-          <div class="table-header">
-            <div class="set-col">Serie</div>
-            <div class="reps-col">Reps</div>
-            <div class="weight-col">Peso (kg)</div>
-            <div class="rpe-col">RPE</div>
-            <div class="notes-col">Notas</div>
-          </div>
-          <div class="table-body">
-            <div
-              class="set-row"
-              *ngFor="let set of exercisePerformed.sets; let setIndex = index"
-            >
-              <div class="set-col">{{ setIndex + 1 }}</div>
-              <div class="reps-col">{{ set.reps }}</div>
-              <div class="weight-col">{{ set.weight }}</div>
-              <div class="rpe-col">
-                <span *ngIf="set.rpe" class="rpe-badge">{{ set.rpe }}</span>
-                <span *ngIf="!set.rpe" class="no-data">-</span>
-              </div>
-              <div class="notes-col">
-                <span *ngIf="set.notes" class="notes">{{ set.notes }}</span>
-                <span *ngIf="!set.notes" class="no-data">-</span>
-              </div>
+            <div class="sets-table table-responsive" *ngIf="exercisePerformed.sets && exercisePerformed.sets.length > 0">
+                <table class="table table-sm table-striped table-bordered">
+                    <thead class="thead-light">
+                        <tr>
+                        <th scope="col" class="text-center">Serie</th>
+                        <th scope="col" class="text-center">Repeticiones</th>
+                        <th scope="col" class="text-center">Peso (kg)</th>
+                        <th scope="col" class="text-center">Descanso (seg)</th>
+                        <th scope="col">Notas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let set of exercisePerformed.sets; let setIndex = index">
+                        <td class="text-center font-weight-bold">{{ setIndex + 1 }}</td>
+                        <td class="text-center">{{ set.reps }}</td>
+                        <td class="text-center">{{ set.weight | number:'1.0-2' }}</td>
+                        <td class="text-center">
+                            <span *ngIf="set.restTime !== null && set.restTime !== undefined">{{ set.restTime }}s</span>
+                            <span *ngIf="set.restTime === null || set.restTime === undefined" class="no-data text-muted">-</span>
+                        </td>
+                        <td>
+                            <span *ngIf="set.notes" class="notes">{{ set.notes }}</span>
+                            <span *ngIf="!set.notes" class="no-data text-muted">-</span>
+                        </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-          </div>
-        </div>
+             <div *ngIf="!exercisePerformed.sets || exercisePerformed.sets.length === 0" class="alert alert-light small">
+                No hay series registradas para este ejercicio.
+            </div>
 
-        <div class="exercise-stats">
-          <div class="stat">
-            <span class="label">Mejor Serie:</span>
-            <span class="value">{{ getBestSet(exercisePerformed) }}</span>
-          </div>
-          <div class="stat">
-            <span class="label">Volumen por Ejercicio:</span>
-            <span class="value"
-              >{{ getExerciseVolume(exercisePerformed) | number : "1.0-0" }} kg</span
-            >
-          </div>
+            <div class="exercise-stats mt-3">
+                <div class="stat">
+                <span class="label">Mejor Serie:</span>
+                <span class="value">{{ getBestSet(exercisePerformed) }}</span>
+                </div>
+                <div class="stat">
+                <span class="label">Volumen por Ejercicio:</span>
+                <span class="value">{{ getExerciseVolume(exercisePerformed) | number : "1.0-0" }} kg</span>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" *ngIf="!exercisePerformed.exercise">
+            <p class="text-danger">Error: Detalles del ejercicio no disponibles.</p>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="notes-section" *ngIf="workout.notes">
-    <h2>Notas del Entrenamiento</h2>
-    <div class="notes-content">
-      <p>{{ workout.notes }}</p>
+  <div class="notes-section card mt-4" *ngIf="workout.notes">
+    <div class="card-body">
+        <h2 class="card-title">Notas del Entrenamiento</h2>
+        <p class="card-text notes-content">{{ workout.notes }}</p>
     </div>
   </div>
 </div>
 
-<div class="loading" *ngIf="loading">
-  <div class="spinner"></div>
-  <p>Cargando entrenamiento...</p>
-</div>
+<ng-template #loadingOrError>
+    <div class="loading-container text-center py-5" *ngIf="loading">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
+    <p class="mt-2 lead">Cargando entrenamiento...</p>
+    </div>
 
-<div class="error" *ngIf="error">
-  <i class="material-icons">error</i>
-  <p>{{ error }}</p>
-  <button class="btn btn-primary" (click)="goBack()">Volver</button>
-</div>
+    <div class="error-container alert alert-danger" *ngIf="error && !loading">
+    <h4 class="alert-heading"><i class="material-icons">error_outline</i> ¡Error!</h4>
+    <p class="error-message">{{ error }}</p>
+    <hr>
+    <button class="btn btn-primary btn-sm" (click)="goBack()">Volver a Entrenamientos</button>
+    </div>
+</ng-template>

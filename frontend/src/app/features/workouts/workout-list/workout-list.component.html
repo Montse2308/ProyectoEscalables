@@ -1,130 +1,118 @@
 <div class="workout-list-container">
   <div class="header">
-    <h1>My Workouts</h1>
+    <h1>Mis Entrenamientos</h1>
     <button class="btn btn-primary" (click)="createWorkout()">
-      <i class="material-icons">add</i>
-      New Workout
+      <i class="material-icons">add_circle_outline</i> Nuevo Entrenamiento
     </button>
   </div>
 
   <div class="search-section">
-    <div class="search-box">
-      <i class="material-icons">search</i>
+    <div class="search-box input-group">
+      <div class="input-group-prepend">
+          <span class="input-group-text"><i class="material-icons">search</i></span>
+      </div>
       <input
         type="text"
-        placeholder="Search workouts..."
+        class="form-control"
+        placeholder="Buscar por nombre o notas..."
         [(ngModel)]="searchTerm"
         (input)="onSearchChange()"
       />
     </div>
   </div>
 
-  <div class="content" *ngIf="!loading">
+  <div *ngIf="loading && workouts.length === 0" class="loading-spinner mt-4">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-2">Cargando entrenamientos...</p>
+  </div>
+  
+  <div *ngIf="error" class="alert alert-danger mt-3">
+    {{ error }}
+    <button class="btn btn-sm btn-link p-0 ml-2" (click)="loadWorkouts()">Reintentar</button>
+  </div>
+
+  <div class="content mt-3" *ngIf="!loading || workouts.length > 0">
     <div class="workout-grid" *ngIf="filteredWorkouts.length > 0">
-      <div class="workout-card" *ngFor="let workout of filteredWorkouts">
-        <div class="card-header">
-          <h3>{{ workout.name }}</h3>
-          <div class="date">{{ workout.date | date : "MMM dd, yyyy" }}</div>
+      <div class="workout-card card mb-3" *ngFor="let workout of filteredWorkouts">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h3 class="mb-0 h5">{{ workout.name }}</h3>
+          <span class="badge {{workout.isCompleted ? 'badge-success' : 'badge-warning'}}">
+            {{ workout.isCompleted ? 'Completado' : 'En Progreso' }}
+          </span>
         </div>
 
         <div class="card-body">
-          <div class="workout-stats">
-            <div class="stat">
-              <i class="material-icons">fitness_center</i>
-              <span>{{ getExerciseCount(workout) }} exercises</span>
+          <p class="card-subtitle mb-2 text-muted"><i class="material-icons vm-icon">event</i> {{ workout.date | date : "dd/MM/yyyy" : '' : 'es' }}</p>
+          
+          <div class="workout-stats-small">
+            <span title="Ejercicios"><i class="material-icons vm-icon">fitness_center</i> {{ getExerciseCount(workout) }}</span>
+            <span title="Series Totales"><i class="material-icons vm-icon">repeat</i> {{ getTotalSets(workout) }}</span>
             </div>
-            <div class="stat">
-              <i class="material-icons">repeat</i>
-              <span>{{ getTotalSets(workout) }} sets</span>
-            </div>
-            <div class="stat" *ngIf="workout.duration">
-              <i class="material-icons">schedule</i>
-              <span>{{ workout.duration }}min</span>
-            </div>
+
+          <div class="exercises-preview mt-2" *ngIf="workout.exercises && workout.exercises.length > 0">
+            <strong>Ejercicios:</strong>
+            <ul class="list-inline">
+              <li class="list-inline-item" *ngFor="let exPerf of workout.exercises.slice(0, 3)">
+                <small>{{ exPerf.exercise.name || 'Ejercicio sin nombre' }}</small>
+              </li>
+              <li class="list-inline-item" *ngIf="workout.exercises.length > 3">
+                <small>+{{ workout.exercises.length - 3 }} más</small>
+              </li>
+            </ul>
           </div>
 
-          <div class="exercises-preview" *ngIf="workout.exercises.length > 0">
-            <div
-              class="exercise"
-              *ngFor="let exercise of workout.exercises.slice(0, 3)"
-            >
-              {{ exercise.exercise.name }}
-            </div>
-            <div class="more" *ngIf="workout.exercises.length > 3">
-              +{{ workout.exercises.length - 3 }} more
-            </div>
-          </div>
-
-          <div class="notes" *ngIf="workout.notes">
-            <p>
-              {{ workout.notes | slice : 0 : 100
-              }}<span *ngIf="workout.notes.length > 100">...</span>
-            </p>
+          <div class="notes mt-2" *ngIf="workout.notes">
+            <p class="card-text text-muted"><small><strong>Notas:</strong> {{ workout.notes | slice : 0 : 80 }}{{ (workout.notes && workout.notes.length > 80) ? '...' : '' }}</small></p>
           </div>
         </div>
 
-        <div class="card-actions">
-          <button class="btn btn-outline" (click)="viewWorkout(workout._id)">
-            <i class="material-icons">visibility</i>
-            View
+        <div class="card-footer bg-transparent border-top-0">
+          <button class="btn btn-sm btn-outline-primary mr-2" (click)="viewWorkout(workout._id)" title="Ver Detalles">
+            <i class="material-icons">visibility</i> Ver
           </button>
-          <button class="btn btn-outline" (click)="editWorkout(workout._id)">
-            <i class="material-icons">edit</i>
-            Edit
+          <button class="btn btn-sm btn-outline-secondary mr-2" (click)="editWorkout(workout._id)" title="Editar Entrenamiento">
+            <i class="material-icons">edit</i> Editar
           </button>
-          <button
-            class="btn btn-danger"
-            (click)="confirmDeleteWorkout(workout)"
-          >
-            <i class="material-icons">delete</i>
-            Delete
+          <button class="btn btn-sm btn-outline-danger" (click)="confirmDeleteWorkout(workout)" title="Eliminar Entrenamiento">
+            <i class="material-icons">delete_outline</i> Eliminar
           </button>
         </div>
       </div>
     </div>
 
-    <div class="empty-state" *ngIf="filteredWorkouts.length === 0 && !loading">
-      <i class="material-icons">fitness_center</i>
-      <h3>No workouts found</h3>
-      <p *ngIf="searchTerm">Try adjusting your search terms</p>
-      <p *ngIf="!searchTerm">Start tracking your workouts today!</p>
-      <button
-        class="btn btn-primary"
-        (click)="createWorkout()"
-        *ngIf="!searchTerm"
-      >
-        Create Your First Workout
+    <div class="empty-state alert alert-light text-center" *ngIf="filteredWorkouts.length === 0 && !loading">
+      <i class="material-icons large-icon d-block mb-2">sentiment_dissatisfied</i>
+      <h4 class="alert-heading">No hay entrenamientos</h4>
+      <p *ngIf="searchTerm">No se encontraron entrenamientos que coincidan con "<strong>{{searchTerm}}</strong>".</p>
+      <p *ngIf="!searchTerm && workouts.length === 0">Aún no has registrado ningún entrenamiento. ¡Comienza ahora!</p>
+      <button class="btn btn-primary mt-2" (click)="createWorkout()" *ngIf="!searchTerm && workouts.length === 0">
+        Registrar mi Primer Entrenamiento
       </button>
     </div>
   </div>
 
-  <div class="loading" *ngIf="loading">
-    <div class="spinner"></div>
-    <p>Loading workouts...</p>
-  </div>
-
-  <div class="error" *ngIf="error">
-    <i class="material-icons">error</i>
-    <p>{{ error }}</p>
-    <button class="btn btn-primary" (click)="loadWorkouts()">Try Again</button>
-  </div>
-
-  <!-- Delete Confirmation Modal -->
   <div class="modal-overlay" *ngIf="confirmDelete" (click)="cancelDelete()">
-    <div class="modal" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h3>Delete Workout</h3>
-        <button class="close-btn" (click)="cancelDelete()">
-          <i class="material-icons">close</i>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p>Are you sure you want to delete "{{ workoutToDelete?.name }}"?</p>
-        <p class="warning">This action cannot be undone.</p>
-      </div>
-      <div class="modal-actions">
-        <button class="btn btn-outline" (click)="cancelDelete()">Cancel</button>
-        <button class="btn btn-danger" (click)="deleteWorkout()">Delete</button>
+    <div class="modal" tabindex="-1" role="dialog" (click)="$event.stopPropagation()">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Confirmar Eliminación</h5>
+            <button type="button" class="close" (click)="cancelDelete()" aria-label="Cerrar">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>¿Estás seguro de que quieres eliminar el entrenamiento "<strong>{{ workoutToDelete?.name }}</strong>"?</p>
+            <p class="text-danger font-weight-bold">Esta acción no se puede deshacer.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="cancelDelete()">Cancelar</button>
+            <button type="button" class="btn btn-danger" (click)="deleteWorkout()" [disabled]="loading">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+              Sí, Eliminar
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
