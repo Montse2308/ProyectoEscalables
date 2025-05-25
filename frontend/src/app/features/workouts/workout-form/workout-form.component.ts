@@ -201,16 +201,15 @@ export class WorkoutFormComponent implements OnInit {
 
   createSetGroup(reps?: number, weight?: number, restTime?: number, notes?: string): FormGroup {
     return this.formBuilder.group({
-      reps: [reps || '', [Validators.required, Validators.min(0)]],
-      weight: [weight || '', [Validators.required, Validators.min(0)]],
-      restTime: [restTime || 60, [Validators.required, Validators.min(0)]], // Input para descanso
-      notes: [notes || ''],
-      // rpe: [rpe || null, [Validators.min(0), Validators.max(10)]], // RPE ELIMINADO
+        reps: [reps || 0, [Validators.required, Validators.min(0)]], // Valor inicial más seguro
+        weight: [weight || 0, [Validators.required, Validators.min(0)]],
+        restTime: [restTime ?? 60, [Validators.required, Validators.min(0)]], // Usar operador ?? para null/undefined
+        notes: [notes || '']
     });
   }
 
-  addSetToExercise(exerciseIndex: number, reps?: number, weight?: number, restTime?: number, notes?: string): void {
-    this.getSetsArray(exerciseIndex).push(this.createSetGroup(reps, weight, restTime, notes));
+  addSetToExercise(exerciseIndex: number): void {
+    this.getSetsArray(exerciseIndex).push(this.createSetGroup());
   }
 
   removeSet(exerciseIndex: number, setIndex: number): void {
@@ -220,12 +219,12 @@ export class WorkoutFormComponent implements OnInit {
   // Calcula la duración total en minutos basada en el formulario actual
   private calculateFormDuration(): number {
     let totalSeconds = 0;
-    this.exercisesArray.value.forEach((exercisePerf: {exercise: string, sets: Array<{reps: number, weight: number, restTime: number}>}) => {
-        const exerciseDetails = this.allAvailableExercises.find(e => e._id === exercisePerf.exercise);
-        if (exerciseDetails && exercisePerf.sets) {
-            const workTimePerSet = exerciseDetails.isPowerlifting ? 90 : 60;
-            exercisePerf.sets.forEach(set => {
-                totalSeconds += workTimePerSet + (Number(set.restTime) || 0);
+    this.exercisesArray.value.forEach((exercisePerf: any) => {
+        const exercise = this.allAvailableExercises.find(e => e._id === exercisePerf.exercise);
+        if (exercise) {
+            exercisePerf.sets.forEach((set: any) => {
+                const work = exercise.isPowerlifting ? 90 : 60;
+                totalSeconds += work + (set.restTime || 0);
             });
         }
     });
@@ -300,4 +299,14 @@ export class WorkoutFormComponent implements OnInit {
       this.router.navigate(['/workouts']);
     }
   }
+
+  private formatDuration(minutes: number): string {
+    if (!minutes) return '0 min';
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return hours > 0 
+        ? `${hours}:${mins.toString().padStart(2, '0')} hrs` 
+        : `${mins} min`;
+  }
+
 }

@@ -95,7 +95,7 @@
               
               
 <div formArrayName="sets" class="sets-container mt-3">
-  <ng-container *ngFor="let setCtrl of getSetsArray(0).controls; let i = index">
+  <ng-container *ngFor="let setCtrl of getSetsArray(i).controls; let i = index">
     <div class="sets-header">
       <h5>Series Realizadas</h5>
       <button type="button" class="btn btn-sm btn-outline-success" (click)="addSetToExercise(i)">

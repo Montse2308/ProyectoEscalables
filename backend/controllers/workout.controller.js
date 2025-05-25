@@ -144,15 +144,15 @@ exports.startWorkoutFromTemplate = async (req, res) => {
 
     // Mapear ejercicios de plantilla a formato de ExercisePerformed,
     // incluyendo el restTime de la plantilla en cada set del workout.
+    // En startWorkoutFromTemplate, corregir el mapeo de series:
     const exercisesPerformed = template.exercises.map((templateExercise) => {
-        const exerciseDetails = templateExercise.exercise; // exercise ya está populado
+        const exerciseDetails = templateExercise.exercise;
         return {
-            exercise: exerciseDetails._id, // Guardar solo el ID del ejercicio
-            sets: Array(templateExercise.sets).fill(null).map(() => ({
+            exercise: exerciseDetails._id,
+            sets: Array.from({length: templateExercise.sets}).map(() => ({ // Usar Array.from para mejor compatibilidad
                 reps: templateExercise.reps,
                 weight: 0,
-                // rpe: null, // ELIMINADO
-                restTime: templateExercise.restTime || 60, // Usar restTime de la plantilla
+                restTime: templateExercise.restTime || 60,
                 notes: templateExercise.notes || "",
             })),
         };
