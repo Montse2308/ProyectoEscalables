@@ -20,7 +20,7 @@
               class="nav-link"
             >
               <i class="fas fa-calculator"></i>
-              Calculators
+              Calculadoras
             </a>
             <a
               routerLink="/standards"
@@ -28,7 +28,7 @@
               class="nav-link"
             >
               <i class="fas fa-chart-bar"></i>
-              Standards
+              Estándares
             </a>
           </div>
 
@@ -48,7 +48,7 @@
               class="nav-link"
             >
               <i class="fas fa-dumbbell"></i>
-              Workouts
+              Entrenamientos
             </a>
             <a
               routerLink="/templates"
@@ -56,7 +56,7 @@
               class="nav-link"
             >
               <i class="fas fa-clipboard-list"></i>
-              Templates
+              Plantillas
             </a>
           </div>
 
@@ -68,7 +68,7 @@
               class="nav-link admin-link"
             >
               <i class="fas fa-cog"></i>
-              Admin
+              Administrador
             </a>
           </div>
         </div>
@@ -76,8 +76,8 @@
         <!-- User Menu -->
         <div class="user-menu">
           <div *ngIf="!isLoggedIn()" class="auth-buttons">
-            <a routerLink="/auth/login" class="btn btn-outline">Login</a>
-            <a routerLink="/auth/register" class="btn btn-primary">Sign Up</a>
+            <a routerLink="/auth/login" class="btn btn-outline">Iniciar Sesión</a>
+            <a routerLink="/auth/register" class="btn btn-primary">Registrate</a>
           </div>
 
           <div *ngIf="isLoggedIn()" class="user-dropdown">
@@ -96,12 +96,12 @@
                 (click)="closeMenu()"
               >
                 <i class="fas fa-user"></i>
-                Profile
+                Perfil
               </a>
               <div class="dropdown-divider"></div>
               <button class="dropdown-item logout-btn" (click)="logout()">
                 <i class="fas fa-sign-out-alt"></i>
-                Logout
+                Cerrar Sesión
               </button>
             </div>
           </div>
@@ -128,7 +128,7 @@
             (click)="closeMenu()"
           >
             <i class="fas fa-calculator"></i>
-            Calculators
+            Calculadoras
           </a>
           <a
             routerLink="/standards"
@@ -137,7 +137,7 @@
             (click)="closeMenu()"
           >
             <i class="fas fa-chart-bar"></i>
-            Standards
+            Estándares
           </a>
         </div>
 
@@ -160,7 +160,7 @@
             (click)="closeMenu()"
           >
             <i class="fas fa-dumbbell"></i>
-            Workouts
+            Entrenamientos
           </a>
           <a
             routerLink="/templates"
@@ -169,7 +169,7 @@
             (click)="closeMenu()"
           >
             <i class="fas fa-clipboard-list"></i>
-            Templates
+            Plantillas
           </a>
           <a
             routerLink="/profile"
@@ -178,7 +178,7 @@
             (click)="closeMenu()"
           >
             <i class="fas fa-user"></i>
-            Profile
+            Perfil
           </a>
         </div>
 
@@ -206,7 +206,7 @@
               (click)="closeMenu()"
             >
               <i class="fas fa-sign-in-alt"></i>
-              Login
+              Iniciar Sesión
             </a>
             <a
               routerLink="/auth/register"
@@ -220,7 +220,7 @@
           <div *ngIf="isLoggedIn()">
             <button class="mobile-nav-link logout-btn" (click)="logout()">
               <i class="fas fa-sign-out-alt"></i>
-              Logout
+              Cerrar Sesión
             </button>
           </div>
         </div>
