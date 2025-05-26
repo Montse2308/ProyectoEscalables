@@ -4,6 +4,16 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Workout } from '../models/workout.model';
 
+export interface PaginatedWorkoutsResponse {
+  workouts: Workout[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
+  };
+}
+
 @Injectable({
   providedIn: 'root',
 })
