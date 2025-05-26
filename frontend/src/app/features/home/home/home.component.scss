@@ -4,6 +4,7 @@
   display: flex;
   align-items: center;
   overflow: hidden;
+  text-align: center;
 
   .hero-background {
     position: absolute;
@@ -44,10 +45,11 @@
     font-weight: 800;
     line-height: 1.1;
     margin-bottom: 1.5rem;
+    
 
     .highlight {
       color: var(--accent-color);
-      text-shadow: 0 0 20px rgba(255, 193, 7, 0.5);
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
     }
 
     @media (max-width: 768px) {
@@ -66,6 +68,7 @@
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
+    justify-content: center;
 
     @media (max-width: 768px) {
       justify-content: center;
@@ -109,6 +112,13 @@
   }
 }
 
+.nuevo {
+  display: flex;          
+  justify-content: center; 
+  gap: 12px;              
+  flex-wrap: wrap;        
+  align-items: center;
+}
 .features {
   padding: 6rem 0;
 
@@ -374,6 +384,21 @@
   &.btn-primary {
     background: var(--accent-color);
     color: var(--text-primary);
+    &:hover {
+      background: #e6ac00;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+    }
+  }
+
+  &.btn-primary2 {
+    background: var(--accent-color);
+    color: var(--text-primary);
+
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    margin: 0 auto; 
 
     &:hover {
       background: #e6ac00;
@@ -399,7 +424,7 @@
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1500px;
   margin: 0 auto;
   padding: 0 1rem;
 }

@@ -7,32 +7,40 @@
     <div class="hero-content">
       <div class="hero-text">
         <h1 class="hero-title">
-          Potencia Tu <span class="highlight">Entrenamiento</span>
+          <span class="highlight">Potencia Tu  Entrenamiento</span>
         </h1>
         <p class="hero-subtitle">
           La aplicación definitiva para el seguimiento de entrenamiento de fuerza. 
           Calcula, registra, analiza y mejora tu rendimiento con herramientas científicamente respaldadas.
         </p>
         <div class="hero-actions">
+          <div class="nuevo">
+          <button 
+            class="btn btn-outline btn-large"
+            (click)="navigateToFeature('/calculators')">
+            <span class="material-icons">calculate</span>
+            Probar Calculadoras
+          </button>
+          <button 
+            class="btn btn-outline btn-large"
+            (click)="navigateToFeature('/standards')">
+            <span class="material-icons">bar_chart</span>
+            Probar Estandardes
+          </button>
+          </div>
           <button 
             *ngIf="!isLoggedIn" 
-            class="btn btn-primary btn-large"
+            class="btn btn-primary2 btn-large"
             (click)="navigateToRegister()">
             <span class="material-icons">rocket_launch</span>
             Comenzar Gratis
           </button>
           <button 
             *ngIf="isLoggedIn" 
-            class="btn btn-primary btn-large"
+            class="btn btn-primary2 btn-large"
             (click)="navigateToDashboard()">
             <span class="material-icons">dashboard</span>
             Ir al Dashboard
-          </button>
-          <button 
-            class="btn btn-outline btn-large"
-            (click)="navigateToFeature('/calculators')">
-            <span class="material-icons">calculate</span>
-            Probar Calculadoras
           </button>
         </div>
       </div>

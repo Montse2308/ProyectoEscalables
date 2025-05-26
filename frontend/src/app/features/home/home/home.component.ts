@@ -38,7 +38,7 @@ export class HomeComponent implements OnInit {
       icon: 'analytics',
       title: 'Análisis de Rendimiento',
       description:
-        'Identifica tendencias, fortalezas y debilidades. Toma decisiones informadas para mejorar.',
+        'Tu panel central para revisas tus estadísticas, entrenamientos recientes y analiza tu rendimiento.',
       link: '/dashboard',
     },
     {
@@ -80,7 +80,7 @@ export class HomeComponent implements OnInit {
   }
 
   navigateToRegister(): void {
-    this.router.navigate(['/register']);
+    this.router.navigate(['/auth/register']);
   }
 
   navigateToDashboard(): void {
@@ -92,6 +92,6 @@ export class HomeComponent implements OnInit {
   }
 
   navigateToLogin(): void {
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth/login']);
   }
 }
