@@ -73,6 +73,39 @@
   color: var(--dark-gray);
 }
 
+.metric-value {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 0;
+}
+
+.metric-exercise {
+  font-size: 1.1rem;
+  color: var(--dark-gray);
+  font-weight: 500;
+  margin: 0.5rem 0;
+}
+
+.metric-subtitle {
+  font-size: 0.9rem;
+  color: var(--medium-gray);
+ }
+
+.metric-card:nth-child(3) {
+  .metric-value {
+    font-size: 1.8rem; 
+    margin-bottom: 0.1rem;
+  }
+
+  .metric-exercise {
+    font-size: 1rem;
+    margin: 0.25rem 0;
+    color: var(--primary-color);
+    opacity: 0.9;
+  }
+}
+
 .recent-workouts {
   background-color: #fff;
   border-radius: var(--border-radius);

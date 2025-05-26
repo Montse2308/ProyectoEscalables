@@ -16,15 +16,23 @@ exports.getDashboardData = async (req, res) => {
       date: { $gte: oneWeekAgo }
     });
     
-    // CORRECCIÓN PRINCIPAL: Usar new mongoose.Types.ObjectId()
     const strongestLift = await Workout.aggregate([
-      { $match: { user: new mongoose.Types.ObjectId(userId) } }, // <-- Aquí está el cambio
+      { $match: { user: new mongoose.Types.ObjectId(userId) } },
       { $unwind: '$exercises' },
       { $unwind: '$exercises.sets' },
       { $sort: { 'exercises.sets.weight': -1 } },
       { $limit: 1 },
+      { 
+        $lookup: {
+          from: 'exercises',
+          localField: 'exercises.exercise',
+          foreignField: '_id',
+          as: 'exerciseDetails'
+        }
+      },
+      { $unwind: '$exerciseDetails' },
       { $project: {
-          exercise: '$exercises.exercise.name',
+          exercise: '$exerciseDetails.name',
           weight: '$exercises.sets.weight'
         } 
       }
