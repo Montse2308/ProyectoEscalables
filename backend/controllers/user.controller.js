@@ -1,6 +1,5 @@
 const User = require("../models/user.model")
 
-// Get user by ID
 exports.getUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("-password")
@@ -15,13 +14,11 @@ exports.getUser = async (req, res) => {
   }
 }
 
-// Update user profile
 exports.updateProfile = async (req, res) => {
   try {
     const userId = req.user._id
     const updateData = req.body
 
-    // Remove sensitive fields that shouldn't be updated via this endpoint
     delete updateData.password
     delete updateData.email
     delete updateData.role
@@ -57,7 +54,6 @@ exports.deleteUser = async (req, res) => {
   }
 }
 
-// Get all users (admin only)
 exports.getAllUsers = async (req, res) => {
   try {
     const page = Number.parseInt(req.query.page) || 1

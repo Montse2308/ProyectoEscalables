@@ -29,7 +29,6 @@ export class OneRmCalculatorComponent implements OnInit {
     });
   }
 
-  // Convenience getter for easy access to form fields
   get f() {
     return this.calculatorForm.controls;
   }

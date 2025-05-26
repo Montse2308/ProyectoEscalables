@@ -169,52 +169,47 @@
   }
 }
 
-// En styles.scss o en template-detail.component.scss
 
 .template-stats {
   display: flex;
-  justify-content: space-around; // O space-between, o space-evenly
-  align-items: stretch; // Para que todos los items tengan la misma altura si su contenido varía
-  gap: 1rem; // Espacio entre los items
-  margin-bottom: 2rem; // Espacio debajo del contenedor de stats
+  justify-content: space-around; 
+  align-items: stretch; 
+  gap: 1rem; 
+  margin-bottom: 2rem; 
 
   .stat-item {
-    flex: 1; // Hace que cada item trate de ocupar el mismo espacio disponible
-    // Opcional: para asegurar que empiecen desde la misma base si el contenido es diferente
-    // flex-basis: 0; 
+    flex: 1; 
 
-    background-color: #f8f9fa; // Un color de fondo ligero
-    padding: 1.5rem 1rem; // Padding interno
-    border-radius: 8px; // Bordes redondeados
-    text-align: center; // Centrar el contenido
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05); // Una sombra sutil
-    display: flex; // Para centrar contenido verticalmente si es necesario
+    background-color: #f8f9fa; 
+    padding: 1.5rem 1rem; 
+    border-radius: 8px; 
+    text-align: center; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+    display: flex; 
     flex-direction: column;
     justify-content: center;
 
     .stat-value {
-      font-size: 2rem; // Tamaño grande para el valor
-      font-weight: 600; // Seminegrita
-      color: var(--primary-color, #c62828); // Usar tu color primario
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--primary-color, #c62828); 
       margin-bottom: 0.5rem;
-      line-height: 1.2; // Ajustar si el texto como "1:15 hrs" se corta
-      word-break: break-word; // Para evitar que textos largos rompan el layout
+      line-height: 1.2; 
+      word-break: break-word;
     }
 
     .stat-label {
       font-size: 0.9rem;
-      color: #6c757d; // Un gris para la etiqueta
+      color: #6c757d; 
     }
   }
 }
 
-// Media query para móviles si quieres que los stats se apilen
 @media (max-width: 767px) {
   .template-stats {
-    flex-direction: column; // Apilar en vertical
+    flex-direction: column; 
     .stat-item {
-      // flex: 1 no es necesario si están en columna, o puedes ajustarlo
-      margin-bottom: 1rem; // Espacio entre items apilados
+      margin-bottom: 1rem; 
       &:last-child {
         margin-bottom: 0;
       }

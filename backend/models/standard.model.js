@@ -1,4 +1,3 @@
-// backend/models/standard.model.js
 const mongoose = require("mongoose");
 
 const strengthLevelRatiosSchema = new mongoose.Schema({
@@ -7,7 +6,7 @@ const strengthLevelRatiosSchema = new mongoose.Schema({
   intermedio: { type: Number, required: true, min: 0 },
   avanzado: { type: Number, required: true, min: 0 },
   elite: { type: Number, required: true, min: 0 },
-}, { _id: false }); // No necesita su propio _id como subdocumento aquí
+}, { _id: false }); 
 
 const standardSchema = new mongoose.Schema(
   {
@@ -24,12 +23,11 @@ const standardSchema = new mongoose.Schema(
       },
       required: [true, "El género es obligatorio."],
     },
-    ratios: { // Contendrá los factores de relación
+    ratios: { 
       type: strengthLevelRatiosSchema,
       required: [true, "Los ratios de nivel de fuerza son obligatorios."],
     },
-    // Ya no necesitamos 'weightCategories' para definir el estándar en sí
-    // weightCategories: [weightCategorySchema], // ELIMINADO
+
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -37,14 +35,11 @@ const standardSchema = new mongoose.Schema(
     }
   },
   { 
-    timestamps: true, // Habilita createdAt y updatedAt automáticamente
-    // Asegurar índice único para la combinación de ejercicio y género
-    // para que no haya múltiples entradas de ratios para el mismo ejercicio/género.
+    timestamps: true, 
     indexes: [{ unique: true, fields: ['exercise', 'gender'] }]
   }
 );
 
-// Middleware para asegurar que no se dupliquen estándares por ejercicio y género
 standardSchema.pre('save', async function (next) {
   if (this.isNew) {
     const existing = await mongoose.model('Standard').findOne({
@@ -53,7 +48,6 @@ standardSchema.pre('save', async function (next) {
     });
     if (existing) {
       const err = new Error(`Ya existe un estándar definido para el ejercicio '${this.exercise}' y el género '${this.gender}'. Edita el existente en lugar de crear uno nuevo.`);
-      // Attach a custom property for easier handling in controller if needed
       err.isDuplicate = true; 
       return next(err);
     }

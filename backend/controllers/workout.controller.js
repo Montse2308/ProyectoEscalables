@@ -1,4 +1,3 @@
-// backend/controllers/workout.controller.js
 const Workout = require("../models/workout.model");
 const Template = require("../models/template.model"); // Asegúrate que el path sea correcto
 const Exercise = require("../models/exercise.model");

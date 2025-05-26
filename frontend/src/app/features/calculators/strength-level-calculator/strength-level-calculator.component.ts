@@ -1,29 +1,26 @@
 import { Component, type OnInit } from '@angular/core';
 import { FormBuilder, type FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { CalculatorService } from '../../../core/services/calculator.service';
-// Ya no necesitamos ExerciseService ni Exercise para esta calculadora específica de IPF Points Total.
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { forkJoin, of, type Observable } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-strength-level-calculator', // Mantendremos este selector por ahora
+  selector: 'app-strength-level-calculator', 
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './strength-level-calculator.component.html', // Actualizaremos este HTML
+  templateUrl: './strength-level-calculator.component.html', 
   styleUrls: ['./strength-level-calculator.component.scss'],
 })
 export class StrengthLevelCalculatorComponent implements OnInit {
   calculatorForm!: FormGroup;
-  ipfPointsResult: number | null = null; // Cambiado de 'result' a algo más específico
+  ipfPointsResult: number | null = null; 
   loading = false;
-  // loadingExercises ya no es necesario
   error = '';
 
   inputType: 'direct' | 'detailed' = 'direct';
 
-  // Para los resultados individuales de 1RM
   squatRM: number | null = null;
   benchRM: number | null = null;
   deadliftRM: number | null = null;
@@ -38,7 +35,7 @@ export class StrengthLevelCalculatorComponent implements OnInit {
     this.calculatorForm = this.formBuilder.group({
       bodyWeight: ['', [Validators.required, Validators.min(20), Validators.max(300)]],
       gender: ['male', Validators.required],
-      equipment: ['classic_raw', Validators.required], // Nuevo campo para tipo de equipamiento
+      equipment: ['classic_raw', Validators.required], 
       inputType: ['direct', Validators.required],
 
       liftedWeightTotal: ['', [Validators.required, Validators.min(1)]],
@@ -51,8 +48,7 @@ export class StrengthLevelCalculatorComponent implements OnInit {
       deadliftReps: ['', [Validators.min(1), Validators.max(36)]],
     });
 
-    this.onInputTypeChange(); // Configurar validadores iniciales
-    // loadExercises() ya no es necesario para esta calculadora
+    this.onInputTypeChange(); 
   }
 
   get f(): { [key: string]: AbstractControl } {
@@ -76,7 +72,7 @@ export class StrengthLevelCalculatorComponent implements OnInit {
       this.f['benchReps'].clearValidators();
       this.f['deadliftWeight'].clearValidators();
       this.f['deadliftReps'].clearValidators();
-    } else { // 'detailed'
+    } else { 
       this.f['liftedWeightTotal'].clearValidators();
       this.f['squatWeight'].setValidators([Validators.required, Validators.min(1)]);
       this.f['squatReps'].setValidators([Validators.required, Validators.min(1), Validators.max(36)]);
@@ -129,7 +125,7 @@ export class StrengthLevelCalculatorComponent implements OnInit {
     if (this.inputType === 'direct') {
       const liftedWeightTotal = this.f['liftedWeightTotal'].value;
       this.callIpfPointsService(bodyWeight, liftedWeightTotal, gender, equipment);
-    } else { // 'detailed'
+    } else { 
       const squatWeight = this.f['squatWeight'].value;
       const squatReps = this.f['squatReps'].value;
       const benchWeight = this.f['benchWeight'].value;
@@ -169,20 +165,7 @@ export class StrengthLevelCalculatorComponent implements OnInit {
   }
 
   private callIpfPointsService(bodyWeight: number, totalLifted: number, gender: string, equipment: string): void {
-    // Asumimos que CalculatorService tendrá un método calculateIpfPoints
-    // this.calculatorService.calculateIpfPoints(bodyWeight, totalLifted, gender, equipment).subscribe({
-    //   next: (data) => {
-    //     this.ipfPointsResult = data.ipfPoints; // Suponiendo que el backend devuelve { ipfPoints: XXX }
-    //     this.loading = false;
-    //   },
-    //   error: (err) => {
-    //     this.error = err.error?.message || 'Error en el cálculo de Puntos IPF.';
-    //     this.loading = false;
-    //   },
-    // });
-
-    // --- SIMULACIÓN DE CÁLCULO IPF EN FRONTEND (TEMPORAL HASTA TENER BACKEND) ---
-    // ¡Esta lógica debería estar en el backend!
+    
     if (equipment !== 'classic_raw') {
         this.error = "Por el momento, solo se soportan cálculos para Powerlifting Clásico (Raw).";
         this.loading = false;
@@ -192,7 +175,7 @@ export class StrengthLevelCalculatorComponent implements OnInit {
     let A, B, C;
     if (gender === 'male') {
         A = 123.59533; B = 149.26993; C = 0.0073838;
-    } else { // female
+    } else { 
         A = 107.89909; B = 122.91604; C = 0.0093104;
     }
 
@@ -210,10 +193,6 @@ export class StrengthLevelCalculatorComponent implements OnInit {
     }
     this.ipfPointsResult = 100 * (totalLifted / denominator);
     this.loading = false;
-    // --- FIN DE SIMULACIÓN ---
-
-    // Cuando tengas el backend, descomenta la llamada al servicio y borra la simulación.
-    // Recuerda añadir el método `calculateIpfPoints` a `CalculatorService`
-    // y el endpoint correspondiente en el backend.
+    
   }
 }

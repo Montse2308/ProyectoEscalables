@@ -291,12 +291,12 @@ th {
 }
 
 .col-lg-2dot4 {
-  @media (min-width: 992px) { // lg breakpoint de Bootstrap
+  @media (min-width: 992px) { 
     flex: 0 0 20%;
     max-width: 20%;
   }
 }
-.ml-2 { margin-left: 0.5rem !important; } // Si no usas Bootstrap, o para asegurar
+.ml-2 { margin-left: 0.5rem !important; }
 .editing-info {
   font-style: italic;
   color: #555;

@@ -1,14 +1,13 @@
-// frontend/src/app/features/templates/template-detail/template-detail.component.ts
 import { Component, type OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TemplateService } from '../../../core/services/template.service';
 import { WorkoutService } from '../../../core/services/workout.service';
-import { Template, TemplateExercise } from '../../../core/models/template.model'; // Asegúrate que TemplateExercise esté importado
-import { Exercise } from '../../../core/models/exercise.model'; // Importar Exercise para el casting
+import { Template, TemplateExercise } from '../../../core/models/template.model'; 
+import { Exercise } from '../../../core/models/exercise.model'; 
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { DecimalPipe } from '@angular/common'; // Para el pipe 'number'
-import { Workout } from '../../../core/models/workout.model'; // Importar Workout
+import { DecimalPipe } from '@angular/common';
+import { Workout } from '../../../core/models/workout.model'; 
 
 
 @Component({
@@ -62,16 +61,14 @@ export class TemplateDetailComponent implements OnInit {
     if (!this.template) return;
 
     this.startingWorkout = true;
-    this.error = ''; // Limpiar error previo
+    this.error = ''; 
     this.workoutService.startWorkoutFromTemplate(this.template._id).subscribe({
       next: (newlyCreatedWorkout: Workout) => {
         this.startingWorkout = false;
-        // Navegar al formulario de workout en modo edición, pasando los datos de la plantilla
-        // y el workout recién creado (que ya tiene los ejercicios y sets pre-poblados)
         this.router.navigate(['/workouts/edit', newlyCreatedWorkout._id], {
           state: { 
-            templateData: this.template, // Plantilla original para referencia (ej. notas generales)
-            workoutShell: newlyCreatedWorkout // El workout creado por el backend
+            templateData: this.template, 
+            workoutShell: newlyCreatedWorkout 
           }
         });
       },
@@ -103,7 +100,7 @@ export class TemplateDetailComponent implements OnInit {
     );
   }
 
-  getEstimatedDuration(): number { // Este método ahora devuelve el total de minutos
+  getEstimatedDuration(): number { 
     if (!this.template || !this.template.exercises || this.template.exercises.length === 0) {
       return 0;
     }
@@ -111,26 +108,25 @@ export class TemplateDetailComponent implements OnInit {
     let totalSecondsForAllExercises = 0;
 
     this.template.exercises.forEach((exerciseItem: TemplateExercise) => {
-      const exerciseDetails = exerciseItem.exercise as Exercise; // Asumimos que está populado con 'isPowerlifting'
+      const exerciseDetails = exerciseItem.exercise as Exercise;
       const sets = exerciseItem.sets;
-      const restTimePerSetInSeconds = exerciseItem.restTime || 0; // restTime está en segundos
+      const restTimePerSetInSeconds = exerciseItem.restTime || 0;
 
       let workTimePerSetInSeconds: number;
 
       if (exerciseDetails && exerciseDetails.isPowerlifting) {
-        workTimePerSetInSeconds = 90; // 90 segundos de trabajo por serie para powerlifting
+        workTimePerSetInSeconds = 90; 
       } else {
-        workTimePerSetInSeconds = 60; // 60 segundos de trabajo por serie para otros
+        workTimePerSetInSeconds = 60; 
       }
 
       const timeForThisExerciseInSeconds = (sets * workTimePerSetInSeconds) + (sets * restTimePerSetInSeconds);
       totalSecondsForAllExercises += timeForThisExerciseInSeconds;
     });
 
-    return totalSecondsForAllExercises / 60; // Convertir el total de segundos a minutos
+    return totalSecondsForAllExercises / 60;
   }
 
-  // NUEVO MÉTODO para formatear la duración para la vista
   formatDurationDisplay(totalMinutes: number): string {
     if (isNaN(totalMinutes) || totalMinutes < 0) {
       return 'N/A';
@@ -140,7 +136,7 @@ export class TemplateDetailComponent implements OnInit {
     }
 
     const hours = Math.floor(totalMinutes / 60);
-    const minutes = Math.round(totalMinutes % 60); // Redondear minutos
+    const minutes = Math.round(totalMinutes % 60); 
 
     if (hours > 0) {
       return `${hours}:${minutes.toString().padStart(2, '0')} hrs`;

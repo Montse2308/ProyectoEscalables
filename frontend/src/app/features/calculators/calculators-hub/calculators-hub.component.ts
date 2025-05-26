@@ -6,7 +6,7 @@ interface CalculatorInfo {
   name: string;
   description: string;
   link: string;
-  icon: string; // Opcional: un ícono para visualización
+  icon: string;
 }
 
 @Component({
@@ -22,7 +22,7 @@ export class CalculatorsHubComponent {
       name: 'Calculadora de 1RM',
       description: 'Estima tu Repetición Máxima (1RM) basado en el peso y las repeticiones realizadas.',
       link: '/calculators/one-rm',
-      icon: 'fitness_center', // Ejemplo de ícono de Material Icons
+      icon: 'fitness_center', 
     },
     {
       name: 'Calculadora de Wilks',
@@ -31,13 +31,13 @@ export class CalculatorsHubComponent {
       icon: 'leaderboard',
     },
     {
-      name: 'Calculadora de Fuerza por Ejercicio', // Anteriormente "Exercise Strength Calculator"
+      name: 'Calculadora de Fuerza por Ejercicio', 
       description: 'Calcula tu nivel de fuerza (e.g., principiante, intermedio) para un ejercicio específico.',
       link: '/calculators/exercise-strength',
       icon: 'calculate',
     },
     {
-      name: 'Calculadora de Powerlifting', // Anteriormente "Strength Level Calculator"
+      name: 'Calculadora de Powerlifting', 
       description: 'Mide tu nivel en powerlifting con puntos IPF según tu peso, género y marcas.',
       link: '/calculators/strength-level',
       icon: 'emoji_events',

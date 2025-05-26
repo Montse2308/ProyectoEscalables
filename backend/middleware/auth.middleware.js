@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken")
 const User = require("../models/user.model")
 
-// Middleware to verify JWT token
 exports.verifyToken = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(" ")[1]
@@ -24,7 +23,6 @@ exports.verifyToken = async (req, res, next) => {
   }
 }
 
-// Middleware to check if user is admin
 exports.isAdmin = (req, res, next) => {
   if (req.user && req.user.role === "admin") {
     next()

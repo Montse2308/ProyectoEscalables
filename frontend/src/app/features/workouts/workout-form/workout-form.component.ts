@@ -1,4 +1,3 @@
-// frontend/src/app/features/workouts/workout-form/workout-form.component.ts
 import { Component, type OnInit } from '@angular/core';
 import { FormBuilder, type FormGroup, type FormArray, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,9 +6,9 @@ import { ExerciseService } from '../../../core/services/exercise.service';
 import { Exercise } from '../../../core/models/exercise.model';
 import { Workout, ExercisePerformed, Set as WorkoutSet } from '../../../core/models/workout.model';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms'; // FormsModule no es necesario si solo usas ReactiveForms
+import { ReactiveFormsModule } from '@angular/forms'; 
 import { RouterModule } from '@angular/router';
-import { Template } from '../../../core/models/template.model'; // Importar Template para el tipo de fromTemplate
+import { Template } from '../../../core/models/template.model'; 
 
 @Component({
   selector: 'app-workout-form',
@@ -28,7 +27,7 @@ export class WorkoutFormComponent implements OnInit {
   editMode = false;
   workoutId: string | null = null;
   isCompleting = false;
-  workoutFromTemplateData: Template | null = null; // Para guardar datos de la plantilla si se edita
+  workoutFromTemplateData: Template | null = null; 
 
   constructor(
     private formBuilder: FormBuilder,
@@ -46,21 +45,18 @@ export class WorkoutFormComponent implements OnInit {
       if (params['id']) {
         this.workoutId = params['id'];
         if (this.router.getCurrentNavigation()?.extras.state?.['templateData']) {
-          // Viene de "Iniciar Entrenamiento" desde una plantilla, y es la primera carga (modo edición implícito)
-          this.editMode = true; // Se tratará como una edición de un workout recién creado
+          this.editMode = true; 
           const template = this.router.getCurrentNavigation()?.extras.state?.['templateData'] as Template;
           const workoutShell = this.router.getCurrentNavigation()?.extras.state?.['workoutShell'] as Workout;
-          this.workoutId = workoutShell._id; // Usar el ID del workout creado
+          this.workoutId = workoutShell._id;
           this.patchFormWithTemplateData(template, workoutShell);
         } else {
-          // Editando un workout existente
           this.editMode = true;
           if (this.workoutId) {
             this.loadWorkoutForEditing(this.workoutId);
           }
         }
       } else {
-        // Creando un workout nuevo desde cero
         this.editMode = false;
         if (this.exercisesArray.length === 0) {
           this.onAddExerciseClicked();
@@ -75,19 +71,17 @@ export class WorkoutFormComponent implements OnInit {
       date: [new Date().toISOString().split('T')[0], Validators.required],
       notes: [''],
       exercises: this.formBuilder.array([]),
-      // fromTemplate y isCompleted no son parte del form, se manejan al enviar
     });
   }
 
   loadAvailableExercises(): void {
-    // No bloquear la UI si estamos cargando una plantilla o workout
     if (!this.editMode || !this.workoutId) {
        this.loadingData = true;
     }
     this.exerciseService.getExercises().subscribe({
       next: (data) => {
         this.allAvailableExercises = data.sort((a,b) => a.name.localeCompare(b.name));
-        if (!this.editMode || !this.workoutId || (this.editMode && !this.loadingData) ) { // Solo set a false si no estaba ya cargando un workout
+        if (!this.editMode || !this.workoutId || (this.editMode && !this.loadingData) ) { 
             this.loadingData = false;
         }
       },
@@ -98,7 +92,6 @@ export class WorkoutFormComponent implements OnInit {
     });
   }
 
-  // Carga un workout existente para editar
   loadWorkoutForEditing(id: string): void {
     this.loadingData = true;
     this.workoutService.getWorkout(id).subscribe({
@@ -114,14 +107,13 @@ export class WorkoutFormComponent implements OnInit {
     });
   }
 
-  // Pre-llena el formulario cuando se "inicia entrenamiento" desde una plantilla
   patchFormWithTemplateData(template: Template, workoutShell: Workout): void {
     this.workoutForm.patchValue({
-      name: workoutShell.name, // Nombre generado como "Nombre Plantilla - Fecha"
+      name: workoutShell.name, 
       date: new Date(workoutShell.date).toISOString().split('T')[0],
-      notes: template.description || '', // Notas de la plantilla como notas iniciales del workout
+      notes: template.description || '', 
     });
-    this.workoutFromTemplateData = template; // Guardar referencia a la plantilla
+    this.workoutFromTemplateData = template;
 
     while (this.exercisesArray.length !== 0) { this.exercisesArray.removeAt(0); }
 
@@ -132,9 +124,6 @@ export class WorkoutFormComponent implements OnInit {
       
       const setsArray = exerciseGroup.get('sets') as FormArray;
       for (let i = 0; i < templateExercise.sets; i++) {
-        // Para cada serie de la plantilla, creamos un set en el workout
-        // El peso se deja en blanco (o 0) para que el usuario lo ingrese.
-        // El restTime viene de la plantilla.
         setsArray.push(this.createSetGroup(templateExercise.reps, undefined, templateExercise.restTime, templateExercise.notes));
       }
     });
@@ -142,19 +131,14 @@ export class WorkoutFormComponent implements OnInit {
   }
 
 
-  // Pre-llena el formulario con un workout existente
   patchFormWithExistingWorkout(workout: Workout): void {
     this.workoutForm.patchValue({
       name: workout.name,
       date: new Date(workout.date).toISOString().split('T')[0],
       notes: workout.notes,
     });
-    // Guardar si vino de una plantilla para el submit
     if (workout.fromTemplate) {
-        // Necesitaríamos cargar la plantilla completa si queremos sus datos aquí,
-        // o asumir que workout.fromTemplate (si es objeto) tiene el ID y nombre.
-        // Por ahora, el modelo Workout.fromTemplate es string | {_id, name}
-        this.workoutFromTemplateData = workout.fromTemplate as any; // Asumir que es compatible para la lógica del submit
+        this.workoutFromTemplateData = workout.fromTemplate as any; 
     }
 
 
@@ -184,7 +168,7 @@ export class WorkoutFormComponent implements OnInit {
 
   createExerciseGroup(exerciseId?: string): FormGroup {
     return this.formBuilder.group({
-      exercise: [exerciseId || '', Validators.required], // Guardará el _id del Exercise
+      exercise: [exerciseId || '', Validators.required],
       sets: this.formBuilder.array([]),
     });
   }
@@ -201,9 +185,9 @@ export class WorkoutFormComponent implements OnInit {
 
   createSetGroup(reps?: number, weight?: number, restTime?: number, notes?: string): FormGroup {
     return this.formBuilder.group({
-        reps: [reps || 0, [Validators.required, Validators.min(0)]], // Valor inicial más seguro
+        reps: [reps || 0, [Validators.required, Validators.min(0)]], 
         weight: [weight || 0, [Validators.required, Validators.min(0)]],
-        restTime: [restTime ?? 60, [Validators.required, Validators.min(0)]], // Usar operador ?? para null/undefined
+        restTime: [restTime ?? 60, [Validators.required, Validators.min(0)]],
         notes: [notes || '']
     });
   }
@@ -216,7 +200,6 @@ export class WorkoutFormComponent implements OnInit {
     this.getSetsArray(exerciseIndex).removeAt(setIndex);
   }
   
-  // Calcula la duración total en minutos basada en el formulario actual
   private calculateFormDuration(): number {
     let totalSeconds = 0;
     this.exercisesArray.value.forEach((exercisePerf: any) => {
@@ -244,9 +227,9 @@ export class WorkoutFormComponent implements OnInit {
     this.error = '';
 
     const formValues = this.workoutForm.value;
-    const calculatedDuration = this.calculateFormDuration(); // Calcular duración desde el form
+    const calculatedDuration = this.calculateFormDuration(); 
 
-    const workoutData: Partial<Workout> = { // Usar Partial para el payload
+    const workoutData: Partial<Workout> = { 
       name: formValues.name,
       date: formValues.date,
       notes: formValues.notes,
@@ -255,22 +238,18 @@ export class WorkoutFormComponent implements OnInit {
         sets: ex.sets.map((s: any) => ({
           reps: Number(s.reps),
           weight: Number(s.weight),
-          restTime: Number(s.restTime) || 0, // Enviar restTime
+          restTime: Number(s.restTime) || 0, 
           notes: s.notes,
-          // rpe: s.rpe ? Number(s.rpe) : null, // RPE ELIMINADO
         }))
       })),
       isCompleted: markAsCompleteOnClick,
-      duration: calculatedDuration, // Enviar duración calculada
+      duration: calculatedDuration, 
       fromTemplate: this.editMode && this.workoutFromTemplateData 
                     ? (typeof this.workoutFromTemplateData === 'string' ? this.workoutFromTemplateData : this.workoutFromTemplateData._id) 
                     : (this.workoutId && this.editMode ? (this.workoutForm.get('fromTemplate')?.value || null) : null) // Mantener fromTemplate si se edita
     };
     
-    // Si es una edición y originalmente venía de una plantilla, mantener ese ID
-    // Esta lógica es compleja, el backend ya no debería cambiar fromTemplate en update.
-    // Y en create, solo se pone si se inicia desde plantilla.
-
+    
     const operation = (this.editMode && this.workoutId)
       ? this.workoutService.updateWorkout(this.workoutId, workoutData as Workout) // Hacer cast si es necesario
       : this.workoutService.createWorkout(workoutData as Workout);

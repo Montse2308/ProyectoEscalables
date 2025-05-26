@@ -1,19 +1,17 @@
-// backend/controllers/standard.controller.js
 const Standard = require("../models/standard.model");
-const Exercise = require("../models/exercise.model"); // Para popular
+const Exercise = require("../models/exercise.model"); 
 
-// Get all standards
 exports.getStandards = async (req, res) => {
   try {
-    const { exerciseId, gender } = req.query; // Cambiado a exerciseId para claridad
+    const { exerciseId, gender } = req.query; 
     const filter = {};
     if (exerciseId) filter.exercise = exerciseId;
     if (gender) filter.gender = gender;
 
     const standards = await Standard.find(filter)
-      .populate({ path: "exercise", model: Exercise, select: "name _id" }) // Popular ejercicio con nombre
+      .populate({ path: "exercise", model: Exercise, select: "name _id" }) 
       .populate("createdBy", "name")
-      .sort({ 'exercise.name': 1, gender: 1 }); // Ordenar por nombre de ejercicio, luego género
+      .sort({ 'exercise.name': 1, gender: 1 }); 
 
     res.status(200).json(standards);
   } catch (error) {
@@ -22,7 +20,6 @@ exports.getStandards = async (req, res) => {
   }
 };
 
-// Get standard by ID (puede ser menos útil ahora que se identifican por ejercicio/género)
 exports.getStandard = async (req, res) => {
   try {
     const standard = await Standard.findById(req.params.id)
@@ -39,29 +36,21 @@ exports.getStandard = async (req, res) => {
   }
 };
 
-// Create new standard (admin only)
 exports.createStandard = async (req, res) => {
   try {
     const { exercise, gender, ratios } = req.body;
 
-    // La validación de duplicados está en el middleware pre('save') del modelo
-    // pero una comprobación aquí podría dar un mensaje más amigable si no quieres depender solo del middleware.
-    // const existingStandard = await Standard.findOne({ exercise, gender });
-    // if (existingStandard) {
-    //   return res.status(409).json({ message: `Ya existe un estándar para el ejercicio y género seleccionados. Por favor, edita el existente.` });
-    // }
 
     const standardData = {
       exercise,
       gender,
       ratios,
-      createdBy: req.user._id, // Asumiendo que req.user está disponible
+      createdBy: req.user._id, 
     };
 
     const newStandard = new Standard(standardData);
     await newStandard.save();
 
-    // Popular el ejercicio para la respuesta
     const populatedStandard = await Standard.findById(newStandard._id)
         .populate({ path: "exercise", model: Exercise, select: "name _id" })
         .populate("createdBy", "name");
@@ -69,7 +58,7 @@ exports.createStandard = async (req, res) => {
     res.status(201).json(populatedStandard);
   } catch (error) {
     console.error("Error en createStandard:", error);
-     if (error.isDuplicate || (error.code === 11000 && error.message.includes('exercise_1_gender_1'))) { // MongoDB duplicate key error
+     if (error.isDuplicate || (error.code === 11000 && error.message.includes('exercise_1_gender_1'))) { 
       return res.status(409).json({ message: `Error: Ya existe un estándar definido para este ejercicio y género.` });
     }
     if (error.name === 'ValidationError') {
@@ -80,19 +69,13 @@ exports.createStandard = async (req, res) => {
   }
 };
 
-// Update standard by ID (admin only)
 exports.updateStandard = async (req, res) => {
   try {
-    const { ratios } = req.body; // Solo se deberían poder actualizar los ratios
-    // No permitir cambiar ejercicio o género de un estándar existente, se debería crear uno nuevo.
-    // O si se permite, la lógica sería más compleja para evitar duplicados.
-    // Por simplicidad, asumimos que solo actualizamos ratios de un estándar identificado por ID.
-
+    const { ratios } = req.body; 
     if (!ratios) {
         return res.status(400).json({ message: "Faltan los datos de ratios para actualizar." });
     }
     
-    // Validar que todos los campos de ratios estén presentes y sean números
     const requiredRatioKeys = ['principiante', 'novato', 'intermedio', 'avanzado', 'elite'];
     for (const key of requiredRatioKeys) {
         if (ratios[key] === undefined || typeof ratios[key] !== 'number' || ratios[key] < 0) {
@@ -103,7 +86,7 @@ exports.updateStandard = async (req, res) => {
 
     const standard = await Standard.findByIdAndUpdate(
       req.params.id,
-      { ratios, updatedAt: Date.now() }, // Actualizar solo los ratios
+      { ratios, updatedAt: Date.now() }, 
       { new: true, runValidators: true }
     )
     .populate({ path: "exercise", model: Exercise, select: "name _id" })
@@ -124,7 +107,6 @@ exports.updateStandard = async (req, res) => {
   }
 };
 
-// Delete standard (admin only) - Esto eliminaría la combinación ejercicio/género
 exports.deleteStandard = async (req, res) => {
   try {
     const standard = await Standard.findByIdAndDelete(req.params.id);

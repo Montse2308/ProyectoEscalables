@@ -1,4 +1,3 @@
-// backend/models/template.model.js
 const mongoose = require("mongoose");
 
 const templateExerciseSchema = new mongoose.Schema({
@@ -18,12 +17,12 @@ const templateExerciseSchema = new mongoose.Schema({
     min: 1,
   },
   restTime: {
-    type: Number, // in seconds
+    type: Number, 
     default: 60,
-    min: 0, // Añadido min 0
+    min: 0, 
   },
   notes: String,
-}, { _id: false }); // _id no es necesario para subdocumentos embebidos así, a menos que se requiera explícitamente.
+}, { _id: false }); 
 
 const templateSchema = new mongoose.Schema(
   {
@@ -42,11 +41,7 @@ const templateSchema = new mongoose.Schema(
       trim: true,
     },
     exercises: [templateExerciseSchema],
-    // isPublic: { // ELIMINADO
-    //   type: Boolean,
-    //   default: false,
-    // },
-    // createdAt y updatedAt son manejados por timestamps
+
   },
   { timestamps: true }
 );

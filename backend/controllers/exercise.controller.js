@@ -1,37 +1,25 @@
-// backend/controllers/exercise.controller.js
 const Exercise = require("../models/exercise.model");
 
-// Get all exercises
 exports.getExercises = async (req, res) => {
   try {
-    // Usar los nombres de campo del NUEVO esquema para los query params
     const {
-      // 'muscleGroupQuery' podría ser un query param si quieres buscar por un solo grupo dentro del array
-      // o 'muscleGroupsQuery' si esperas una lista separada por comas
-      muscleGroupToSearch, // Renombrado para claridad, asume que se busca si este grupo está en el array
+      muscleGroupToSearch,
       movementType,
-      exerciseType,       // NUEVO: Reemplaza isCompound
+      exerciseType,       
       isPowerlifting
     } = req.query;
 
     const filter = {};
 
-    // Lógica para filtrar por muscleGroups (array en el modelo)
     if (muscleGroupToSearch) {
-      // Esto encontrará ejercicios donde el array 'muscleGroups' contenga el valor de 'muscleGroupToSearch'
       filter.muscleGroups = muscleGroupToSearch;
     }
-    // Si quisieras permitir buscar por múltiples grupos en el query (ej. ?muscleGroups=pecho,espalda)
-    // podrías hacer algo como:
-    // if (req.query.muscleGroupsList) {
-    //   filter.muscleGroups = { $in: req.query.muscleGroupsList.split(',') };
-    // }
+
 
     if (movementType) {
       filter.movementType = movementType;
     }
 
-    // Usar exerciseType para filtrar en lugar de isCompound
     if (exerciseType) {
       filter.exerciseType = exerciseType;
     }
@@ -51,7 +39,6 @@ exports.getExercises = async (req, res) => {
   }
 };
 
-// Get exercise by ID
 exports.getExercise = async (req, res) => {
   try {
     const exercise = await Exercise.findById(req.params.id).populate("createdBy", "name");
@@ -67,28 +54,20 @@ exports.getExercise = async (req, res) => {
   }
 };
 
-// Create new exercise (admin only)
 exports.createExercise = async (req, res) => {
   try {
-    // req.body ya debería venir del frontend con: name, exerciseType, muscleGroups (array), movementType, etc.
     const exerciseData = {
       ...req.body,
-      createdBy: req.user._id, // Asumiendo que tu middleware de auth (auth.middleware.js) añade req.user
+      createdBy: req.user._id, 
     };
 
-    // Validar que muscleGroups sea un array si es necesario (aunque Mongoose debería hacerlo)
     if (exerciseData.muscleGroups && !Array.isArray(exerciseData.muscleGroups)) {
-        // Si desde el frontend, para el tipo 'specific', envías muscleGroups como string en vez de array de un elemento:
-        // podrías convertirlo aquí o asegurar que el frontend siempre envíe array.
-        // Por ahora, confiamos en que el frontend y Mongoose manejan el tipo array.
+      // Asegurarse de que muscleGroups sea un array
     }
 
 
     const exercise = new Exercise(exerciseData);
-    await exercise.save(); // Aquí es donde Mongoose usará el esquema de exercise.model.js cargado
-
-    // La validación pre('save') en tu modelo se encargará de la lógica de 'specific' vs 'compound'
-    // para la cantidad de elementos en muscleGroups.
+    await exercise.save(); 
 
     const populatedExercise = await Exercise.findById(exercise._id).populate("createdBy", "name");
     res.status(201).json(populatedExercise);
@@ -103,19 +82,15 @@ exports.createExercise = async (req, res) => {
   }
 };
 
-// Update exercise (admin only)
 exports.updateExercise = async (req, res) => {
   try {
-    // Los datos en req.body deben ser compatibles con el nuevo esquema
-    // (ej. exerciseType, muscleGroups como array)
+
     const updateData = { ...req.body };
-    // Asegúrate de no intentar pasar 'updatedAt' directamente si usas {timestamps: true}
-    // delete updateData.updatedAt; // Mongoose lo maneja con timestamps
 
     const exercise = await Exercise.findByIdAndUpdate(
       req.params.id,
-      updateData, // Mongoose intentará aplicar estos datos al esquema
-      { new: true, runValidators: true } // runValidators es clave para que se apliquen las reglas del esquema
+      updateData, 
+      { new: true, runValidators: true } 
     ).populate("createdBy", "name");
 
     if (!exercise) {
@@ -133,7 +108,6 @@ exports.updateExercise = async (req, res) => {
   }
 };
 
-// Delete exercise (admin only)
 exports.deleteExercise = async (req, res) => {
   try {
     const exercise = await Exercise.findByIdAndDelete(req.params.id);

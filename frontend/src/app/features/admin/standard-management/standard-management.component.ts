@@ -151,11 +151,9 @@ export class StandardManagementComponent implements OnInit, OnDestroy {
     if (existingStandard) {
       this.editMode = true;
       this.currentStandardId = existingStandard._id;
-      // Verificar si existingStandard.ratios existe antes de usarlo
       if (existingStandard.ratios) {
         this.standardForm.get('ratios')?.patchValue(existingStandard.ratios, { emitEvent: false });
       } else {
-        // Si no hay ratios en el estándar existente (datos antiguos), resetea esa parte del formulario
         this.resetRatiosForm(false); 
         console.warn(`El estándar existente con ID ${existingStandard._id} no tiene un campo 'ratios'. Se mostrará el formulario de ratios vacío.`);
       }
@@ -214,10 +212,6 @@ export class StandardManagementComponent implements OnInit, OnDestroy {
         if (fullExerciseDetails) {
             finalExerciseObjectForStandard = fullExerciseDetails;
         } else if (typeof savedStandard.exercise === 'object' && savedStandard.exercise !== null && (savedStandard.exercise as Exercise)._id && (savedStandard.exercise as Exercise).name) {
-            // Si el backend devolvió un objeto ejercicio (aunque sea parcial), lo usamos,
-            // pero lo casteamos a Exercise asumiendo que el resto de la app puede manejarlo.
-            // Lo ideal sería que el backend siempre devuelva el objeto Exercise completo
-            // o que la interfaz Standard.exercise sea Partial<Exercise>.
              finalExerciseObjectForStandard = {
                 _id: (savedStandard.exercise as Exercise)._id,
                 name: (savedStandard.exercise as Exercise).name,
@@ -231,7 +225,6 @@ export class StandardManagementComponent implements OnInit, OnDestroy {
                 updatedAt: (savedStandard.exercise as Exercise).updatedAt || new Date(),
              };
         } else {
-            // Fallback si savedStandard.exercise es solo un ID y no se encuentra en this.exercises
             console.warn(`Detalles completos para el ejercicio ID ${exerciseIdFromSaved} no encontrados. Se crea un objeto parcial.`);
             finalExerciseObjectForStandard = {
                 _id: exerciseIdFromSaved || 'ID_DESCONOCIDO',
@@ -306,8 +299,8 @@ export class StandardManagementComponent implements OnInit, OnDestroy {
     
     if (resetExerciseAndGender) {
         this.standardForm.reset({
-            exercise: this.f['exercise'].value || '', // Mantener selección si existe
-            gender: this.f['gender'].value || 'male', // Mantener selección si existe
+            exercise: this.f['exercise'].value || '', 
+            gender: this.f['gender'].value || 'male', 
             ratios: defaultRatios
         });
     } else {

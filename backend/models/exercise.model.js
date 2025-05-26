@@ -1,4 +1,3 @@
-// backend/models/exercise.model.js
 const mongoose = require("mongoose");
 
 const exerciseSchema = new mongoose.Schema(
@@ -9,7 +8,7 @@ const exerciseSchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
-    exerciseType: { // Nuevo campo
+    exerciseType: {
       type: String,
       required: [true, "El tipo de ejercicio es obligatorio."],
       enum: {
@@ -17,10 +16,10 @@ const exerciseSchema = new mongoose.Schema(
         message: "{VALUE} no es un tipo de ejercicio válido (compuesto/específico)."
       }
     },
-    muscleGroups: [{ // Cambiado de muscleGroup a muscleGroups y ahora es un Array
+    muscleGroups: [{ 
       type: String,
       required: [true, "Se requiere al menos un grupo muscular."],
-      enum: { // Nuevos valores detallados
+      enum: { 
         values: [
           "pecho", "espalda", "hombros",
           "biceps", "triceps", "antebrazos",
@@ -42,10 +41,6 @@ const exerciseSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    // isCompound: { // Eliminado
-    //   type: Boolean,
-    //   default: false,
-    // },
     isPowerlifting: {
       type: Boolean,
       default: false,
@@ -53,14 +48,12 @@ const exerciseSchema = new mongoose.Schema(
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true, // Asumiendo que siempre se sabe quién crea el ejercicio
+      required: true, 
     }
-    // createdAt y updatedAt son manejados por timestamps: true
   },
-  { timestamps: true } // Habilita createdAt y updatedAt automáticamente
+  { timestamps: true } 
 );
 
-// Validación para asegurar que si es 'specific', solo haya un grupo muscular
 exerciseSchema.pre('save', function(next) {
   if (this.exerciseType === 'specific' && this.muscleGroups.length > 1) {
     next(new Error('Para ejercicios específicos, solo se permite un grupo muscular.'));

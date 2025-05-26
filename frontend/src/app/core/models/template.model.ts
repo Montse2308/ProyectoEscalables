@@ -1,8 +1,7 @@
-// frontend/src/app/core/models/template.model.ts
 import type { Exercise } from "./exercise.model";
 
 export interface TemplateExercise {
-  exercise: Exercise; // Aquí Exercise debe ser la interfaz completa o una referencia con los campos necesarios
+  exercise: Exercise; 
   sets: number;
   reps: number;
   restTime: number;
@@ -13,9 +12,8 @@ export interface Template {
   _id: string;
   name: string;
   description?: string;
-  user: string | { _id: string; name: string }; // Puede ser ID o User populado
+  user: string | { _id: string; name: string }; 
   exercises: TemplateExercise[];
-  // isPublic: boolean; // ELIMINADO
   createdAt: Date;
   updatedAt: Date;
 }

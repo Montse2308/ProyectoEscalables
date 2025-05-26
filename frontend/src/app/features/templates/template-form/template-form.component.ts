@@ -1,5 +1,4 @@
-// frontend/src/app/features/templates/template-form/template-form.component.ts
-import { Component, type OnInit, OnDestroy } from '@angular/core'; // Añadir OnDestroy si usas suscripciones
+import { Component, type OnInit, OnDestroy } from '@angular/core'; 
 import {
   FormBuilder,
   type FormGroup,
@@ -14,7 +13,6 @@ import { Template } from '../../../core/models/template.model';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-// import { Subscription } from 'rxjs'; // Si tienes suscripciones que limpiar
 
 @Component({
   selector: 'app-template-form',
@@ -25,17 +23,16 @@ import { RouterModule } from '@angular/router';
 })
 export class TemplateFormComponent implements OnInit /*, OnDestroy */ {
   templateForm!: FormGroup;
-  allAvailableExercises: Exercise[] = []; // Renombrado para claridad
+  allAvailableExercises: Exercise[] = []; 
   loading = false;
-  loadingData = false; // Para la carga inicial de ejercicios y la plantilla a editar
+  loadingData = false;
   submitSuccess = false;
   error = '';
   editMode = false;
   templateId: string | null = null;
-  filteredExercisesForSearch: Exercise[] = []; // Para el dropdown de búsqueda
+  filteredExercisesForSearch: Exercise[] = []; 
   searchTerm = '';
 
-  // private subscriptions = new Subscription(); // Si es necesario
 
   constructor(
     private formBuilder: FormBuilder,
@@ -47,7 +44,7 @@ export class TemplateFormComponent implements OnInit /*, OnDestroy */ {
 
   ngOnInit(): void {
     this.initForm();
-    this.loadAvailableExercises(); // Cargar todos los ejercicios disponibles para los dropdowns
+    this.loadAvailableExercises(); 
 
     this.route.params.subscribe((params) => {
       if (params['id']) {
@@ -58,26 +55,21 @@ export class TemplateFormComponent implements OnInit /*, OnDestroy */ {
     });
   }
 
-  // ngOnDestroy(): void { // Si usas this.subscriptions
-  //   this.subscriptions.unsubscribe();
-  // }
 
   initForm(): void {
     this.templateForm = this.formBuilder.group({
       name: ['', Validators.required],
       description: [''],
-      // isPublic: [false], // ELIMINADO
       exercises: this.formBuilder.array([]),
     });
   }
 
   loadAvailableExercises(): void {
-    this.loadingData = true; // Puede combinarse con loadingTemplate si se edita
+    this.loadingData = true; 
     this.exerciseService.getExercises().subscribe({
       next: (data) => {
         this.allAvailableExercises = data.sort((a,b) => a.name.localeCompare(b.name));
         this.filteredExercisesForSearch = [...this.allAvailableExercises];
-        // No establecer loadingData = false aquí si también estamos cargando la plantilla
         if (!this.editMode) {
             this.loadingData = false;
         }
@@ -94,7 +86,7 @@ export class TemplateFormComponent implements OnInit /*, OnDestroy */ {
     this.templateService.getTemplate(id).subscribe({
       next: (template) => {
         this.patchFormWithTemplate(template);
-        this.loadingData = false; // Ahora sí, después de cargar la plantilla
+        this.loadingData = false;
       },
       error: (err) => {
         this.error = err.error?.message || 'Error al cargar la plantilla para editar.';
@@ -108,18 +100,15 @@ export class TemplateFormComponent implements OnInit /*, OnDestroy */ {
     this.templateForm.patchValue({
       name: template.name,
       description: template.description,
-      // isPublic: template.isPublic, // ELIMINADO
     });
 
-    // CORRECCIÓN DEL BUG DE EDICIÓN: Limpiar el FormArray 'exercisesArray'
     while (this.exercisesArray.length !== 0) {
       this.exercisesArray.removeAt(0);
     }
 
-    // Añadir los ejercicios de la plantilla al FormArray
     template.exercises.forEach((templateExercise) => {
-      this.addExerciseToForm( // Renombrado para claridad
-        (templateExercise.exercise as Exercise)?._id || (templateExercise.exercise as unknown as string), // Manejar si exercise es objeto o ID
+      this.addExerciseToForm( 
+        (templateExercise.exercise as Exercise)?._id || (templateExercise.exercise as unknown as string),
         templateExercise.sets,
         templateExercise.reps,
         templateExercise.restTime,
@@ -136,7 +125,6 @@ export class TemplateFormComponent implements OnInit /*, OnDestroy */ {
     return this.f['exercises'] as FormArray;
   }
 
-  // Método para crear el FormGroup de un ejercicio
   createExerciseGroup(
     exerciseId?: string,
     sets?: number,
@@ -153,7 +141,6 @@ export class TemplateFormComponent implements OnInit /*, OnDestroy */ {
     });
   }
   
-  // Método para añadir un ejercicio al FormArray
   addExerciseToForm(
     exerciseId?: string,
     sets?: number,
@@ -166,7 +153,6 @@ export class TemplateFormComponent implements OnInit /*, OnDestroy */ {
     );
   }
   
-  // Para el botón "Añadir Ejercicio" en el HTML
   onAddExerciseClicked(): void {
       this.addExerciseToForm();
   }
@@ -189,9 +175,8 @@ export class TemplateFormComponent implements OnInit /*, OnDestroy */ {
     const templateData = {
       name: this.f['name'].value,
       description: this.f['description'].value,
-      // isPublic: this.f['isPublic'].value, // ELIMINADO
-      exercises: this.exercisesArray.value.map((ex: any) => ({ // Asegurar estructura correcta
-        exercise: ex.exercise, // Debe ser el _id del ejercicio
+      exercises: this.exercisesArray.value.map((ex: any) => ({ 
+        exercise: ex.exercise, 
         sets: ex.sets,
         reps: ex.reps,
         restTime: ex.restTime,
@@ -222,18 +207,10 @@ export class TemplateFormComponent implements OnInit /*, OnDestroy */ {
     this.router.navigate(['/templates']);
   }
 
-  // getExerciseName ya no es necesario aquí si el dropdown muestra los nombres directamente
-  // y la plantilla de detalle se encarga de mostrar el nombre del ejercicio.
+
 
   onSearchChange(eventTarget: EventTarget | null, exerciseIndex: number): void {
     const searchTerm = (eventTarget as HTMLInputElement)?.value || '';
-    // Esta búsqueda es para un dropdown específico de un ejercicio, no un filtro global aquí.
-    // La lógica de `filteredExercisesForSearch` debe ser manejada de forma diferente si cada
-    // fila de ejercicio tiene su propio buscador/filtrador.
-    // Por simplicidad, el dropdown de ejercicio en cada fila usará `allAvailableExercises`.
-    // El `searchTerm` y `filteredExercisesForSearch` globales son para un filtro general si lo hubiera.
-    // Dado el HTML, parece que cada fila tiene su propio select. El [(ngModel)]="searchTerm" global no aplica bien ahí.
-    // Voy a eliminar el filtro en el TS por ahora y asumir que el <select> usa allAvailableExercises.
-    // Si quieres un buscador por cada <select> de ejercicio, la lógica es más compleja.
+    //
   }
 }

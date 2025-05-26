@@ -1,11 +1,9 @@
-// backend/controllers/template.controller.js
 const Template = require("../models/template.model");
 
-// Obtener todas las plantillas del usuario actual
 exports.getTemplates = async (req, res) => {
   try {
     const templates = await Template.find({ user: req.user._id })
-      .populate("exercises.exercise", "name muscleGroups exerciseType movementType isPowerlifting") // Añadido isPowerlifting
+      .populate("exercises.exercise", "name muscleGroups exerciseType movementType isPowerlifting") 
       .populate("user", "name")
       .sort({ createdAt: -1 });
 
@@ -16,14 +14,13 @@ exports.getTemplates = async (req, res) => {
   }
 };
 
-// Obtener plantilla por ID (asegurándose que pertenezca al usuario)
 exports.getTemplate = async (req, res) => {
   try {
     const template = await Template.findOne({
       _id: req.params.id,
       user: req.user._id,
     })
-      .populate("exercises.exercise", "name muscleGroups exerciseType movementType isPowerlifting") // Añadido isPowerlifting
+      .populate("exercises.exercise", "name muscleGroups exerciseType movementType isPowerlifting")
       .populate("user", "name");
 
     if (!template) {
@@ -37,7 +34,6 @@ exports.getTemplate = async (req, res) => {
   }
 };
 
-// Crear nueva plantilla
 exports.createTemplate = async (req, res) => {
   try {
     const { name, description, exercises } = req.body;
@@ -53,7 +49,7 @@ exports.createTemplate = async (req, res) => {
     await template.save();
 
     const populatedTemplate = await Template.findById(template._id)
-      .populate("exercises.exercise", "name muscleGroups exerciseType movementType isPowerlifting") // Añadido isPowerlifting
+      .populate("exercises.exercise", "name muscleGroups exerciseType movementType isPowerlifting") 
       .populate("user", "name");
 
     res.status(201).json(populatedTemplate);
@@ -67,7 +63,6 @@ exports.createTemplate = async (req, res) => {
   }
 };
 
-// Actualizar plantilla
 exports.updateTemplate = async (req, res) => {
   try {
     const { name, description, exercises } = req.body;
@@ -96,7 +91,6 @@ exports.updateTemplate = async (req, res) => {
   }
 };
 
-// Eliminar plantilla
 exports.deleteTemplate = async (req, res) => {
   try {
     const template = await Template.findOneAndDelete({

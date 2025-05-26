@@ -1,11 +1,9 @@
 import type { Exercise } from "./exercise.model";
-// import type { Template } from "./template.model"; // Template no es usado directamente aquí
 
 export interface Set {
   reps: number;
   weight: number;
-  // rpe?: number; // ELIMINADO
-  restTime?: number; // AÑADIDO: Descanso después de esta serie (en segundos)
+  restTime?: number; 
   notes?: string;
 }
 
@@ -20,7 +18,7 @@ export interface Workout {
   date: Date;
   name: string;
   exercises: ExercisePerformed[];
-  duration?: number; // Se calculará y guardará
+  duration?: number; 
   notes?: string;
   fromTemplate?: string | { _id: string; name: string; };
   isCompleted?: boolean;

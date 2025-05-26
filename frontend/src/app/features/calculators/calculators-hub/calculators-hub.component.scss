@@ -45,8 +45,8 @@
   }
 
   .calculator-icon-container {
-    font-size: 2.5rem; // Tamaño del ícono
-    color: var(--primary-color, #c62828); // Usa tu color primario
+    font-size: 2.5rem; 
+    color: var(--primary-color, #c62828); 
     margin-bottom: 1rem;
     display: flex;
     justify-content: center;
@@ -59,7 +59,7 @@
     margin-right: auto;
 
     .material-icons {
-      font-size: inherit; // Para que el ícono tome el tamaño del contenedor
+      font-size: inherit; 
     }
   }
 
@@ -90,12 +90,11 @@
   }
 }
 
-// Estilos para Material Icons si no están globales
 .material-icons {
   font-family: 'Material Icons';
   font-weight: normal;
   font-style: normal;
-  font-size: 24px; /* Preferred icon size */
+  font-size: 24px; 
   display: inline-block;
   line-height: 1;
   text-transform: none;

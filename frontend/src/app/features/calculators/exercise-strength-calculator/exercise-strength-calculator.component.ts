@@ -2,29 +2,28 @@ import { Component, type OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, type FormGroup, Validators } from '@angular/forms';
 import { CalculatorService } from '../../../core/services/calculator.service';
 import { ExerciseService } from '../../../core/services/exercise.service';
-import { StandardService } from '../../../core/services/standard.service'; // Importar StandardService
-import { AuthService } from '../../../core/services/auth.service'; // Importar AuthService
+import { StandardService } from '../../../core/services/standard.service'; 
+import { AuthService } from '../../../core/services/auth.service'; 
 import { Exercise } from '../../../core/models/exercise.model';
-import { Standard, StrengthLevelRatios } from '../../../core/models/standard.model'; // Usar el modelo Standard actualizado
-import { User } from '../../../core/models/user.model'; // Importar User model
+import { Standard, StrengthLevelRatios } from '../../../core/models/standard.model';
+import { User } from '../../../core/models/user.model'; 
 import { CommonModule, TitleCasePipe, DecimalPipe } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
-// Definición de la estructura del resultado que pasaremos a la plantilla
 interface StrengthCalculationResult {
   userEstimated1RM: number;
-  determinedStrengthLevel: string; // Ej: 'Novato'
+  determinedStrengthLevel: string; 
   percentageToNextLevel: number;
-  targetKgsPerLevel: StrengthLevelRatios; // Pesos en KG calculados para cada nivel
-  nextLevelLabel?: string; // Etiqueta del siguiente nivel
+  targetKgsPerLevel: StrengthLevelRatios;
+  nextLevelLabel?: string; 
   selectedExerciseName: string;
   userBodyWeightForCalc: number;
   userGenderForCalc: string;
 }
 
 @Component({
-  selector: 'app-exercise-strength-calculator', // Mantenemos el selector
+  selector: 'app-exercise-strength-calculator',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, DecimalPipe],
   templateUrl: './exercise-strength-calculator.component.html',
@@ -33,14 +32,14 @@ interface StrengthCalculationResult {
 })
 export class ExerciseStrengthCalculatorComponent implements OnInit, OnDestroy {
   calculatorForm!: FormGroup;
-  exercises: Exercise[] = []; // Ejercicios para los que hay estándares
-  allStandards: Standard[] = []; // Todos los estándares cargados
+  exercises: Exercise[] = []; 
+  allStandards: Standard[] = []; 
   currentUser: User | null = null;
   
   loading = false;
-  loadingInitialData = false; // Para la carga inicial de ejercicios y estándares
+  loadingInitialData = false; 
   error = '';
-  result: StrengthCalculationResult | null = null; // Tipo de resultado actualizado
+  result: StrengthCalculationResult | null = null;
 
   private authSubscription?: Subscription;
 
@@ -57,8 +56,8 @@ export class ExerciseStrengthCalculatorComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private calculatorService: CalculatorService,
     private exerciseService: ExerciseService,
-    private standardService: StandardService, // Inyectar StandardService
-    private authService: AuthService // Inyectar AuthService
+    private standardService: StandardService, 
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -104,7 +103,6 @@ export class ExerciseStrengthCalculatorComponent implements OnInit, OnDestroy {
     .then(([exercisesData, standardsData]) => {
       this.allStandards = standardsData || [];
       
-      // CORRECCIÓN AQUÍ:
       const exerciseIdArray: string[] = this.allStandards
         .map(s => {
           if (s.exercise && typeof s.exercise === 'object' && (s.exercise as Exercise)._id) {
@@ -112,9 +110,9 @@ export class ExerciseStrengthCalculatorComponent implements OnInit, OnDestroy {
           }
           return null; 
         })
-        .filter(id => id !== null) as string[]; // Primero creamos un array de strings no nulos
+        .filter(id => id !== null) as string[]; 
 
-      const exercisesWithStandardsIds = new Set(exerciseIdArray); // Luego creamos el Set a partir del array
+      const exercisesWithStandardsIds = new Set(exerciseIdArray); 
       
       this.exercises = (exercisesData || [])
         .filter(ex => exercisesWithStandardsIds.has(ex._id) && (ex.isPowerlifting || ex.exerciseType === 'compound'))
@@ -144,7 +142,7 @@ export class ExerciseStrengthCalculatorComponent implements OnInit, OnDestroy {
     this.result = null;
     this.error = '';
 
-    const formValues = this.calculatorForm.getRawValue(); // Usar getRawValue para obtener valores de campos deshabilitados
+    const formValues = this.calculatorForm.getRawValue(); 
     const exerciseId = formValues.exercise;
     const weight = parseFloat(formValues.weight);
     const reps = parseInt(formValues.reps, 10);
@@ -173,17 +171,17 @@ export class ExerciseStrengthCalculatorComponent implements OnInit, OnDestroy {
 
     const relevantStandard = this.allStandards.find(s => {
 
-      const standardExerciseObject = s.exercise; // Tipo Exercise
+      const standardExerciseObject = s.exercise; 
       if (standardExerciseObject && typeof standardExerciseObject === 'object' && standardExerciseObject._id) {
         return standardExerciseObject._id === exerciseId && s.gender === userGender;
       }
-      return false; // Si s.exercise no tiene la forma esperada
+      return false;
     });
 
     if (!relevantStandard || !relevantStandard.ratios) {
       this.error = `No se encontraron estándares de ratios definidos para "${selectedExercise.name}" y género "${userGender === 'male' ? 'Masculino' : 'Femenino'}".`;
       this.loading = false;
-      this.result = null; // Limpiar resultado si no hay estándar
+      this.result = null; 
       return;
     }
 
@@ -221,14 +219,14 @@ export class ExerciseStrengthCalculatorComponent implements OnInit, OnDestroy {
         nextLevelLabel = this.strengthLevelLabels[nextLevelKey];
         const nextLevelWeight = targetKgsPerLevel[nextLevelKey];
         
-        if (nextLevelWeight > currentLevelWeight) { // Evitar división por cero
+        if (nextLevelWeight > currentLevelWeight) { 
           percentageToNext = ((user1RM - currentLevelWeight) / (nextLevelWeight - currentLevelWeight)) * 100;
-        } else if (user1RM >= nextLevelWeight) { // Si el peso del siguiente nivel es igual o menor (no debería pasar con ratios crecientes)
+        } else if (user1RM >= nextLevelWeight) {
             percentageToNext = 100;
         }
-        percentageToNext = Math.max(0, Math.min(percentageToNext, 100)); // Asegurar que esté entre 0 y 100
+        percentageToNext = Math.max(0, Math.min(percentageToNext, 100)); 
       }
-    } else { // Debajo de principiante
+    } else { 
         nextLevelLabel = this.strengthLevelLabels.principiante;
         const beginnerTarget = targetKgsPerLevel.principiante;
         if (beginnerTarget > 0) {

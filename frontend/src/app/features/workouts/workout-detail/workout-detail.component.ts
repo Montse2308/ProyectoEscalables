@@ -1,4 +1,3 @@
-// frontend/src/app/features/workouts/workout-detail/workout-detail.component.ts
 import { Component, type OnInit, LOCALE_ID, Inject } from '@angular/core';
 import { CommonModule, DatePipe, DecimalPipe, TitleCasePipe } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
@@ -43,11 +42,10 @@ export class WorkoutDetailComponent implements OnInit {
 
   loadWorkout(id: string): void {
     this.loading = true;
-    this.error = ''; // Limpiar errores previos
+    this.error = ''; 
     this.workoutService.getWorkout(id).subscribe({
       next: (workoutData) => {
         this.workout = workoutData;
-        // console.log('Workout data received:', JSON.stringify(workoutData, null, 2)); // DEBUG
         if (this.workout) {
           this.calculatedDurationDisplay = this.formatDurationDisplay(this.calculateEstimatedDuration());
         }
@@ -57,8 +55,6 @@ export class WorkoutDetailComponent implements OnInit {
         this.error = err.error?.message || 'Error al cargar el entrenamiento.';
         console.error("Error al cargar workout:", err); // Log detallado del error
         this.loading = false;
-        // No redirigir inmediatamente, permitir al usuario ver el error.
-        // this.router.navigate(['/workouts']); 
       },
     });
   }
@@ -129,13 +125,13 @@ export class WorkoutDetailComponent implements OnInit {
 
     if (exercisePerf.sets && exercisePerf.sets.length > 0) {
       exercisePerf.sets.forEach(set => {
-        totalSeconds += workTimePerSet; // Tiempo de trabajo por serie
-        totalSeconds += set.restTime || 0; // Tiempo de descanso de la serie
+        totalSeconds += workTimePerSet; 
+        totalSeconds += set.restTime || 0; 
       });
     }
   });
   
-  return Math.round(totalSeconds / 60); // Convertir a minutos
+  return Math.round(totalSeconds / 60); 
 }
 
   formatDurationDisplay(totalMinutes: number): string {
@@ -155,9 +151,6 @@ export class WorkoutDetailComponent implements OnInit {
 
   get fromTemplateName(): string {
     if (this.workout && this.workout.fromTemplate) {
-      // El backend popula 'fromTemplate' con el campo 'name'
-      // por lo que esperamos un objeto como { _id: '...', name: '...' }
-      // o podría ser solo el ID string si la populación falla o no se hace.
       if (
         typeof this.workout.fromTemplate === 'object' &&
         this.workout.fromTemplate !== null &&
@@ -165,12 +158,9 @@ export class WorkoutDetailComponent implements OnInit {
       ) {
         return (this.workout.fromTemplate as { name: string }).name;
       } else if (typeof this.workout.fromTemplate === 'string') {
-        // Si es solo un ID, podrías mostrar el ID o un placeholder.
-        // Por ahora, indicaremos que es un ID o que no se pudo cargar el nombre.
-        // return `ID Plantilla: ${this.workout.fromTemplate}`; 
-        return 'Nombre no disponible'; // O simplemente 'Desconocida'
+        return 'Nombre no disponible'; 
       }
     }
-    return 'Ninguna'; // Si no hay fromTemplate
+    return 'Ninguna';
   }
 }

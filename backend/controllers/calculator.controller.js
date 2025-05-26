@@ -1,4 +1,3 @@
-// 1RM Calculator
 exports.calculate1RM = (req, res) => {
   try {
     const { weight, reps } = req.body
@@ -7,7 +6,6 @@ exports.calculate1RM = (req, res) => {
       return res.status(400).json({ message: "Weight and reps are required" })
     }
 
-    // Brzycki formula: 1RM = weight × (36 / (37 - reps))
     const oneRM = weight * (36 / (37 - reps))
 
     res.status(200).json({ oneRM: Math.round(oneRM * 100) / 100 })
@@ -16,7 +14,6 @@ exports.calculate1RM = (req, res) => {
   }
 }
 
-// Wilks Calculator
 exports.calculateWilks = (req, res) => {
   try {
     const { bodyWeight, liftedWeight, gender } = req.body
@@ -28,7 +25,6 @@ exports.calculateWilks = (req, res) => {
     let wilksCoefficient
 
     if (gender === "male") {
-      // Male Wilks Coefficient formula
       const a = -216.0475144
       const b = 16.2606339
       const c = -0.002388645
@@ -45,7 +41,6 @@ exports.calculateWilks = (req, res) => {
           e * Math.pow(bodyWeight, 4) +
           f * Math.pow(bodyWeight, 5))
     } else {
-      // Female Wilks Coefficient formula
       const a = 594.31747775582
       const b = -27.23842536447
       const c = 0.82112226871
@@ -71,7 +66,6 @@ exports.calculateWilks = (req, res) => {
   }
 }
 
-// Strength Level Calculator
 exports.calculateStrengthLevel = (req, res) => {
   try {
     const { exercise, oneRM, bodyWeight, gender } = req.body
@@ -80,8 +74,6 @@ exports.calculateStrengthLevel = (req, res) => {
       return res.status(400).json({ message: "Exercise, 1RM, body weight, and gender are required" })
     }
 
-    // This would typically query the database for strength standards
-    // For now, we'll return a placeholder response
     res.status(200).json({
       strengthLevel: "intermediate",
       percentiles: {
@@ -91,7 +83,7 @@ exports.calculateStrengthLevel = (req, res) => {
         advanced: 160,
         elite: 200,
       },
-      percentage: 65, // Percentage towards next level
+      percentage: 65, 
     })
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message })

@@ -18,9 +18,8 @@ export class WilksCalculatorComponent implements OnInit {
   result: number | null = null;
   loading = false;
   error = '';
-  inputType: 'direct' | 'detailed' = 'direct'; // Para controlar qué campos se muestran
+  inputType: 'direct' | 'detailed' = 'direct'; 
 
-  // Para los resultados individuales de 1RM si se usa entrada detallada
   squatRM: number | null = null;
   benchRM: number | null = null;
   deadliftRM: number | null = null;
@@ -35,12 +34,10 @@ export class WilksCalculatorComponent implements OnInit {
     this.calculatorForm = this.formBuilder.group({
       bodyWeight: ['', [Validators.required, Validators.min(30), Validators.max(300)]],
       gender: ['male', Validators.required],
-      inputType: ['direct', Validators.required], // Selector para el tipo de entrada
+      inputType: ['direct', Validators.required], 
 
-      // Campos para entrada directa del total levantado
       liftedWeightTotal: ['', [Validators.required, Validators.min(1)]],
 
-      // Campos para entrada detallada por ejercicio
       squatWeight: ['', [Validators.min(1)]],
       squatReps: ['', [Validators.min(1), Validators.max(36)]],
       benchWeight: ['', [Validators.min(1)]],
@@ -49,7 +46,7 @@ export class WilksCalculatorComponent implements OnInit {
       deadliftReps: ['', [Validators.min(1), Validators.max(36)]],
     });
 
-    this.onInputTypeChange(); // Configurar validadores iniciales
+    this.onInputTypeChange(); 
   }
 
   get f(): { [key: string]: AbstractControl } {
@@ -58,7 +55,7 @@ export class WilksCalculatorComponent implements OnInit {
 
   onInputTypeChange(): void {
     this.inputType = this.f['inputType'].value;
-    this.result = null; // Limpiar resultado anterior al cambiar tipo de entrada
+    this.result = null; 
     this.squatRM = null;
     this.benchRM = null;
     this.deadliftRM = null;
@@ -97,14 +94,13 @@ export class WilksCalculatorComponent implements OnInit {
       map(response => response.oneRM),
       catchError(err => {
         this.error += `Error calculando 1RM para ${weight}kg x ${reps}reps. `;
-        return of(0); // Retorna 0 si hay error para no romper el forkJoin
+        return of(0); 
       })
     );
   }
 
   onSubmit(): void {
     if (this.calculatorForm.invalid) {
-      // Marcar todos los campos como 'touched' para mostrar errores
       Object.values(this.calculatorForm.controls).forEach(control => {
         control.markAsTouched();
       });

@@ -1,5 +1,5 @@
 import { Component, type OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms'; // Validators ya no es tan necesario aquí
+import { FormBuilder, FormGroup } from '@angular/forms'; 
 import { StandardService } from '../../../core/services/standard.service';
 import { ExerciseService } from '../../../core/services/exercise.service';
 import { Exercise } from '../../../core/models/exercise.model';
@@ -81,25 +81,20 @@ export class StandardsViewComponent implements OnInit, OnDestroy {
         if (this.activeStandardForTable) {
             const currentActiveTableExerciseId = (this.activeStandardForTable.exercise as Exercise)?._id;
 
-            // Verificar si el género del estándar activo es diferente al género del filtro Y si tenemos un ID de ejercicio activo
             if (this.activeStandardForTable.gender !== displayGender && currentActiveTableExerciseId) {
-                // El género ha cambiado, intentamos encontrar el estándar para el nuevo género pero MISMO ejercicio
                 const newActiveStandard = this.allStandards.find(s => {
-                    // CORRECCIÓN AQUÍ: Acceder de forma segura a s.exercise._id
                     const standardExerciseId = s.exercise?._id;
                     return standardExerciseId === currentActiveTableExerciseId && s.gender === displayGender;
                 });
                 this.setActiveStandardForTable(newActiveStandard || null);
             } else if (this.activeStandardForTable.gender === displayGender) {
-                // El género no cambió, pero el término de búsqueda sí pudo haberlo hecho.
-                // Verificamos si el estándar activo actual sigue estando en la lista filtrada.
                 const isActiveStandardStillFiltered = this.filteredAndSortedStandards.some(
                     std => std._id === this.activeStandardForTable?._id
                 );
                 if (isActiveStandardStillFiltered) {
-                     this.generateDynamicTable(); // El estándar activo sigue siendo válido, regenerar tabla.
+                     this.generateDynamicTable(); 
                 } else {
-                    this.setActiveStandardForTable(null); // El estándar activo ya no está en la lista filtrada, deseleccionar.
+                    this.setActiveStandardForTable(null); 
                 }
             }
 

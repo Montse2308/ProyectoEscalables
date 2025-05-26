@@ -1,7 +1,7 @@
 import { Component, type OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, type FormGroup, Validators, FormArray } from '@angular/forms'; // Añadir FormArray
+import { FormBuilder, type FormGroup, Validators, FormArray } from '@angular/forms'; 
 import { ExerciseService } from '../../../core/services/exercise.service';
-import { Exercise } from '../../../core/models/exercise.model'; // Actualizado para el nuevo modelo
+import { Exercise } from '../../../core/models/exercise.model'; 
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs';
 interface MuscleGroupOption {
   value: string;
   label: string;
-  category: 'upper' | 'lower' | 'core' | 'full'; // Para agrupar visualmente si se desea
+  category: 'upper' | 'lower' | 'core' | 'full';
 }
 
 @Component({
@@ -78,9 +78,8 @@ export class ExerciseManagementComponent implements OnInit, OnDestroy {
   initForm(): void {
     this.exerciseForm = this.formBuilder.group({
       name: ['', Validators.required],
-      exerciseType: ['specific', Validators.required], // 'specific' o 'compound'
-      // muscleGroup se convierte en muscleGroups y su manejo dependerá de exerciseType
-      muscleGroups: this.formBuilder.control([], [Validators.required, Validators.minLength(1)]), // Para multi-select o single
+      exerciseType: ['specific', Validators.required], 
+      muscleGroups: this.formBuilder.control([], [Validators.required, Validators.minLength(1)]), 
       movementType: ['', Validators.required],
       description: [''],
       isPowerlifting: [false],
@@ -91,16 +90,9 @@ export class ExerciseManagementComponent implements OnInit, OnDestroy {
     this.exerciseTypeSubscription = this.exerciseForm.get('exerciseType')?.valueChanges.subscribe(type => {
       const muscleGroupsControl = this.exerciseForm.get('muscleGroups');
       if (type === 'specific') {
-        // Permitir solo una selección, o cambiar el control a un single-select en el HTML
-        // Por ahora, la validación se mantiene, pero el UI debería guiar la selección única.
-        // Si se usa un <select> normal (no multiple) en el HTML, no se necesita cambio de validación aquí.
-        // Si se usan checkboxes, se podría añadir un validador custom para permitir solo uno.
-        // De momento, asumimos que el UI controlará que solo se envíe un valor si es específico.
-        // o podemos resetearlo para que el usuario vuelva a seleccionar.
-        muscleGroupsControl?.setValue([]); // Resetear al cambiar tipo
-      } else { // compound
-        // Permite múltiples, la validación minLength(1) ya está.
-        muscleGroupsControl?.setValue([]); // Resetear al cambiar tipo
+        muscleGroupsControl?.setValue([]); 
+      } else { 
+        muscleGroupsControl?.setValue([]); 
       }
       muscleGroupsControl?.updateValueAndValidity();
     });
@@ -128,7 +120,6 @@ export class ExerciseManagementComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     if (this.exerciseForm.invalid) {
-      // Marcar todos los campos como 'touched' para mostrar errores de validación si es necesario
       Object.values(this.exerciseForm.controls).forEach(control => {
         control.markAsTouched();
       });
@@ -141,7 +132,6 @@ export class ExerciseManagementComponent implements OnInit, OnDestroy {
     this.error = '';
 
     let muscleGroupsValue = this.f['muscleGroups'].value;
-    // Asegurarse que muscleGroupsValue sea siempre un array para el backend
     if (!Array.isArray(muscleGroupsValue)) {
       muscleGroupsValue = muscleGroupsValue ? [muscleGroupsValue] : [];
     }
@@ -153,7 +143,7 @@ export class ExerciseManagementComponent implements OnInit, OnDestroy {
     }
 
 
-    const exerciseData: Partial<Exercise> = { // Usar Partial para permitir no enviar _id, createdAt, etc.
+    const exerciseData: Partial<Exercise> = { 
       name: this.f['name'].value,
       exerciseType: this.f['exerciseType'].value,
       muscleGroups: muscleGroupsValue,
@@ -201,7 +191,7 @@ export class ExerciseManagementComponent implements OnInit, OnDestroy {
     this.exerciseForm.patchValue({
       name: exercise.name,
       exerciseType: exercise.exerciseType,
-      muscleGroups: exercise.muscleGroups, // Esto funcionará bien si el control es un multi-select o se adapta en el HTML
+      muscleGroups: exercise.muscleGroups, 
       movementType: exercise.movementType,
       description: exercise.description,
       isPowerlifting: exercise.isPowerlifting,
@@ -221,14 +211,13 @@ export class ExerciseManagementComponent implements OnInit, OnDestroy {
 
   deleteExercise(): void {
     if (!this.exerciseToDelete) return;
-    this.loading = true; // Re-usar 'loading' para la acción de borrado
+    this.loading = true; 
     this.exerciseService.deleteExercise(this.exerciseToDelete._id).subscribe({
       next: () => {
         this.loading = false;
         this.confirmDelete = false;
         this.exerciseToDelete = null;
         this.loadExercises();
-        // Podrías añadir un mensaje de éxito temporal aquí también
       },
       error: (error) => {
         this.error = 'Error al eliminar el ejercicio: ' + (error.error?.message || error.message);
@@ -239,7 +228,7 @@ export class ExerciseManagementComponent implements OnInit, OnDestroy {
 
   resetForm(): void {
     this.exerciseForm.reset({
-      exerciseType: 'specific', // Valor por defecto
+      exerciseType: 'specific', 
       muscleGroups: [],
       isPowerlifting: false,
     });
@@ -271,7 +260,7 @@ export class ExerciseManagementComponent implements OnInit, OnDestroy {
 
   getMovementTypeLabel(movementTypeValue: string): string {
     const foundType = this.movementTypeOptions.find(mt => mt.value === movementTypeValue);
-    return foundType ? foundType.label : movementTypeValue; // Devuelve el valor original si no se encuentra la etiqueta
+    return foundType ? foundType.label : movementTypeValue; 
   }
 
 }
