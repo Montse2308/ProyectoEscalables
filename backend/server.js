@@ -13,6 +13,7 @@ const templateRoutes = require("./routes/template.routes")
 const exerciseRoutes = require("./routes/exercise.routes")
 const standardRoutes = require("./routes/standard.routes")
 const calculatorRoutes = require("./routes/calculator.routes")
+const dashboardRoutes = require("./routes/dashboard.routes");
 
 // Load environment variables
 dotenv.config()
@@ -33,6 +34,7 @@ app.use("/api/templates", templateRoutes)
 app.use("/api/exercises", exerciseRoutes)
 app.use("/api/standards", standardRoutes)
 app.use("/api/calculators", calculatorRoutes)
+app.use("/api/dashboard", dashboardRoutes);
 
 // Serve static files in production
 if (process.env.NODE_ENV === "production") {
