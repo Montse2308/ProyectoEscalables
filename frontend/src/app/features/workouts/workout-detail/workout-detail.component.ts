@@ -110,32 +110,33 @@ export class WorkoutDetailComponent implements OnInit {
   }
 
   calculateEstimatedDuration(): number {
-    if (!this.workout || !this.workout.exercises || this.workout.exercises.length === 0) {
-      return 0;
-    }
-    let totalSecondsForAllExercises = 0;
-    this.workout.exercises.forEach((exercisePerf: ExercisePerformed) => {
-      const exerciseDetails = exercisePerf.exercise as Exercise; 
-      
-      if (!exerciseDetails) { // Chequeo por si el ejercicio no se populó correctamente
-          console.warn("Ejercicio no populado en workout:", exercisePerf);
-          return; // Saltar este ejercicio si no hay detalles
-      }
-
-      const isPowerliftingExercise = exerciseDetails.isPowerlifting;
-      const workTimePerSetInSeconds = isPowerliftingExercise ? 90 : 60;
-
-      let exerciseSeconds = 0;
-      if (exercisePerf.sets && exercisePerf.sets.length > 0) {
-        const numSets = exercisePerf.sets.length;
-        exerciseSeconds += numSets * workTimePerSetInSeconds;
-        // NOTA: No estamos sumando restTime aquí porque no está en el modelo Set del Workout.
-        // Si se quisiera, se necesitaría una lógica diferente o un restTime estándar.
-      }
-      totalSecondsForAllExercises += exerciseSeconds;
-    });
-    return totalSecondsForAllExercises / 60; 
+  if (!this.workout || !this.workout.exercises || this.workout.exercises.length === 0) {
+    return 0;
   }
+  
+  let totalSeconds = 0;
+  
+  this.workout.exercises.forEach((exercisePerf: ExercisePerformed) => {
+    const exerciseDetails = exercisePerf.exercise as Exercise;
+    
+    if (!exerciseDetails) {
+      console.warn("Ejercicio no populado en workout:", exercisePerf);
+      return;
+    }
+
+    const isPowerlifting = exerciseDetails.isPowerlifting;
+    const workTimePerSet = isPowerlifting ? 90 : 60;
+
+    if (exercisePerf.sets && exercisePerf.sets.length > 0) {
+      exercisePerf.sets.forEach(set => {
+        totalSeconds += workTimePerSet; // Tiempo de trabajo por serie
+        totalSeconds += set.restTime || 0; // Tiempo de descanso de la serie
+      });
+    }
+  });
+  
+  return Math.round(totalSeconds / 60); // Convertir a minutos
+}
 
   formatDurationDisplay(totalMinutes: number): string {
     if (isNaN(totalMinutes) || totalMinutes < 0) return 'N/A';
@@ -146,7 +147,7 @@ export class WorkoutDetailComponent implements OnInit {
     const minutes = Math.round(totalMinutes % 60);
 
     if (hours > 0) {
-      return `${hours}h ${minutes.toString().padStart(2, '0')}min`;
+      return `${hours}:${minutes.toString().padStart(2, '0')} hrs`;
     } else {
       return `${minutes} min`;
     }
