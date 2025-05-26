@@ -21,7 +21,7 @@ export class ProfileComponent implements OnInit {
   loadingUser = false;
   updateSuccess = false;
   error = '';
-  activeTab = 'profile'; // 'profile' or 'measurements'
+  activeTab = 'profile';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -37,7 +37,7 @@ export class ProfileComponent implements OnInit {
   initForms(): void {
     this.profileForm = this.formBuilder.group({
       name: ['', Validators.required],
-      email: [{ value: '', disabled: true }], // Email cannot be changed
+      email: [{ value: '', disabled: true }],
       gender: ['', Validators.required],
       age: ['', [Validators.required, Validators.min(13), Validators.max(100)]],
       weight: [
@@ -68,7 +68,7 @@ export class ProfileComponent implements OnInit {
         this.loadingUser = false;
       },
       error: (error) => {
-        this.error = error.error.message || 'Failed to load user profile';
+        this.error = error.error.message || 'Error al cargar el perfil de usuario';
         this.loadingUser = false;
       },
     });
@@ -95,7 +95,6 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  // Convenience getter for easy access to form fields
   get f() {
     return this.profileForm.controls;
   }
@@ -129,11 +128,10 @@ export class ProfileComponent implements OnInit {
       next: () => {
         this.updateSuccess = true;
         this.loading = false;
-        // Refresh user data
         this.loadUserProfile();
       },
       error: (error) => {
-        this.error = error.error.message || 'Failed to update profile';
+        this.error = error.error.message || 'Error al actualizar el perfil';
         this.loading = false;
       },
     });
@@ -162,11 +160,10 @@ export class ProfileComponent implements OnInit {
       next: () => {
         this.updateSuccess = true;
         this.loading = false;
-        // Refresh user data
         this.loadUserProfile();
       },
       error: (error) => {
-        this.error = error.error.message || 'Failed to update measurements';
+        this.error = error.error.message || 'Error al actualizar las medidas';
         this.loading = false;
       },
     });
