@@ -23,9 +23,3 @@ export interface Standard {
   createdAt?: Date;
   updatedAt?: Date;
 }
-
-// Las interfaces StrengthLevel y WeightCategory originales ya no son necesarias
-// para definir la estructura del estándar en la base de datos con este nuevo enfoque.
-// Podrían reutilizarse o adaptarse en StandardsViewComponent si se quiere mostrar
-// una tabla con ejemplos de pesos para diferentes categorías de peso corporal,
-// pero el estándar en sí solo guarda los ratios.
