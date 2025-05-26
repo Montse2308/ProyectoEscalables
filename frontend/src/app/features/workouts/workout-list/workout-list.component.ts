@@ -30,20 +30,28 @@ export class WorkoutListComponent implements OnInit {
 
   loadWorkouts(): void {
     this.loading = true;
-    this.error = ''; 
+    this.error = '';
     this.workoutService.getWorkouts().subscribe({
       next: (response: any) => {
-        console.log('Respuesta de getWorkouts:', response); 
-        this.workouts = response.workouts || [];
+        console.log('Respuesta de getWorkouts:', response);
+        let fetchedWorkouts = response.workouts || [];
+
+        fetchedWorkouts.sort((a: Workout, b: Workout) => {
+          const dateA = new Date(a.updatedAt).getTime();
+          const dateB = new Date(b.updatedAt).getTime();
+          return dateB - dateA;
+        });
+
+        this.workouts = fetchedWorkouts;
         this.filterWorkouts();
         this.loading = false;
         if (this.workouts.length === 0 && !this.searchTerm) {
-            console.log('No se cargaron entrenamientos o la lista está vacía.');
+          console.log('No se cargaron entrenamientos o la lista está vacía.');
         }
       },
       error: (err) => {
         this.error = err.error?.message || 'Error al cargar los entrenamientos.';
-        console.error('Error detallado en loadWorkouts:', err); // DEBUG: Ver el error completo
+        console.error('Error detallado en loadWorkouts:', err);
         this.loading = false;
       },
     });
