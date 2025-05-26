@@ -24,14 +24,17 @@
 
         <div class="form-group">
           <label for="exerciseType">Tipo de Ejercicio</label>
-          <select formControlName="exerciseType" class="form-control">
+          <select formControlName="exerciseType" class="form-control" [ngClass]="{ 'is-invalid': f['exerciseType'].touched && f['exerciseType'].errors }">
+            <option value="" disabled>SELECCIONA UN TIPO DE EJERCICIO</option>
             <option value="specific">Específico / Aislamiento</option>
             <option value="compound">Compuesto</option>
           </select>
+          <div *ngIf="f['exerciseType'].touched && f['exerciseType'].errors" class="invalid-feedback">
+            <div *ngIf="f['exerciseType'].errors['required']">El tipo de ejercicio es requerido.</div>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label for="muscleGroups">
+        <div class="form-group" *ngIf="f['exerciseType'].value"> <label for="muscleGroups">
             {{ f['exerciseType'].value === 'compound' ? 'Grupos Musculares (selecciona uno o más)' : 'Grupo Muscular (selecciona uno)' }}
           </label>
 
@@ -41,30 +44,28 @@
             class="form-control"
             [ngClass]="{ 'is-invalid': f['muscleGroups'].touched && f['muscleGroups'].errors }"
           >
-            <option value="" disabled>Selecciona un grupo muscular</option>
-            <option *ngFor="let group of muscleGroupOptions" [value]="group.value">
+            <option value="" disabled>Selecciona un grupo muscular</option> <option *ngFor="let group of muscleGroupOptions" [value]="group.value">
               {{ group.label }}
             </option>
           </select>
 
-          <select
-            *ngIf="f['exerciseType'].value === 'compound'"
-            formControlName="muscleGroups"
-            class="form-control"
-            multiple
-            [ngClass]="{ 'is-invalid': f['muscleGroups'].touched && f['muscleGroups'].errors }"
-            size="6"
-          >
-            <option *ngFor="let group of muscleGroupOptions" [value]="group.value">
-              {{ group.label }}
-            </option>
-          </select>
-          <small *ngIf="f['exerciseType'].value === 'compound'" class="form-text text-muted">
-            Mantén presionada la tecla Ctrl (o Cmd en Mac) para seleccionar múltiples opciones.
-          </small>
+          <div *ngIf="f['exerciseType'].value === 'compound'" class="checkbox-group mt-2">
+            <div *ngFor="let group of muscleGroupOptions" class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                [id]="'mg_compound_' + group.value"
+                [value]="group.value"
+                (change)="onMuscleGroupCheckboxChange($event, group.value)"
+                [checked]="isMuscleGroupSelectedForCompound(group.value)"
+              />
+              <label class="form-check-label" [for]="'mg_compound_' + group.value">
+                {{ group.label }}
+              </label>
+            </div>
+          </div>
 
-          <div *ngIf="f['muscleGroups'].touched && f['muscleGroups'].errors" class="invalid-feedback">
-            <div *ngIf="f['muscleGroups'].errors['required'] || f['muscleGroups'].errors['minlength']">
+          <div *ngIf="f['muscleGroups'].touched && f['muscleGroups'].errors" class="invalid-feedback d-block"> <div *ngIf="f['muscleGroups'].errors['required'] || f['muscleGroups'].errors['minlength']">
               Debes seleccionar al menos un grupo muscular.
             </div>
           </div>

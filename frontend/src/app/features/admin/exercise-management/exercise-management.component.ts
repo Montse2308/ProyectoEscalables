@@ -90,32 +90,43 @@ export class ExerciseManagementComponent implements OnInit, OnDestroy {
     this.exerciseTypeSubscription = this.exerciseForm.get('exerciseType')?.valueChanges.subscribe(type => {
       const muscleGroupsControl = this.exerciseForm.get('muscleGroups');
       if (type === 'specific') {
-        muscleGroupsControl?.setValue([]); 
-      } else { 
-        muscleGroupsControl?.setValue([]); 
+        muscleGroupsControl?.setValue('');
+      } else if (type === 'compound') {
+        muscleGroupsControl?.setValue([]);
+      } else {
+        muscleGroupsControl?.setValue([]);
       }
+      muscleGroupsControl?.markAsUntouched();
+      muscleGroupsControl?.markAsPristine();
       muscleGroupsControl?.updateValueAndValidity();
     });
   }
 
+  onMuscleGroupCheckboxChange(event: Event, groupValue: string): void {
+    const target = event.target as HTMLInputElement;
+    const muscleGroupsControl = this.exerciseForm.get('muscleGroups');
 
-  loadExercises(): void {
-    this.loadingExercises = true;
-    this.exerciseService.getExercises().subscribe({
-      next: (data) => {
-        this.exercises = data;
-        this.filterExercises();
-        this.loadingExercises = false;
-      },
-      error: (error) => {
-        this.error = 'Error al cargar los ejercicios: ' + (error.error?.message || error.message);
-        this.loadingExercises = false;
-      },
-    });
+    if (muscleGroupsControl) {
+      let currentValues: string[] = muscleGroupsControl.value || [];
+      if (target.checked) {
+        if (!currentValues.includes(groupValue)) {
+          currentValues = [...currentValues, groupValue];
+        }
+      } else {
+        currentValues = currentValues.filter(val => val !== groupValue);
+      }
+      muscleGroupsControl.setValue(currentValues);
+      muscleGroupsControl.markAsTouched();
+    }
   }
 
-  get f() {
-    return this.exerciseForm.controls;
+
+  isMuscleGroupSelectedForCompound(groupValue: string): boolean {
+    const muscleGroupsControl = this.exerciseForm.get('muscleGroups');
+    if (muscleGroupsControl && Array.isArray(muscleGroupsControl.value)) {
+      return muscleGroupsControl.value.includes(groupValue);
+    }
+    return false;
   }
 
   onSubmit(): void {
@@ -132,18 +143,26 @@ export class ExerciseManagementComponent implements OnInit, OnDestroy {
     this.error = '';
 
     let muscleGroupsValue = this.f['muscleGroups'].value;
-    if (!Array.isArray(muscleGroupsValue)) {
-      muscleGroupsValue = muscleGroupsValue ? [muscleGroupsValue] : [];
+    if (this.f['exerciseType'].value === 'specific') {
+        muscleGroupsValue = muscleGroupsValue ? [muscleGroupsValue] : [];
     }
-    
+
     if (this.f['exerciseType'].value === 'specific' && muscleGroupsValue.length > 1) {
         this.error = 'Para ejercicios específicos, solo puedes seleccionar un grupo muscular.';
         this.loading = false;
         return;
     }
-
-
-    const exerciseData: Partial<Exercise> = { 
+    if (this.f['exerciseType'].value === 'specific' && muscleGroupsValue.length === 0 && this.f['muscleGroups'].errors?.['required']) {
+        this.error = 'Debes seleccionar un grupo muscular para ejercicios específicos.';
+        this.loading = false;
+        return;
+    }
+     if (this.f['exerciseType'].value === 'compound' && muscleGroupsValue.length === 0 && this.f['muscleGroups'].errors?.['minlength']) {
+        this.error = 'Debes seleccionar al menos un grupo muscular para ejercicios compuestos.';
+        this.loading = false;
+        return;
+    }
+    const exerciseData: Partial<Exercise> = {
       name: this.f['name'].value,
       exerciseType: this.f['exerciseType'].value,
       muscleGroups: muscleGroupsValue,
@@ -184,6 +203,27 @@ export class ExerciseManagementComponent implements OnInit, OnDestroy {
       });
     }
   }
+
+
+  loadExercises(): void {
+    this.loadingExercises = true;
+    this.exerciseService.getExercises().subscribe({
+      next: (data) => {
+        this.exercises = data;
+        this.filterExercises();
+        this.loadingExercises = false;
+      },
+      error: (error) => {
+        this.error = 'Error al cargar los ejercicios: ' + (error.error?.message || error.message);
+        this.loadingExercises = false;
+      },
+    });
+  }
+
+  get f() {
+    return this.exerciseForm.controls;
+  }
+
 
   editExercise(exercise: Exercise): void {
     this.editMode = true;
@@ -236,6 +276,10 @@ export class ExerciseManagementComponent implements OnInit, OnDestroy {
     this.currentExerciseId = null;
     this.error = '';
     this.submitSuccess = false;
+    Object.values(this.exerciseForm.controls).forEach(control => {
+        control.markAsPristine();
+        control.markAsUntouched();
+    });
   }
 
   onSearchChange(): void {
