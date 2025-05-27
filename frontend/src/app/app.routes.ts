@@ -145,7 +145,6 @@ export const routes: Routes = [
       import(
         './features/standards/standards-view/standards-view.component'
       ).then((m) => m.StandardsViewComponent),
-    canActivate: [AuthGuard],
   },
   {
     path: 'admin', 
